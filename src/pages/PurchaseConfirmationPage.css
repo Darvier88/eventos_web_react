@@ -1,0 +1,111 @@
+.purchase-confirmation-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background-color: #1a1a1a;
+}
+
+.confirmation-card {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 24px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+}
+
+.icon.success {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.confirmation-card h2 {
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.confirmation-card > p {
+  color: #cfcfcf;
+}
+
+.details {
+  margin: 16px 0;
+  color: #d7d7d7;
+}
+
+.details p {
+  color: #d7d7d7;
+}
+
+.actions .btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #c8752e;
+  color: #fff;
+  cursor: pointer;
+}
+
+.actions .btn:hover {
+  background: #b06727;
+}
+.email-status {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.email-status.success {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.email-status.error {
+  background: rgba(244, 67, 54, 0.15);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  color: #ff9c9c;
+}
+
+.email-status.loading {
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #ffc107;
+}
+
+.tickets-summary {
+  margin-top: 12px;
+  padding: 12px;
+  background: #252525;
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+}
+
+.tickets-summary h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.tickets-summary ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #d7d7d7;
+}
+
+.tickets-summary li {
+  margin-bottom: 6px;
+}

@@ -1,0 +1,168 @@
+/* src/pages/LinkDocumentPage.css */
+
+.link-document-page {
+  background: #1a1a1a;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: system-ui;
+}
+
+.link-document-container {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.link-document-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.link-document-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 10px;
+}
+
+.link-document-header p {
+  color: #cfcfcf;
+  font-size: 16px;
+  margin: 0;
+}
+
+.link-document-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 700;
+  color: #fff;
+  font-size: 14px;
+}
+
+.form-group select,
+.form-group input {
+  padding: 12px;
+  border: 1px solid #4a4a4a;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #1f1f1f;
+  color: #f3f3f3;
+  transition: all 0.2s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #c8752e;
+  box-shadow: 0 0 0 3px rgba(200, 117, 46, 0.15);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: #2a2a2a;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-message {
+  padding: 12px;
+  background: rgba(244, 67, 54, 0.15);
+  color: #ff9c9c;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.success-message {
+  text-align: center;
+  animation: slideIn 0.5s ease-out;
+}
+
+.success-icon {
+  font-size: 60px;
+  color: #10b981;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.success-message h2 {
+  color: #10b981;
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.success-message p {
+  color: #cfcfcf;
+  margin: 0;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-submit {
+  background: #c8752e;
+  color: white;
+  box-shadow: 0 8px 18px rgba(200, 117, 46, 0.25);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #b06727;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-cancel {
+  background: #3a3a3a;
+  color: #fff;
+  border: 1px solid #4a4a4a;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background: #4a4a4a;
+}
+
+.btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
