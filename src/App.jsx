@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ViewProvider } from './context/ViewContext';
 import Header from './components/Header';
@@ -76,13 +76,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <ViewProvider>
-          <AppContent />
-        </ViewProvider>
-      </AuthProvider>
-    </Router>
+    <AuthProvider>
+      <ViewProvider>
+        <AppContent />
+      </ViewProvider>
+    </AuthProvider>
   );
 }
 
