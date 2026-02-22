@@ -165,21 +165,14 @@ const MyTicketsPage = () => {
         </div>
       ) : (
         <div className="tickets-list">
-          {visibleTickets.map((ticket, index) => {
-            const purchaseDate = ticket?.purchase_ticket?.purchase_date;
-            return (
-              <div key={ticket?.purchase_ticket?._id || ticket?.purchase_ticket?.id || `ticket-${index}`}>
-                <div style={{ fontSize: '0.9em', color: '#888', marginBottom: 4 }}>
-                  Fecha de compra: {purchaseDate ? new Date(purchaseDate).toLocaleString() : 'Sin fecha'}
-                </div>
-                <TicketCard
-                  ticket={ticket}
-                  onShowQr={() => handleShowQr(ticket)}
-                  onDownloadPdf={() => handleDownloadPdf(ticket)}
-                />
-              </div>
-            );
-          })}
+          {visibleTickets.map((ticket, index) => (
+            <TicketCard
+              key={ticket?.purchase_ticket?._id || ticket?.purchase_ticket?.id || `ticket-${index}`}
+              ticket={ticket}
+              onShowQr={() => handleShowQr(ticket)}
+              onDownloadPdf={() => handleDownloadPdf(ticket)}
+            />
+          ))}
         </div>
       )}
 
