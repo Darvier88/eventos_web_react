@@ -1,65 +1,41 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import TicketCard from '../components/TicketCard';
 import QRCodeModal from '../components/QRCodeModal';
 import './MyTicketsPage.css';
 
 const MyTicketsPage = () => {
-  const [purchaseTickets, setPurchaseTickets] = useState([]);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showAllTickets, setShowAllTickets] = useState(false);
 
   const userId = localStorage.getItem('user_id');
 
-  const loadData = useCallback(async () => {
-    if (!userId) {
-      setError('Usuario no autenticado');
-      setLoading(false);
-      return;
-    }
-    try {
-      setLoading(true);
-      setError('');
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['myTickets', userId],
+    queryFn: async () => {
       const [orders, pending] = await Promise.all([
         apiService.getPurchaseTicketsByAttender(userId),
         apiService.getPayphoneTransactionsByAttender(userId),
       ]);
-      setPurchaseTickets(Array.isArray(orders) ? orders : []);
-      setPendingCount(Array.isArray(pending) ? pending.length : Number(pending) || 0);
-    } catch (err) {
-      setError(err.message || 'Error al cargar los tickets');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  useEffect(() => {
-    if (!purchaseTickets.length) {
-      return;
-    }
-
-    console.log('[MyTickets] sample ticket:', purchaseTickets[purchaseTickets.length - 1]);
-    console.log('[MyTickets] purchase_ticket date fields:', purchaseTickets.map((ticket) => {
-      const purchase = ticket?.purchase_ticket || {};
       return {
-        id: purchase._id || purchase.id,
-        created_at: purchase.created_at,
-        createdAt: purchase.createdAt,
-        purchase_date: purchase.purchase_date,
-        purchaseDate: purchase.purchaseDate,
-        date: purchase.date,
-        created: purchase.created,
+        purchaseTickets: Array.isArray(orders) ? orders : [],
+        pendingCount: Array.isArray(pending) ? pending.length : Number(pending) || 0,
       };
-    }));
-  }, [purchaseTickets]);
+    },
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 2,
+  });
+
+  const purchaseTickets = data?.purchaseTickets ?? [];
+  const pendingCount    = data?.pendingCount    ?? 0;
 
   const handleShowQr = (ticket) => {
     setSelectedTicket(ticket);
@@ -77,7 +53,6 @@ const MyTicketsPage = () => {
       alert('Error: No se encontró el ID del ticket');
       return;
     }
-    
     try {
       const message = await apiService.downloadTicketPdf(purchaseTicketId);
       console.log(message);
@@ -86,7 +61,15 @@ const MyTicketsPage = () => {
     }
   };
 
-  if (loading) {
+  if (!userId) {
+    return (
+      <div className="my-tickets-page">
+        <div className="error-banner">Usuario no autenticado</div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
     return (
       <div className="my-tickets-page">
         <div className="loading-state">
@@ -98,28 +81,26 @@ const MyTicketsPage = () => {
   }
 
   const now = new Date();
+
   const getPurchaseTimestamp = (ticket) => {
     const purchase = ticket?.purchase_ticket || {};
     const parsed = new Date(purchase.purchase_date || 0);
     return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
   };
 
-  // Filtrar tickets con purchase_date null
   const filteredTickets = purchaseTickets.filter(
     (ticket) => ticket?.purchase_ticket?.purchase_date != null
   );
 
-  const sortedTickets = [...filteredTickets].sort((a, b) => (
+  const sortedTickets = [...filteredTickets].sort((a, b) =>
     getPurchaseTimestamp(b) - getPurchaseTimestamp(a)
-  ));
+  );
 
   const visibleTickets = showAllTickets
     ? sortedTickets
     : sortedTickets.filter((ticket) => {
         const eventDate = ticket?.event?.start_date;
-        if (!eventDate) {
-          return true;
-        }
+        if (!eventDate) return true;
         return new Date(eventDate) >= now;
       });
 
@@ -144,7 +125,7 @@ const MyTicketsPage = () => {
               Todos
             </button>
           </div>
-          <button className="refresh-btn" onClick={loadData}>
+          <button className="refresh-btn" onClick={() => refetch()}>
             Actualizar
           </button>
         </div>
@@ -157,7 +138,7 @@ const MyTicketsPage = () => {
         </div>
       )}
 
-      {error && <div className="error-banner">{error}</div>}
+      {isError && <div className="error-banner">{error?.message || 'Error al cargar los tickets'}</div>}
 
       {visibleTickets.length === 0 ? (
         <div className="empty-state">

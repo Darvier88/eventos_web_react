@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import EventCard from '../components/EventCard';
 import apiService from '../services/apiService';
 import secureStorage from '../services/secureStorage';
@@ -7,41 +8,59 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import './EventsPage.css';
 
-const EventsPage = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [imageUrls, setImageUrls] = useState({
-    current: null,
-    next: null
+const useEvents = () =>
+  useQuery({
+    queryKey: ['events'],
+    queryFn: async () => {
+      const data = await apiService.getAllEvents();
+      return data.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+    },
+    staleTime: 1000 * 60 * 2, // 2 minutos antes de refetch
   });
+
+const useEventImages = (events, currentIndex) => {
+  const nextIndex = events.length > 0
+    ? (currentIndex === events.length - 1 ? 0 : currentIndex + 1)
+    : 0;
+
+  const currentEvent = events[currentIndex];
+  const nextEvent = events[nextIndex];
+
+  const currentId = currentEvent?._id || currentEvent?.id || currentEvent?.event_id;
+  const nextId    = nextEvent?._id   || nextEvent?.id   || nextEvent?.event_id;
+
+  return useQuery({
+    queryKey: ['eventImages', currentId, nextId],
+    queryFn: async () => {
+      const [currentUrl, nextUrl] = await Promise.all([
+        apiService.getImageFileByEvent(currentId, 'square').catch(() => null),
+        apiService.getImageFileByEvent(nextId,    'square').catch(() => null),
+      ]);
+      return { current: currentUrl, next: nextUrl };
+    },
+    enabled: events.length > 0, // solo corre si hay eventos
+    staleTime: 1000 * 60 * 5, 
+  });
+};
+
+
+const EventsPage = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered]       = useState(false);
   const autoAdvanceRef = useRef(null);
   const navigate = useNavigate();
 
-  const loadEvents = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiService.getAllEvents();
-      // Ordenar por fecha de inicio
-      const sortedEvents = data.sort((a, b) => 
-        new Date(a.start_date) - new Date(b.start_date)
-      );
-      setEvents(sortedEvents);
-    } catch (err) {
-      setError(err.message);
-      console.error('Error loading events:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: events = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useEvents();
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
+  const {
+    data: imageUrls = { current: null, next: null },
+  } = useEventImages(events, currentIndex);
   const stopAutoAdvance = () => {
     if (autoAdvanceRef.current) {
       clearInterval(autoAdvanceRef.current);
@@ -50,95 +69,36 @@ const EventsPage = () => {
   };
 
   const startAutoAdvance = () => {
-    if (events.length <= 1) {
-      return;
-    }
-
+    if (events.length <= 1) return;
     stopAutoAdvance();
     autoAdvanceRef.current = setInterval(() => {
-      setCurrentIndex((prev) => prev === events.length - 1 ? 0 : prev + 1);
-    }, 2000); // 2 segundos como pediste
-  };
-
-  const resetAutoAdvance = () => {
-    if (isHovered) {
-      return;
-    }
-
-    startAutoAdvance();
+      setCurrentIndex((prev) => (prev === events.length - 1 ? 0 : prev + 1));
+    }, 2000);
   };
 
   useEffect(() => {
-    if (!isHovered) {
-      startAutoAdvance();
-    }
-
+    if (!isHovered) startAutoAdvance();
     return () => stopAutoAdvance();
   }, [events.length, isHovered]);
-
-  useEffect(() => {
-    // Cargar imágenes del evento actual y siguiente
-    if (events.length > 0) {
-      const loadImages = async () => {
-        const nextIndex = currentIndex === events.length - 1 ? 0 : currentIndex + 1;
-
-        const currentEvent = events[currentIndex];
-        const nextEvent = events[nextIndex];
-
-        const currentId = currentEvent._id || currentEvent.id || currentEvent.event_id;
-        const nextId = nextEvent._id || nextEvent.id || nextEvent.event_id;
-
-        try {
-          const [currentUrl, nextUrl] = await Promise.all([
-            apiService.getImageFileByEvent(currentId, 'square').catch(() => null),
-            apiService.getImageFileByEvent(nextId, 'square').catch(() => null)
-          ]);
-
-          setImageUrls({
-            current: currentUrl,
-            next: nextUrl
-          });
-        } catch (error) {
-          console.error('Error loading images:', error);
-        }
-      };
-
-      loadImages();
-
-      return () => {
-        // Limpiar URLs anteriores
-        Object.values(imageUrls).forEach(url => {
-          if (url) URL.revokeObjectURL(url);
-        });
-      };
-    }
-  }, [currentIndex, events]);
-
-  const handleRefresh = () => {
-    loadEvents();
-  };
-
   const handlePrevious = () => {
-    setCurrentIndex((prev) => prev === 0 ? events.length - 1 : prev - 1);
-    resetAutoAdvance();
+    setCurrentIndex((prev) => (prev === 0 ? events.length - 1 : prev - 1));
+    if (!isHovered) startAutoAdvance();
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => prev === events.length - 1 ? 0 : prev + 1);
-    resetAutoAdvance();
+    setCurrentIndex((prev) => (prev === events.length - 1 ? 0 : prev + 1));
+    if (!isHovered) startAutoAdvance();
   };
 
-  const formatEventDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es });
-  };
+  const formatEventDate = (dateString) =>
+    format(new Date(dateString), "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es });
 
   const handleEventClick = (eventId) => {
     secureStorage.setEventId(eventId);
     navigate(`/evento/${eventId}`);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="events-page">
         <div className="loading-container">
@@ -149,7 +109,7 @@ const EventsPage = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="events-page">
         <div className="error-container">
@@ -159,8 +119,8 @@ const EventsPage = () => {
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
           <h2>Error al cargar eventos</h2>
-          <p>{error}</p>
-          <button className="btn btn-primary" onClick={handleRefresh}>
+          <p>{error?.message || 'Error desconocido'}</p>
+          <button className="btn btn-primary" onClick={refetch}>
             Reintentar
           </button>
         </div>

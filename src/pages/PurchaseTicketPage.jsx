@@ -1,5 +1,6 @@
 // src/pages/PurchaseTicketPage.jsx (VERSIÓN SIMPLIFICADA CON PAYPHONE)
 import React, { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import apiService from '../services/apiService';
 import PayphonePaymentBox from '../components/PayphonePaymentBox';
@@ -22,8 +23,14 @@ const PurchaseTicketsPage = () => {
   const [error, setError] = useState(null);
   const [showPaymentBox, setShowPaymentBox] = useState(false);
   const [purchaseCreated, setPurchaseCreated] = useState(null);
-  const [bannerImageUrl, setBannerImageUrl] = useState(null);
   const [imageError, setImageError] = useState(false);
+  const { data: bannerImageUrl } = useQuery({
+    queryKey: ['bannerImage', resolvedEventId],
+    queryFn: () => apiService.getImageFileByEvent(resolvedEventId, 'banner'),
+    enabled: !!resolvedEventId,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
   // Campos del formulario
   const [observation, setObservation] = useState('');

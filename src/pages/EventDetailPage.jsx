@@ -1,8 +1,9 @@
 // src/pages/EventDetailPage.jsx
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useQuery } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import secureStorage from '../services/secureStorage';
 import { useAuth } from '../context/AuthContext';
@@ -14,83 +15,61 @@ const EventDetailPage = () => {
   const { isAuthenticated } = useAuth();
   const eventId = id || secureStorage.getEventId();
 
-  // Estados principales del evento
-  const [event, setEvent] = useState(null);
-  const [tickets, setTickets] = useState([]);
-  const [bannerImageUrl, setBannerImageUrl] = useState(null);
-  const [imageError, setImageError] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['eventDetail', eventId],
+    queryFn: async () => {
+      const [ev, tks] = await Promise.all([
+        apiService.getEventById(eventId),
+        apiService.getTicketsByEvent(eventId),
+      ]);
+      return { event: ev, tickets: tks };
+    },
+    enabled: !!eventId,
+    staleTime: 1000 * 60 * 2,
+  });
 
+  const event   = data?.event   ?? null;
+  const tickets = data?.tickets ?? [];
 
-  useEffect(() => {
-    if (!eventId) {
-      setError('No se pudo identificar el evento');
-      setLoading(false);
-      return;
-    }
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [ev, tks] = await Promise.all([
-          apiService.getEventById(eventId),
-          apiService.getTicketsByEvent(eventId),
-        ]);
-        setEvent(ev);
-        setTickets(tks);
-        try {
-          const url = await apiService.getImageFileByEvent(eventId, 'banner');
-          setBannerImageUrl(url);
-        } catch {
-          setImageError(true);
-        }
-      } catch (err) {
-        setError(err.message || 'No se pudo cargar el evento');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-    return () => {
-      if (bannerImageUrl) URL.revokeObjectURL(bannerImageUrl);
-    };
-  }, [eventId]); // sin bannerImageUrl para evitar loop
-
+  const { data: bannerImageUrl, isError: imageError } = useQuery({
+    queryKey: ['bannerImage', eventId],
+    queryFn: () => apiService.getImageFileByEvent(eventId, 'banner'),
+    enabled: !!eventId,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
 
   const formatDate = (d) => format(new Date(d), "dd 'de' MMMM 'de' yyyy", { locale: es });
   const formatTime = (d) => format(new Date(d), 'HH:mm', { locale: es });
 
   const getYoutubeEmbedUrl = (rawUrl) => {
-    if (!rawUrl || typeof rawUrl !== 'string') {
-      return null;
-    }
-
+    if (!rawUrl || typeof rawUrl !== 'string') return null;
     try {
       const url = new URL(rawUrl);
       if (url.hostname.includes('youtu.be')) {
         const videoId = url.pathname.replace('/', '').trim();
         return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
       }
-
       if (url.hostname.includes('youtube.com')) {
         if (url.pathname.startsWith('/embed/')) {
           return `https://www.youtube-nocookie.com${url.pathname}`;
         }
-
         const videoId = url.searchParams.get('v');
         return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
       }
     } catch {
       return null;
     }
-
     return null;
   };
 
   const youtubeEmbedUrl = getYoutubeEmbedUrl(event?.youtube_url);
 
-  // Tickets visibles y ordenados
   const visibleTickets = useMemo(
     () => tickets.filter((t) => !t.hidden).sort((a, b) => a.price - b.price),
     [tickets]
@@ -109,16 +88,24 @@ const EventDetailPage = () => {
     });
   };
 
-  if (loading) {
-    return <div className="event-detail-page"><div className="spinner" /><p>Cargando detalles del evento...</p></div>;
+  if (isLoading) {
+    return (
+      <div className="event-detail-page">
+        <div className="spinner" />
+        <p>Cargando detalles del evento...</p>
+      </div>
+    );
   }
-  if (error || !event) {
+
+  if (isError || !event) {
     return (
       <div className="event-detail-page">
         <div className="error-container">
           <h2>Error al cargar el evento</h2>
-          <p>{error || 'Evento no encontrado'}</p>
-          <button className="btn btn-primary" onClick={() => navigate('/')}>Volver a eventos</button>
+          <p>{error?.message || 'Evento no encontrado'}</p>
+          <button className="btn btn-primary" onClick={() => navigate('/')}>
+            Volver a eventos
+          </button>
         </div>
       </div>
     );
@@ -140,23 +127,25 @@ const EventDetailPage = () => {
         <div className="event-info-section">
           <h1 className="event-title-detail">{event.name}</h1>
           <div className="event-details">
-            <InfoRow icon="calendar" label="Fecha" value={formatDate(event.start_date)} />
-            <InfoRow icon="clock" label="Hora de inicio" value={formatTime(event.start_date)} />
-            <InfoRow icon="location" label="Lugar" value={event.location || 'Por confirmar'} />
+            <InfoRow icon="calendar" label="Fecha"         value={formatDate(event.start_date)} />
+            <InfoRow icon="clock"    label="Hora de inicio" value={formatTime(event.start_date)} />
+            <InfoRow icon="location" label="Lugar"          value={event.location || 'Por confirmar'} />
           </div>
+
           {youtubeEmbedUrl && (
             <div className="event-video">
               <div className="event-video-frame">
                 <iframe
                   src={youtubeEmbedUrl}
                   title="Video del evento"
-                  frameBorder="0"
+                  style={{ border: 'none' }}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                ></iframe>
+                />
               </div>
             </div>
           )}
+
           <div className="event-description-section">
             <h2 className="section-title">Descripción</h2>
             <p className="event-description">{event.description}</p>
@@ -175,15 +164,14 @@ const EventDetailPage = () => {
                     <div key={t._id} className="ticket-card">
                       <div className="ticket-header">
                         <span className="ticket-name">{t.name}</span>
-                        <span className="ticket-price">{t.price === 0 ? 'Gratis' : `$${t.price.toFixed(2)}`}</span>
+                        <span className="ticket-price">
+                          {t.price === 0 ? 'Gratis' : `$${t.price.toFixed(2)}`}
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button
-                  className="btn btn-primary btn-buy"
-                  onClick={handleGoToPurchase}
-                >
+                <button className="btn btn-primary btn-buy" onClick={handleGoToPurchase}>
                   Comprar tickets
                 </button>
               </>
@@ -218,6 +206,7 @@ const InfoRow = ({ icon, label, value }) => {
       </svg>
     ),
   };
+
   return (
     <div className="info-row">
       <div className="info-icon">{icons[icon]}</div>
