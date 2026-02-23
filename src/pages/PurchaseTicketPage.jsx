@@ -126,12 +126,6 @@ const PurchaseTicketsPage = () => {
     }
   }, [resolvedEventId]);
 
-  useEffect(() => {
-    if (!resolvedEventId) return;
-    setImageError(false);
-    setBannerImageUrl(apiService.getBannerImageUrl(resolvedEventId));
-  }, [resolvedEventId]);
-
   // Inicializar cantidades
   useEffect(() => {
     const initial = {};
