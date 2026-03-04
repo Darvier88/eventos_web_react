@@ -1,3 +1,12 @@
+/* LoginPage.css — Fully Responsive */
+
+/* ─── Breakpoints ─────────────────────────────────────────────────
+   ≤320px   Small phones  |  321–480px  Standard phones
+   481–600px Large phones  |  601–768px  Tablets portrait
+   769–1024px Tablets landscape / small laptops
+   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
+──────────────────────────────────────────────────────────────────── */
+
 .login-page {
   min-height: calc(100vh - 60px);
   display: flex;
@@ -5,6 +14,7 @@
   justify-content: center;
   background: #1a1a1a;
   padding: 40px 20px;
+  box-sizing: border-box;
 }
 
 .login-container {
@@ -15,6 +25,7 @@
   border-radius: 20px;
   padding: 100px 60px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
 }
 
 .login-header {
@@ -38,15 +49,8 @@
   justify-content: center;
 }
 
-.back-button:hover {
-  color: #fff;
-}
-
-.back-button svg {
-  stroke: currentColor;
-  width: 26px;
-  height: 26px;
-}
+.back-button:hover { color: #fff; }
+.back-button svg { stroke: currentColor; width: 26px; height: 26px; }
 
 .login-logo {
   width: 180px;
@@ -85,12 +89,7 @@
   font-size: 18px !important;
 }
 
-.login-error svg {
-  flex-shrink: 0;
-  stroke: #f44336;
-  width: 22px;
-  height: 22px;
-}
+.login-error svg { flex-shrink: 0; stroke: #f44336; width: 22px; height: 22px; }
 
 .form-group {
   display: flex;
@@ -100,11 +99,7 @@
   position: relative;
 }
 
-.form-group label {
-  font-size: 20px !important;
-  font-weight: 600;
-  color: #fff !important;
-}
+.form-group label { font-size: 20px !important; font-weight: 600; color: #fff !important; }
 
 .form-group input {
   padding: 22px 26px;
@@ -114,6 +109,8 @@
   color: #fff;
   font-size: 20px !important;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -123,15 +120,8 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
-.form-group input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.form-group input::placeholder {
-  color: #8a8a8a;
-  font-size: 19px;
-}
+.form-group input:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-group input::placeholder { color: #8a8a8a; font-size: 19px; }
 
 .password-field-wrapper {
   display: flex;
@@ -159,15 +149,8 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
-.password-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.password-input::placeholder {
-  color: #8a8a8a;
-  font-size: 19px !important;
-}
+.password-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.password-input::placeholder { color: #8a8a8a; font-size: 19px !important; }
 
 .password-toggle {
   background: none;
@@ -182,15 +165,8 @@
   flex-shrink: 0;
 }
 
-.password-toggle:hover {
-  color: #fff;
-}
-
-.password-toggle svg {
-  stroke: currentColor;
-  width: 24px;
-  height: 24px;
-}
+.password-toggle:hover { color: #fff; }
+.password-toggle svg { stroke: currentColor; width: 24px; height: 24px; }
 
 .btn-login {
   width: 100%;
@@ -209,6 +185,7 @@
   transition: background 0.2s ease, transform 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  cursor: pointer;
 }
 
 .btn-login:hover {
@@ -217,9 +194,7 @@
   box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
 }
 
-.btn-login:active {
-  transform: translateY(0);
-}
+.btn-login:active { transform: translateY(0); }
 
 .spinner-small {
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -229,6 +204,8 @@
   height: 20px;
   animation: spin 0.8s linear infinite;
 }
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .login-footer {
   margin-top: 40px;
@@ -246,136 +223,151 @@
   transition: opacity 0.2s;
 }
 
-.login-link:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+.login-link:hover { opacity: 0.8; text-decoration: underline; }
+
+/* ─── ≤320px — Small phones ────────────────────────────────────── */
+@media (max-width: 320px) {
+  .login-page {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .login-container {
+    padding: 28px 16px;
+    border-radius: 14px 14px 0 0;
+    max-width: 100%;
+  }
+
+  .login-logo { width: 90px; margin-bottom: 20px; }
+  .login-header { margin-bottom: 24px; }
+  .login-title { font-size: 22px !important; }
+  .login-subtitle { font-size: 13px !important; }
+  .login-form { gap: 16px; }
+  .login-error { padding: 10px 12px; font-size: 12px !important; }
+  .form-group { gap: 6px; }
+  .form-group label { font-size: 13px !important; }
+  .form-group input { padding: 12px 14px; font-size: 15px !important; }
+  .form-group input::placeholder { font-size: 14px; }
+  .password-input { padding: 12px 14px; font-size: 15px; }
+  .password-input::placeholder { font-size: 14px !important; }
+  .password-toggle svg { width: 20px; height: 20px; }
+  .btn-login { padding: 14px 16px; font-size: 14px !important; margin-top: 8px; }
+  .login-footer { margin-top: 20px; gap: 10px; }
+  .login-link { font-size: 13px !important; }
+  .back-button { padding: 8px; }
+  .back-button svg { width: 20px; height: 20px; }
 }
 
-/* Tablet */
-@media (max-width: 768px) {
+/* ─── 321–480px — Standard phones ─────────────────────────────── */
+@media (min-width: 321px) and (max-width: 480px) {
+  .login-page { padding: 16px; }
+
+  .login-container {
+    padding: 36px 24px;
+    border-radius: 16px;
+  }
+
+  .login-logo { width: 110px; margin-bottom: 26px; }
+  .login-header { margin-bottom: 32px; }
+  .login-title { font-size: 28px !important; }
+  .login-subtitle { font-size: 15px !important; }
+  .login-form { gap: 20px; }
+  .login-error { padding: 12px 14px; font-size: 13px !important; }
+  .form-group { gap: 8px; }
+  .form-group label { font-size: 15px !important; }
+  .form-group input { padding: 15px 18px; font-size: 17px !important; }
+  .form-group input::placeholder { font-size: 16px; }
+  .password-input { padding: 15px 18px; font-size: 17px; }
+  .password-input::placeholder { font-size: 16px !important; }
+  .btn-login { padding: 16px 18px; font-size: 16px !important; margin-top: 10px; }
+  .login-footer { margin-top: 28px; gap: 12px; }
+  .login-link { font-size: 14px !important; }
+  .back-button svg { width: 22px; height: 22px; }
+}
+
+/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+@media (min-width: 481px) and (max-width: 600px) {
+  .login-page { padding: 20px; }
+
+  .login-container {
+    padding: 48px 32px;
+    max-width: 480px;
+  }
+
+  .login-logo { width: 130px; margin-bottom: 32px; }
+  .login-header { margin-bottom: 40px; }
+  .login-title { font-size: 34px !important; }
+  .login-subtitle { font-size: 17px !important; }
+  .login-form { gap: 26px; }
+  .login-error { font-size: 15px !important; }
+  .form-group label { font-size: 17px !important; }
+  .form-group input { padding: 18px 22px; font-size: 18px !important; }
+  .password-input { padding: 18px 22px; font-size: 18px; }
+  .btn-login { padding: 19px 22px; font-size: 18px !important; }
+  .login-link { font-size: 16px !important; }
+}
+
+/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+@media (min-width: 601px) and (max-width: 768px) {
   .login-container {
     max-width: 500px;
     padding: 70px 50px;
   }
-  
-  .login-logo {
-    width: 150px;
+
+  .login-logo { width: 150px; }
+  .login-title { font-size: 40px !important; }
+  .login-subtitle { font-size: 18px !important; }
+  .login-error { font-size: 16px !important; }
+  .form-group label { font-size: 18px !important; }
+  .form-group input { padding: 20px 22px; font-size: 18px !important; }
+  .form-group input::placeholder { font-size: 17px !important; }
+  .password-input { padding: 20px 22px; font-size: 18px; }
+  .password-input::placeholder { font-size: 17px !important; }
+  .btn-login { padding: 20px 22px; font-size: 18px !important; }
+  .login-link { font-size: 16px !important; }
+}
+
+/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .login-container {
+    max-width: 560px;
+    padding: 80px 56px;
   }
-  
-  .login-title {
-    font-size: 40px !important;
-  }
-  
-  .login-subtitle {
-    font-size: 18px !important;
-  }
-  
-  .login-error {
-    font-size: 16px !important;
-  }
-  
-  .form-group label {
-    font-size: 18px !important;
-  }
-  
-  .form-group input,
-  .password-input {
-    padding: 20px 22px;
-    font-size: 18px;
-  }
-  
-  .form-group input::placeholder,
-  .password-input::placeholder {
-    font-size: 17px !important;
-  }
-  
-  .btn-login {
-    padding: 20px 22px;
-    font-size: 18px !important;
-  }
-  
-  .login-link {
-    font-size: 16px !important;
+
+  .login-title { font-size: 44px !important; }
+  .login-subtitle { font-size: 19px !important; }
+  .form-group label { font-size: 19px !important; }
+  .form-group input { padding: 20px 24px; font-size: 19px !important; }
+  .password-input { padding: 20px 24px; font-size: 19px; }
+  .btn-login { padding: 21px 24px; font-size: 19px !important; }
+  .login-link { font-size: 17px !important; }
+}
+
+/* ─── 1025–1280px — Standard desktops ─────────────────────────── */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .login-container {
+    max-width: 600px;
+    padding: 96px 60px;
   }
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-  .login-page {
-    padding: 20px;
-  }
-
+/* ─── 1441px+ — Large desktops / 4K ───────────────────────────── */
+@media (min-width: 1441px) {
   .login-container {
-    padding: 40px 28px;
+    max-width: 680px;
+    padding: 110px 72px;
+    border-radius: 24px;
   }
 
-  .login-logo {
-    width: 120px;
-    margin-bottom: 30px;
-  }
-  
-  .login-header {
-    margin-bottom: 40px;
-  }
-
-  .login-title {
-    font-size: 32px !important;
-  }
-  
-  .login-subtitle {
-    font-size: 16px !important;
-  }
-  
-  .login-form {
-    gap: 24px;
-  }
-  
-  .login-error {
-    padding: 14px 16px;
-    font-size: 14px !important;
-  }
-  
-  .form-group {
-    gap: 10px;
-  }
-  
-  .form-group label {
-    font-size: 16px !important;
-  }
-  
-  .form-group input,
-  .password-input {
-    padding: 18px 20px;
-    font-size: 17px;
-  }
-  
-  .form-group input::placeholder,
-  .password-input::placeholder {
-    font-size: 16px !important;
-  }
-  
-  .password-toggle svg {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .btn-login {
-    padding: 18px 20px;
-    font-size: 17px !important;
-    margin-top: 12px;
-  }
-  
-  .login-footer {
-    margin-top: 32px;
-    gap: 14px;
-  }
-  
-  .login-link {
-    font-size: 15px !important;
-  }
-  
-  .back-button svg {
-    width: 22px;
-    height: 22px;
-  }
+  .login-logo { width: 200px; margin-bottom: 48px; }
+  .login-header { margin-bottom: 70px; }
+  .login-title { font-size: 56px !important; }
+  .login-subtitle { font-size: 22px !important; }
+  .login-form { gap: 36px; }
+  .form-group label { font-size: 22px !important; }
+  .form-group input { padding: 24px 28px; font-size: 22px !important; }
+  .password-input { padding: 24px 28px; font-size: 22px; }
+  .btn-login { padding: 26px 28px; font-size: 22px !important; }
+  .login-footer { margin-top: 48px; }
+  .login-link { font-size: 20px !important; }
 }

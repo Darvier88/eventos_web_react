@@ -1,7 +1,22 @@
+
 // src/services/apiService.js
 import axios from 'axios';
+import { isOnline, withTimeout, quickPing } from '../utils/networkUtils';
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+
+// Utilidad para comprobar red antes de peticiones pesadas
+async function checkNetworkOrThrow() {
+  if (!isOnline()) throw new Error('No tienes conexión a internet.');
+  const ok = await quickPing();
+  if (!ok) throw new Error('Tu conexión es inestable o lenta.');
+}
+
+// Utilidad para envolver promesas con timeout y control de red
+async function safeRequest(promise, timeoutMs = 20000) {
+  await checkNetworkOrThrow();
+  return withTimeout(promise, timeoutMs, 'Tiempo de espera agotado. Verifica tu conexión.');
+}
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -33,6 +48,16 @@ apiClient.interceptors.response.use(
 
 export const apiService = {
   // ==================== AUTH ====================
+
+  async logoutAllSessions(password) {
+    try {
+      const response = await apiClient.post('/attender/logout-all-sessions', { password });
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `Error al cerrar todas las sesiones: ${error.message}`);
+    }
+  },
   async login(username, password) {
     try {
       const formData = new URLSearchParams();
@@ -114,7 +139,22 @@ export const apiService = {
       throw new Error(`Error al iniciar sesión: ${error.message}`);
     }
   },
-
+  async deleteAccount(password) {
+    // Protegida: usa apiClient, el token se envía automáticamente
+    try {
+      const response = await apiClient.delete('/attender/me', {
+        data: { password },
+      });
+      if (response.status === 204) {
+        // El backend elimina la cuenta y el interceptor borra el token y redirige al login
+        return true;
+      }
+      throw new Error('No se pudo eliminar la cuenta');
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `Error al eliminar la cuenta: ${error.message}`);
+    }
+  },
   async resendVerificationEmail(email) {
     try {
       const response = await axios.post(
@@ -187,7 +227,7 @@ export const apiService = {
   // ==================== EVENTS ====================
   async getAllEvents() {
     try {
-      const response = await axios.get(`${API_BASE_URL}/event/get_all`);
+      const response = await safeRequest(axios.get(`${API_BASE_URL}/event/get_all`));
       return response.data;
     } catch (error) {
       throw new Error(`No se pudieron obtener los eventos: ${error.message}`);
@@ -197,9 +237,8 @@ export const apiService = {
   async getEventById(eventId) {
     try {
       // Usar el endpoint público de todos los eventos y filtrar por ID
-      const allEvents = await axios.get(`${API_BASE_URL}/event/get_all`);
+      const allEvents = await safeRequest(axios.get(`${API_BASE_URL}/event/get_all`));
       const event = allEvents.data.find(e => e._id === eventId || e.id === eventId);
-      
       if (!event) {
         throw new Error('El evento que está buscando no existe');
       }
@@ -214,21 +253,35 @@ export const apiService = {
 
   async getTicketsByEvent(eventId) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/ticket/event`, {
+      const response = await safeRequest(axios.get(`${API_BASE_URL}/ticket/event`, {
         params: { id: eventId },
-      });
+      }));
       return response.data;
     } catch (error) {
       throw new Error(`No se pudieron obtener los tickets: ${error.message}`);
     }
   },
 
+  async getVideoByEventId(eventId) {
+    try {
+      const response = await safeRequest(axios.get(`${API_BASE_URL}/video`, {
+        params: { id: eventId },
+      }));
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new Error('No se encontró video para este evento.');
+      }
+      throw new Error(`No se pudo obtener el video: ${error.message}`);
+    }
+  },
+
   async getImageFileByEvent(eventId, imageType) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/image/`, {
+      const response = await safeRequest(axios.get(`${API_BASE_URL}/image/`, {
         params: { id: eventId, type: imageType },
         responseType: 'blob',
-      });
+      }), 25000);
       if (response.status === 200) {
         return URL.createObjectURL(response.data);
       }
@@ -270,7 +323,7 @@ export const apiService = {
       const body = { event_id: eventId, attender_id: attenderId };
       if (observation) body.observation = observation;
 
-      const response = await apiClient.post('/purchase_ticket', body);
+      const response = await safeRequest(apiClient.post('/purchase_ticket', body));
       if (response.status === 201) {
         const purchaseId = response.data?._id || response.data?.id;
 
@@ -304,7 +357,7 @@ export const apiService = {
         purchase_ticket_id: purchaseId,
       };
 
-      const response = await apiClient.post('/purchase_ticket_item', body);
+      const response = await safeRequest(apiClient.post('/purchase_ticket_item', body));
       if (response.status === 201) {
         return response.data;
       }
@@ -417,35 +470,30 @@ export const apiService = {
 
   async downloadTicketPdf(purchaseTicketId) {
     try {
-      const response = await apiClient.post(
+      const response = await safeRequest(apiClient.post(
         '/purchase_ticket/download_ticket',
         {},
         {
           params: { purchase_ticket_id: purchaseTicketId },
           responseType: 'blob',
         }
-      );
+      ), 25000);
 
       if (response.status === 200) {
         const blob = response.data;
         const fileName = `ticket_${purchaseTicketId.split('-')[0]}.pdf`;
-        
         // Crear URL temporal para el blob
         const url = window.URL.createObjectURL(blob);
-        
         // Crear elemento <a> temporal para la descarga
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
-        
         // Agregar al DOM, hacer click y remover
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
         // Limpiar URL temporal
         window.URL.revokeObjectURL(url);
-        
         return `PDF guardado correctamente: ${fileName}`;
       }
       throw new Error('No se pudo descargar el ticket');
@@ -457,6 +505,69 @@ export const apiService = {
       throw new Error(msg || `No se pudo descargar el ticket: ${error.message}`);
     }
   },
-};
 
+  async requestPasswordReset(email) {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/attender/request-password-reset`,
+        { email },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (response.status === 200) {
+        return 'Correo de restablecimiento enviado. Revise su bandeja de entrada.';
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new Error('Usuario no encontrado');
+      }
+      throw new Error(`Error al solicitar restablecimiento de contraseña: ${error.message}`);
+    }
+  },
+
+  async resetPassword(email, token, newPassword) {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/attender/reset-password`,
+        { email, token, newPassword },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (response.status === 200) {
+        return 'Contraseña restablecida correctamente.';
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new Error('Token inválido o expirado');
+      }
+      throw new Error(`Error al restablecer contraseña: ${error.message}`);
+    }
+  },
+
+  async changePassword(userId, currentPassword, newPassword, confirmPassword) {
+    try {
+      const response = await apiClient.put('/attender/change-password', {
+        currentPassword,
+        newPassword,
+        confirmPassword
+      });
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `Error al cambiar la contraseña: ${error.message}`);
+    }
+  },
+
+  async getAttenderById(attenderId) {
+    try {
+      const response = await apiClient.get('/attender', { params: { id: attenderId } });
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `No se pudo obtener el asistente: ${error.message}`);
+    }
+  },
+
+  
+};
 export default apiService;

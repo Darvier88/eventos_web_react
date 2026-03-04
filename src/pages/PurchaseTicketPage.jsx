@@ -9,6 +9,10 @@ import secureStorage from '../services/secureStorage';
 import './PurchaseTicketPage.css';
 
 const PurchaseTicketsPage = () => {
+  // Scroll al top al montar
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { state } = useLocation();
@@ -334,12 +338,13 @@ const PurchaseTicketsPage = () => {
               {visibleTickets.length === 0 ? (
                 <div className="purchase-empty">No hay tickets disponibles para este evento.</div>
               ) : (
-                visibleTickets.map((t) => {
+                visibleTickets.map((t, idx) => {
                   const min = Number(t.minimum_to_buy ?? t.minimumToBuy ?? 0);
                   const maxRaw = Number(t.max_to_buy ?? t.maximum_to_buy ?? t.maxToBuy ?? 0);
                   const max = maxRaw > 0 ? maxRaw : 9999;
-                  const isFixed = min > 0 && maxRaw > 0 && min === maxRaw;
-                  const hint = isFixed
+                  const mostrarCantidadFija = visibleTickets.length > 1 && min === maxRaw && min > 0;
+                  const isFixed = false;
+                  const hint = mostrarCantidadFija
                     ? `Cantidad fija: ${min}`
                     : `Mín ${min} / Máx ${maxRaw > 0 ? maxRaw : '∞'}`;
 
@@ -348,20 +353,31 @@ const PurchaseTicketsPage = () => {
                       <div className="purchase-locality">
                         <div className="locality-name">{t.name}</div>
                         {t.description && <div className="locality-desc">{t.description}</div>}
-                        {(min > 0 || maxRaw > 0) && <div className="locality-hint">{hint}</div>}
+                        {!mostrarCantidadFija && (min > 0 || maxRaw > 0) && <div className="locality-hint">{hint}</div>}
                       </div>
                       <div className="purchase-price">
                         {t.price === 0 ? 'Gratis' : `$${t.price.toFixed(2)}`}
                       </div>
                       <div className="purchase-qty">
-                        <TicketQuantitySelector
-                          qty={quantities[t._id] || 0}
-                          min={min}
-                          max={max}
-                          isFixed={isFixed}
-                          onIncrement={() => handleQtyChange(t._id, 1, t)}
-                          onDecrement={() => handleQtyChange(t._id, -1, t)}
-                        />
+                        {mostrarCantidadFija ? (
+                          <TicketQuantitySelector
+                            qty={quantities[t._id] || 0}
+                            min={0}
+                            max={min}
+                            isFixed={false}
+                            onIncrement={() => setQuantities((prev) => ({ ...prev, [t._id]: min }))}
+                            onDecrement={() => setQuantities((prev) => ({ ...prev, [t._id]: 0 }))}
+                          />
+                        ) : (
+                          <TicketQuantitySelector
+                            qty={quantities[t._id] || 0}
+                            min={min}
+                            max={max}
+                            isFixed={isFixed}
+                            onIncrement={() => handleQtyChange(t._id, 1, t)}
+                            onDecrement={() => handleQtyChange(t._id, -1, t)}
+                          />
+                        )}
                       </div>
                     </div>
                   );

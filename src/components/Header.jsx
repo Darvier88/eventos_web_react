@@ -69,8 +69,14 @@ const Header = () => {
                     <line x1="10" y1="14" x2="14" y2="14" />
                   </svg>
                 </Link>
-                <button className="icon-btn" onClick={() => navigate('/explore')} title="Explorar">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <button className="icon-btn" onClick={() => navigate('/profile')} title="Perfil">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+                    </svg>
+                </button>
+                <button className="icon-btn" onClick={() => navigate('/explore')} title="Explorar">                                  
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                   </svg>
@@ -125,8 +131,15 @@ const Header = () => {
                       </svg>
                       <span>Mis tickets</span>
                     </button>
+                    <button className="drawer-item" onClick={() => handleNavigate('/profile')}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="12" cy="8" r="4" />
+                          <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+                        </svg>
+                        <span>Perfil</span>
+                    </button>
                     <button className="drawer-item" onClick={() => handleNavigate('/explore')}> 
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                       </svg>

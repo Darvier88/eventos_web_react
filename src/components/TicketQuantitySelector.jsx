@@ -5,7 +5,7 @@ const TicketQuantitySelector = ({ qty, min, max, isFixed, onIncrement, onDecreme
   const cap = max > 0 ? max : 9999;
   return (
     <div className="ticket-actions">
-      <button onClick={onDecrement} disabled={isFixed || qty <= 0}>–</button>
+      <button onClick={onDecrement} disabled={isFixed || qty < 1}>–</button>
       <span className="ticket-qty">{qty}</span>
       <button onClick={onIncrement} disabled={isFixed || qty >= cap}>+</button>
     </div>

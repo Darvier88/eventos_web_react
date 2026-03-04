@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../services/apiService';
 import './RegisterPage.css';
+import PolicyModal from '../components/PolicyModal';
+import { termsContent } from '../constants/policy_text';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -19,6 +21,9 @@ const RegisterPage = () => {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [generalError, setGeneralError] = useState('');
+  const [showPolicyModal, setShowPolicyModal] = useState(false);
+  const [policyTitle, setPolicyTitle] = useState('');
+  const [policyContent, setPolicyContent] = useState('');
 
   const validateName = (value) => {
     const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
@@ -290,7 +295,14 @@ const RegisterPage = () => {
                 disabled={loading}
               />
               <span>
-                Acepto los <a href="/terms" target="_blank" rel="noopener noreferrer">términos y condiciones</a>
+                Acepto los {' '}
+                <button
+                  type="button"
+                  className="link-btn"
+                  style={{ background: 'none', border: 'none', padding: 0, color: '#ff6b35', textDecoration: 'underline', cursor: 'pointer' }}
+                  onClick={() => { setPolicyTitle('Términos y Condiciones'); setPolicyContent(termsContent); setShowPolicyModal(true); }}
+                > 
+                términos y condiciones</button>
               </span>
             </label>
           </div>
@@ -321,6 +333,7 @@ const RegisterPage = () => {
           </div>
         </form>
       </div>
+      <PolicyModal open={showPolicyModal} onClose={() => setShowPolicyModal(false)} title={policyTitle} content={policyContent} />
     </div>
   );
 };

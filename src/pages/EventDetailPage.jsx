@@ -1,5 +1,5 @@
 // src/pages/EventDetailPage.jsx
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -10,6 +10,11 @@ import { useAuth } from '../context/AuthContext';
 import './EventDetailPage.css';
 
 const EventDetailPage = () => {
+  // Scroll al top al montar
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
+
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -36,6 +41,20 @@ const EventDetailPage = () => {
   const event   = data?.event   ?? null;
   const tickets = data?.tickets ?? [];
 
+  // Obtener video del evento
+  const {
+    data: eventVideo,
+    isLoading: isVideoLoading,
+    isError: isVideoError,
+    error: videoError,
+  } = useQuery({
+    queryKey: ['eventVideo', eventId],
+    queryFn: () => apiService.getVideoByEventId(eventId),
+    enabled: !!eventId,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+
   const { data: bannerImageUrl, isError: imageError } = useQuery({
     queryKey: ['bannerImage', eventId],
     queryFn: () => apiService.getImageFileByEvent(eventId, 'banner'),
@@ -47,28 +66,46 @@ const EventDetailPage = () => {
   const formatDate = (d) => format(new Date(d), "dd 'de' MMMM 'de' yyyy", { locale: es });
   const formatTime = (d) => format(new Date(d), 'HH:mm', { locale: es });
 
-  const getYoutubeEmbedUrl = (rawUrl) => {
-    if (!rawUrl || typeof rawUrl !== 'string') return null;
-    try {
-      const url = new URL(rawUrl);
-      if (url.hostname.includes('youtu.be')) {
-        const videoId = url.pathname.replace('/', '').trim();
-        return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
-      }
-      if (url.hostname.includes('youtube.com')) {
-        if (url.pathname.startsWith('/embed/')) {
-          return `https://www.youtube-nocookie.com${url.pathname}`;
+  // Usar youtube_url directamente del objeto eventVideo
+  let videoContent = null;
+  if (eventVideo && typeof eventVideo.youtube_url === 'string' && eventVideo.youtube_url.trim() !== '') {
+    // Convertir a embed si es necesario
+    const getYoutubeEmbedUrl = (rawUrl) => {
+      try {
+        const url = new URL(rawUrl);
+        if (url.hostname.includes('youtu.be')) {
+          const videoId = url.pathname.replace('/', '').trim();
+          return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
         }
-        const videoId = url.searchParams.get('v');
-        return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+        if (url.hostname.includes('youtube.com')) {
+          if (url.pathname.startsWith('/embed/')) {
+            return `https://www.youtube-nocookie.com${url.pathname}`;
+          }
+          const videoId = url.searchParams.get('v');
+          return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : null;
+        }
+      } catch {
+        return null;
       }
-    } catch {
       return null;
+    };
+    const embedUrl = getYoutubeEmbedUrl(eventVideo.youtube_url);
+    if (embedUrl) {
+      videoContent = (
+        <div className="event-video">
+          <div className="event-video-frame">
+            <iframe
+              src={embedUrl}
+              title="Video del evento"
+              style={{ border: 'none' }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      );
     }
-    return null;
-  };
-
-  const youtubeEmbedUrl = getYoutubeEmbedUrl(event?.youtube_url);
+  }
 
   const visibleTickets = useMemo(
     () => tickets.filter((t) => !t.hidden).sort((a, b) => a.price - b.price),
@@ -132,24 +169,16 @@ const EventDetailPage = () => {
             <InfoRow icon="location" label="Lugar"          value={event.location || 'Por confirmar'} />
           </div>
 
-          {youtubeEmbedUrl && (
-            <div className="event-video">
-              <div className="event-video-frame">
-                <iframe
-                  src={youtubeEmbedUrl}
-                  title="Video del evento"
-                  style={{ border: 'none' }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-          )}
-
           <div className="event-description-section">
             <h2 className="section-title">Descripción</h2>
             <p className="event-description">{event.description}</p>
           </div>
+
+          {isVideoLoading ? (
+            <div className="event-video"><div className="spinner" /><p>Cargando video...</p></div>
+          ) : isVideoError ? (
+            <div className="event-video"><p style={{color: 'red'}}>No se pudo cargar el video.</p></div>
+          ) : videoContent}
         </div>
 
         <div className="tickets-section">

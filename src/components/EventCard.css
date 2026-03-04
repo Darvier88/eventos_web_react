@@ -1,3 +1,15 @@
+/* EventCard.css — Fully Responsive */
+
+/* ─── Breakpoints reference ───────────────────────────────────────
+   320px   → Small phones (iPhone SE, Galaxy A series)
+   480px   → Large phones (iPhone 14, Pixel 7)
+   600px   → Phablets / large phones landscape
+   768px   → Tablets portrait (iPad mini, iPad)
+   1024px  → Tablets landscape / small laptops
+   1280px  → Laptops / desktops
+   1440px+ → Large desktops / 4K
+──────────────────────────────────────────────────────────────────── */
+
 .event-card-link {
   text-decoration: none;
   color: inherit;
@@ -27,12 +39,13 @@
   background-color: #f0f0f0;
   position: relative;
   flex-shrink: 0;
-  aspect-ratio: 1/1;
+  aspect-ratio: 1 / 1;
 }
 
 .event-card-image {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
@@ -70,6 +83,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  min-width: 0; /* prevents flex overflow */
 }
 
 .event-card-date {
@@ -98,6 +112,7 @@
   left: 20px;
   transform: translateY(-50%);
   width: calc(100% - 40px);
+  word-break: break-word;
 }
 
 .event-card-description {
@@ -132,81 +147,110 @@
   font-weight: 600;
   font-size: 14px;
   gap: 4px;
+  white-space: nowrap;
 }
 
 .bookmark-btn:hover {
   background-color: #0052cc;
 }
 
-@media (max-width: 900px) {
+/* ─── 320px — Small phones ─────────────────────────────────────── */
+@media (max-width: 320px) {
   .event-card {
     flex-direction: column;
-  }
-
-  .event-card-image-container {
-    width: 100%;
-    height: 220px;
-  }
-
-  .event-card-content {
-    padding: 16px;
-  }
-
-  .event-card-title {
-    font-size: 17px;
-  }
-
-  .event-card-description {
-    font-size: 13px;
-  }
-
-  .event-card-date {
-    font-size: 12px;
-  }
-
-  .bookmark-btn {
-    padding: 10px 28px;
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 768px) {
-  .event-card {
-    flex-direction: column;
-    margin-bottom: 14px;
-  }
-
-  .event-card-image-container {
-    width: 100%;
-    height: 200px;
-  }
-
-  .event-card-content {
-    padding: 14px;
-  }
-
-  .event-card-title {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .event-card-date {
-    font-size: 12px;
-    margin-bottom: 6px;
-  }
-
-  .event-card-description {
-    font-size: 13px;
     margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  .event-card-image-container {
+    width: 100%;
+    height: 120px;
+    aspect-ratio: unset;
+  }
+
+  .event-card-content {
+    padding: 10px;
+  }
+
+  .event-card-title {
+    font-size: 13px;
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .event-card-date {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .event-card-date svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .event-card-description {
+    font-size: 11px;
+    margin-bottom: 8px;
+    -webkit-line-clamp: 2;
   }
 
   .bookmark-btn {
-    padding: 10px 24px;
-    font-size: 13px;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 11px;
   }
 }
 
-@media (max-width: 600px) {
+/* ─── 321–480px — Standard phones ─────────────────────────────── */
+@media (min-width: 321px) and (max-width: 480px) {
+  .event-card {
+    flex-direction: column;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+
+  .event-card-image-container {
+    width: 100%;
+    height: 140px;
+    aspect-ratio: unset;
+  }
+
+  .event-card-content {
+    padding: 10px;
+  }
+
+  .event-card-title {
+    font-size: 14px;
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .event-card-date {
+    font-size: 10px;
+  }
+
+  .event-card-date svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .event-card-description {
+    font-size: 11px;
+    -webkit-line-clamp: 2;
+  }
+
+  .bookmark-btn {
+    padding: 8px 14px;
+    font-size: 11px;
+  }
+}
+
+/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+@media (min-width: 481px) and (max-width: 600px) {
   .event-card {
     flex-direction: column;
     margin-bottom: 12px;
@@ -216,6 +260,7 @@
   .event-card-image-container {
     width: 100%;
     height: 160px;
+    aspect-ratio: unset;
   }
 
   .event-card-content {
@@ -224,6 +269,9 @@
 
   .event-card-title {
     font-size: 15px;
+    position: static;
+    transform: none;
+    width: 100%;
     margin-bottom: 4px;
   }
 
@@ -243,10 +291,6 @@
     -webkit-line-clamp: 2;
   }
 
-  .event-card-footer {
-    margin-top: auto;
-  }
-
   .bookmark-btn {
     width: 100%;
     padding: 10px 16px;
@@ -254,33 +298,158 @@
   }
 }
 
-@media (max-width: 480px) {
+/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+@media (min-width: 601px) and (max-width: 768px) {
   .event-card {
-    margin-bottom: 10px;
+    flex-direction: column;
+    margin-bottom: 14px;
   }
 
   .event-card-image-container {
-    height: 140px;
+    width: 100%;
+    height: 200px;
+    aspect-ratio: unset;
   }
 
   .event-card-content {
-    padding: 10px;
+    padding: 14px;
   }
 
   .event-card-title {
-    font-size: 14px;
+    font-size: 16px;
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-bottom: 6px;
   }
 
   .event-card-date {
-    font-size: 10px;
+    font-size: 12px;
+    margin-bottom: 6px;
   }
 
   .event-card-description {
-    font-size: 11px;
+    font-size: 13px;
+    margin-bottom: 10px;
   }
 
   .bookmark-btn {
-    padding: 8px 14px;
-    font-size: 11px;
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+}
+
+/* ─── 769–900px — Tablets landscape (small) ────────────────────── */
+@media (min-width: 769px) and (max-width: 900px) {
+  .event-card {
+    flex-direction: column;
+  }
+
+  .event-card-image-container {
+    width: 100%;
+    height: 220px;
+    aspect-ratio: unset;
+  }
+
+  .event-card-content {
+    padding: 16px;
+  }
+
+  .event-card-title {
+    font-size: 17px;
+    position: static;
+    transform: none;
+    width: 100%;
+  }
+
+  .event-card-date {
+    font-size: 12px;
+  }
+
+  .event-card-description {
+    font-size: 13px;
+  }
+
+  .bookmark-btn {
+    padding: 10px 28px;
+    font-size: 13px;
+  }
+}
+
+/* ─── 901–1024px — Tablets landscape (large) / small laptops ───── */
+@media (min-width: 901px) and (max-width: 1024px) {
+  .event-card-image-container {
+    width: 220px;
+    height: 220px;
+  }
+
+  .event-card-title {
+    font-size: 22px;
+  }
+
+  .event-card-date {
+    font-size: 14px;
+  }
+
+  .event-card-description {
+    font-size: 14px;
+  }
+}
+
+/* ─── 1025–1280px — Laptops / desktops ────────────────────────── */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .event-card-image-container {
+    width: 250px;
+    height: 250px;
+  }
+
+  .event-card-title {
+    font-size: 26px;
+  }
+}
+
+/* ─── 1281–1440px — Standard desktops ─────────────────────────── */
+@media (min-width: 1281px) and (max-width: 1440px) {
+  .event-card-image-container {
+    width: 280px;
+    height: 280px;
+  }
+
+  .event-card-title {
+    font-size: 28px;
+  }
+}
+
+/* ─── 1441px+ — Large desktops / 4K ───────────────────────────── */
+@media (min-width: 1441px) {
+  .event-card {
+    border-radius: 16px;
+  }
+
+  .event-card-image-container {
+    width: 320px;
+    height: 320px;
+  }
+
+  .event-card-title {
+    font-size: 32px;
+  }
+
+  .event-card-date {
+    font-size: 18px;
+  }
+
+  .event-card-date svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .event-card-description {
+    font-size: 18px;
+  }
+
+  .bookmark-btn {
+    padding: 14px 40px;
+    font-size: 16px;
   }
 }

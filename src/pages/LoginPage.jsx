@@ -154,7 +154,7 @@ const LoginPage = () => {
             <a href="/register" className="login-link">
               ¿No tienes cuenta? Regístrate
             </a>
-            <a href="/recuperar-contraseña" className="login-link">
+            <a href="/forgot-password" className="login-link">
               ¿Olvidaste tu contraseña?
             </a>
           </div>

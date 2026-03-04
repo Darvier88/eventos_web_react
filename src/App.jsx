@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState }  from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ViewProvider } from './context/ViewContext';
@@ -14,7 +14,13 @@ import PaymentCallbackPage from './pages/PaymentCallbackPage';
 import PurchaseConfirmationPage from './pages/PurchaseConfirmationPage';
 import LinkDocumentPage from './pages/LinkDocumentPage';
 import MyTicketsPage from './pages/MyTicketsPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ChangePasswordPage from './pages/ChangePassword';
+import ProfilePage from './pages/ProfilePage';
+import AccountSettings from './pages/AccountSettings';
 import './styles/global.css';
+import NetworkBlocker from './components/NetworkBlocker';
+import { isOnline, quickPing } from './utils/networkUtils';
 
 // Componente para proteger rutas
 const PrivateRoute = ({ children }) => {
@@ -38,8 +44,32 @@ const PrivateRoute = ({ children }) => {
 };
 
 function AppContent() {
+  const [netBlocked, setNetBlocked] = useState(false);
+  const [netMsg, setNetMsg] = useState('');
+
+  useEffect(() => {
+    let interval;
+    const checkNet = async () => {
+      if (!isOnline()) {
+        setNetBlocked(true);
+        setNetMsg('No tienes conexión a internet.');
+        return;
+      }
+      const ok = await quickPing();
+      if (!ok) {
+        setNetBlocked(true);
+        setNetMsg('Tu conexión es inestable o lenta.');
+      } else {
+        setNetBlocked(false);
+        setNetMsg('');
+      }
+    };
+    checkNet();
+  }, [location]);
+
   return (
     <div className="app">
+      <NetworkBlocker show={netBlocked} message={netMsg} />
       <Header />
       <main>
         <Routes>
@@ -49,6 +79,18 @@ function AppContent() {
           <Route path="/explore/:categoryKey" element={<CategoryEventsPage />} />
           <Route path="/" element={<EventsPage />} />
           <Route path="/evento/:id" element={<EventDetailPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          } />
+          <Route path="/account-settings" element={
+            <PrivateRoute>
+              <AccountSettings />
+            </PrivateRoute>
+          } />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route 
             path="/purchase" 
             element={

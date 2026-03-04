@@ -1,3 +1,12 @@
+/* RegisterPage.css — Fully Responsive */
+
+/* ─── Breakpoints ─────────────────────────────────────────────────
+   ≤320px   Small phones  |  321–480px  Standard phones
+   481–600px Large phones  |  601–768px  Tablets portrait
+   769–1024px Tablets landscape / small laptops
+   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
+──────────────────────────────────────────────────────────────────── */
+
 .register-page {
   min-height: calc(100vh - 60px);
   display: flex;
@@ -5,6 +14,7 @@
   justify-content: center;
   background: #1a1a1a;
   padding: 40px 20px;
+  box-sizing: border-box;
 }
 
 .register-container {
@@ -15,6 +25,7 @@
   border-radius: 20px;
   padding: 80px 60px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-sizing: border-box;
 }
 
 .register-header {
@@ -35,9 +46,7 @@
   gap: 28px 32px;
 }
 
-.register-form .full-width {
-  grid-column: 1 / -1;
-}
+.register-form .full-width { grid-column: 1 / -1; }
 
 .register-error-general {
   display: flex;
@@ -51,12 +60,7 @@
   font-size: 18px !important;
 }
 
-.register-error-general svg {
-  stroke: #f44336;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-}
+.register-error-general svg { stroke: #f44336; flex-shrink: 0; width: 22px; height: 22px; }
 
 .form-group {
   display: flex;
@@ -64,11 +68,7 @@
   gap: 14px;
 }
 
-.form-group label {
-  color: #fff !important;
-  font-size: 20px !important;
-  font-weight: 600;
-}
+.form-group label { color: #fff !important; font-size: 20px !important; font-weight: 600; }
 
 .form-group input {
   width: 100%;
@@ -79,6 +79,7 @@
   color: #fff;
   font-size: 20px !important;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -88,15 +89,8 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
-.form-group input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.form-group input::placeholder {
-  color: #8a8a8a;
-  font-size: 19px !important;
-}
+.form-group input:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-group input::placeholder { color: #8a8a8a; font-size: 19px !important; }
 
 .password-field-wrapper {
   display: flex;
@@ -124,15 +118,8 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
-.password-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.password-input::placeholder {
-  color: #8a8a8a;
-  font-size: 19px !important;
-}
+.password-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.password-input::placeholder { color: #8a8a8a; font-size: 19px !important; }
 
 .password-toggle {
   background: none;
@@ -147,26 +134,12 @@
   flex-shrink: 0;
 }
 
-.password-toggle:hover {
-  color: #fff;
-}
+.password-toggle:hover { color: #fff; }
+.password-toggle svg { stroke: currentColor; width: 24px; height: 24px; }
 
-.password-toggle svg {
-  stroke: currentColor;
-  width: 24px;
-  height: 24px;
-}
+.field-error { color: #ff6b6b; font-size: 14px !important; margin-top: -4px; font-weight: 500; }
 
-.field-error {
-  color: #ff6b6b;
-  font-size: 14px !important;
-  margin-top: -4px;
-  font-weight: 500;
-}
-
-.terms-checkbox {
-  margin-top: 8px;
-}
+.terms-checkbox { margin-top: 8px; }
 
 .terms-checkbox label {
   display: flex;
@@ -181,22 +154,12 @@
   height: 20px;
   cursor: pointer;
   accent-color: #ff6b35;
+  flex-shrink: 0;
 }
 
-.terms-checkbox span {
-  color: #d0d0d0;
-  font-size: 16px !important;
-}
-
-.terms-checkbox a {
-  color: #ff6b35;
-  text-decoration: underline;
-  font-weight: 500;
-}
-
-.terms-checkbox a:hover {
-  opacity: 0.8;
-}
+.terms-checkbox span { color: #d0d0d0; font-size: 16px !important; }
+.terms-checkbox a { color: #ff6b35; text-decoration: underline; font-weight: 500; }
+.terms-checkbox a:hover { opacity: 0.8; }
 
 .register-actions {
   display: flex;
@@ -223,6 +186,7 @@
   letter-spacing: 0.5px;
   cursor: pointer;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .btn-register:hover:not(:disabled) {
@@ -231,14 +195,8 @@
   box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
 }
 
-.btn-register:active {
-  transform: translateY(0);
-}
-
-.btn-register:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.btn-register:active { transform: translateY(0); }
+.btn-register:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .btn-cancel {
   width: 100%;
@@ -258,18 +216,11 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: center !important;
+  box-sizing: border-box;
 }
 
-.btn-cancel:hover:not(:disabled) {
-  background-color: #3a3a3a;
-  border-color: #777;
-  color: #fff;
-}
-
-.btn-cancel:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.btn-cancel:hover:not(:disabled) { background-color: #3a3a3a; border-color: #777; color: #fff; }
+.btn-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .spinner-small {
   width: 20px;
@@ -280,135 +231,170 @@
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── ≤320px — Small phones ────────────────────────────────────── */
+@media (max-width: 320px) {
+  .register-page { padding: 0; align-items: flex-end; }
+
+  .register-container {
+    padding: 24px 14px;
+    border-radius: 14px 14px 0 0;
+    max-width: 100%;
+  }
+
+  .register-header { margin-bottom: 22px; }
+  .register-title { font-size: 20px !important; }
+
+  .register-form { grid-template-columns: 1fr; gap: 14px; }
+  .register-error-general { padding: 10px 12px; font-size: 12px !important; }
+  .form-group { gap: 6px; }
+  .form-group label { font-size: 13px !important; }
+  .form-group input { padding: 11px 13px; font-size: 15px !important; }
+  .form-group input::placeholder { font-size: 14px !important; }
+  .password-input { padding: 11px 13px; font-size: 15px !important; }
+  .password-input::placeholder { font-size: 14px !important; }
+  .password-toggle svg { width: 20px; height: 20px; }
+  .field-error { font-size: 11px !important; }
+  .terms-checkbox span { font-size: 12px !important; }
+  .terms-checkbox input[type="checkbox"] { width: 16px; height: 16px; }
+  .register-actions { gap: 10px; margin-top: 12px; }
+  .btn-register, .btn-cancel { padding: 13px 16px; font-size: 14px !important; }
 }
 
-/* Tablet */
-@media (max-width: 768px) {
+/* ─── 321–480px — Standard phones ─────────────────────────────── */
+@media (min-width: 321px) and (max-width: 480px) {
+  .register-page { padding: 16px; }
+
+  .register-container {
+    padding: 36px 22px;
+    border-radius: 16px;
+    max-width: 100%;
+  }
+
+  .register-header { margin-bottom: 28px; }
+  .register-title { font-size: 24px !important; }
+
+  .register-form { grid-template-columns: 1fr; gap: 18px; }
+  .register-error-general { padding: 12px 14px; font-size: 13px !important; }
+  .form-group { gap: 8px; }
+  .form-group label { font-size: 15px !important; }
+  .form-group input { padding: 14px 17px; font-size: 17px !important; }
+  .form-group input::placeholder { font-size: 16px !important; }
+  .password-input { padding: 14px 17px; font-size: 17px !important; }
+  .password-input::placeholder { font-size: 16px !important; }
+  .field-error { font-size: 12px !important; }
+  .terms-checkbox span { font-size: 13px !important; }
+  .register-actions { gap: 12px; }
+  .btn-register { padding: 15px 18px; font-size: 16px !important; }
+  .btn-cancel { padding: 14px 18px; font-size: 15px !important; }
+}
+
+/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+@media (min-width: 481px) and (max-width: 600px) {
+  .register-page { padding: 20px; }
+
+  .register-container {
+    padding: 48px 32px;
+    max-width: 500px;
+  }
+
+  .register-header { margin-bottom: 36px; }
+  .register-title { font-size: 30px !important; }
+
+  .register-form { grid-template-columns: 1fr; gap: 22px; }
+  .form-group label { font-size: 17px !important; }
+  .form-group input { padding: 17px 20px; font-size: 18px !important; }
+  .password-input { padding: 17px 20px; font-size: 18px !important; }
+  .terms-checkbox span { font-size: 14px !important; }
+  .btn-register { padding: 17px 20px; font-size: 18px !important; }
+  .btn-cancel { padding: 15px 20px; font-size: 17px !important; }
+}
+
+/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+@media (min-width: 601px) and (max-width: 768px) {
   .register-container {
     max-width: 500px;
     padding: 60px 50px;
   }
 
-  .register-form {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  .register-title {
-    font-size: 36px !important;
-  }
-  
-  .register-error-general {
-    font-size: 16px !important;
-  }
-  
-  .form-group label {
-    font-size: 18px !important;
-  }
-  
-  .form-group input {
-    padding: 20px 22px;
-    font-size: 18px !important;
-  }
+  .register-header { margin-bottom: 40px; }
+  .register-title { font-size: 34px !important; }
 
-  .password-input {
-    padding: 20px 22px;
-    font-size: 18px !important;
-  }
-
-  .form-group input::placeholder,
-  .password-input::placeholder {
-    font-size: 17px !important;
-  }
-  
-  .btn-register,
-  .btn-cancel {
-    padding: 18px 22px;
-    font-size: 19px !important;
-  }
-  
-  .terms-checkbox span {
-    font-size: 15px !important;
-  }
+  .register-form { grid-template-columns: 1fr; gap: 24px; }
+  .register-error-general { font-size: 15px !important; }
+  .form-group label { font-size: 18px !important; }
+  .form-group input { padding: 19px 22px; font-size: 18px !important; }
+  .form-group input::placeholder { font-size: 17px !important; }
+  .password-input { padding: 19px 22px; font-size: 18px !important; }
+  .password-input::placeholder { font-size: 17px !important; }
+  .terms-checkbox span { font-size: 15px !important; }
+  .btn-register, .btn-cancel { padding: 18px 22px; font-size: 18px !important; }
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-  .register-page {
-    padding: 20px;
+/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .register-container {
+    max-width: 700px;
+    padding: 64px 52px;
   }
+
+  .register-title { font-size: 38px !important; }
+  .register-form { grid-template-columns: repeat(2, 1fr); gap: 24px 28px; }
+  .form-group label { font-size: 19px !important; }
+  .form-group input { padding: 20px 23px; font-size: 19px !important; }
+  .password-input { padding: 20px 23px; font-size: 19px !important; }
+  .btn-register { font-size: 19px !important; }
+  .btn-cancel { font-size: 18px !important; }
+}
+
+/* ─── 1025–1280px — Standard laptops ──────────────────────────── */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .register-container {
+    max-width: 840px;
+    padding: 76px 58px;
+  }
+
+  .register-title { font-size: 40px !important; }
+  .register-form { grid-template-columns: repeat(2, 1fr); gap: 26px 30px; }
+}
+
+/* ─── 1281–1440px — Large desktops ────────────────────────────── */
+@media (min-width: 1281px) and (max-width: 1440px) {
+  .register-container {
+    max-width: 900px;
+    padding: 80px 60px;
+  }
+
+  .register-title { font-size: 42px !important; }
+}
+
+/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
+@media (min-width: 1441px) {
+  .register-page { padding: 56px 24px; }
 
   .register-container {
-    padding: 40px 28px;
+    max-width: 1000px;
+    padding: 96px 72px;
+    border-radius: 24px;
   }
 
-  .register-header {
-    margin-bottom: 36px;
-  }
+  .register-header { margin-bottom: 60px; }
+  .register-title { font-size: 48px !important; }
 
-  .register-title {
-    font-size: 28px !important;
-  }
-  
-  .register-form {
-    gap: 20px;
-  }
-  
-  .register-error-general {
-    padding: 14px 16px;
-    font-size: 14px !important;
-  }
-  
-  .form-group {
-    gap: 8px;
-  }
-  
-  .form-group label {
-    font-size: 16px !important;
-  }
-  
-  .form-group input {
-    padding: 18px 20px;
-    font-size: 17px !important;
-  }
-
-  .password-input {
-    padding: 18px 20px;
-    font-size: 17px !important;
-  }
-
-  .form-group input::placeholder,
-  .password-input::placeholder {
-    font-size: 16px !important;
-  }
-  
-  .password-toggle svg {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .field-error {
-    font-size: 13px !important;
-  }
-  
-  .terms-checkbox span {
-    font-size: 14px !important;
-  }
-  
-  .terms-checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .register-actions {
-    gap: 12px;
-  }
-  
-  .btn-register,
-  .btn-cancel {
-    padding: 16px 20px;
-    font-size: 18px !important;
-  }
+  .register-form { grid-template-columns: repeat(2, 1fr); gap: 32px 40px; }
+  .register-error-general { font-size: 20px !important; }
+  .form-group { gap: 16px; }
+  .form-group label { font-size: 22px !important; }
+  .form-group input { padding: 24px 28px; font-size: 22px !important; }
+  .form-group input::placeholder { font-size: 21px !important; }
+  .password-input { padding: 24px 28px; font-size: 22px !important; }
+  .password-input::placeholder { font-size: 21px !important; }
+  .password-toggle svg { width: 26px; height: 26px; }
+  .field-error { font-size: 16px !important; }
+  .terms-checkbox span { font-size: 18px !important; }
+  .terms-checkbox input[type="checkbox"] { width: 24px; height: 24px; }
+  .register-actions { gap: 16px; margin-top: 20px; }
+  .btn-register { padding: 24px 28px; font-size: 22px !important; }
+  .btn-cancel { padding: 22px 28px; font-size: 21px !important; }
 }
