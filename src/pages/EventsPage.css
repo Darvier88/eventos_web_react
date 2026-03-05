@@ -470,3 +470,15 @@ body {
   .gallery-title { font-size: clamp(48px, 4vw + 12px, 72px); }
   .events-list-title { font-size: 48px; }
 }
+
+/* Skeleton shimmer mientras las imágenes precargan */
+.gallery-image-skeleton {
+  background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

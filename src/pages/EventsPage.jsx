@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import EventCard from '../components/EventCard';
 import apiService from '../services/apiService';
@@ -8,6 +8,17 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import './EventsPage.css';
 
+// ─── Utilidad de precarga ─────────────────────────────────────────────────────
+const preloadImage = (url) =>
+  new Promise((resolve) => {
+    if (!url) return resolve(null);
+    const img = new Image();
+    img.onload  = () => resolve(url);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
 const useEvents = () =>
   useQuery({
     queryKey: ['events'],
@@ -15,71 +26,75 @@ const useEvents = () =>
       const data = await apiService.getAllEvents();
       return data.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
     },
-    staleTime: 1000 * 60 * 2, // 2 minutos antes de refetch
+    staleTime: 1000 * 60 * 2,
   });
 
-const useEventImages = (events, currentIndex) => {
-  const nextIndex = events.length > 0
-    ? (currentIndex === events.length - 1 ? 0 : currentIndex + 1)
-    : 0;
-
-  const currentEvent = events[currentIndex];
-  const nextEvent = events[nextIndex];
-
-  const currentId = currentEvent?._id || currentEvent?.id || currentEvent?.event_id;
-  const nextId    = nextEvent?._id   || nextEvent?.id   || nextEvent?.event_id;
-
-  return useQuery({
-    queryKey: ['eventImages', currentId, nextId],
+// Descarga las URLs de TODAS las imágenes y las precarga en el browser de una vez.
+// El carrusel no avanza hasta que todas estén listas → cero parpadeo.
+const useAllEventImages = (events) =>
+  useQuery({
+    queryKey: ['allEventImages', events.map((e) => e._id || e.id || e.event_id).join(',')],
     queryFn: async () => {
-      const [currentUrl, nextUrl] = await Promise.all([
-        apiService.getImageFileByEvent(currentId, 'square').catch(() => null),
-        apiService.getImageFileByEvent(nextId,    'square').catch(() => null),
-      ]);
-      return { current: currentUrl, next: nextUrl };
+      // 1. Obtener todas las URLs en paralelo
+      const urls = await Promise.all(
+        events.map((e) => {
+          const id = e._id || e.id || e.event_id;
+          return apiService.getImageFileByEvent(id, 'square').catch(() => null);
+        })
+      );
+
+      // 2. Precargar todas las imágenes en el browser antes de devolver nada
+      await Promise.all(urls.map(preloadImage));
+
+      // Devuelve un mapa { eventId: url } para acceso O(1)
+      return Object.fromEntries(
+        events.map((e, i) => [e._id || e.id || e.event_id, urls[i]])
+      );
     },
-    enabled: events.length > 0, // solo corre si hay eventos
-    staleTime: 1000 * 60 * 5, 
+    enabled: events.length > 0,
+    staleTime: 1000 * 60 * 5,
   });
-};
 
-
+// ─── Page Component ───────────────────────────────────────────────────────────
 const EventsPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered]       = useState(false);
   const autoAdvanceRef = useRef(null);
   const navigate = useNavigate();
 
-  const {
-    data: events = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useEvents();
+  const { data: events = [], isLoading, isError, error, refetch } = useEvents();
 
-  const {
-    data: imageUrls = { current: null, next: null },
-  } = useEventImages(events, currentIndex);
-  const stopAutoAdvance = () => {
+  // imageMap es null mientras carga, luego { eventId: url, ... }
+  const { data: imageMap = null, isLoading: isLoadingImages } = useAllEventImages(events);
+
+  const allReady = !isLoading && !isLoadingImages && imageMap !== null;
+
+  const nextIndex = events.length > 0
+    ? (currentIndex === events.length - 1 ? 0 : currentIndex + 1)
+    : 0;
+
+  const stopAutoAdvance = useCallback(() => {
     if (autoAdvanceRef.current) {
       clearInterval(autoAdvanceRef.current);
       autoAdvanceRef.current = null;
     }
-  };
+  }, []);
 
-  const startAutoAdvance = () => {
+  const startAutoAdvance = useCallback(() => {
     if (events.length <= 1) return;
     stopAutoAdvance();
     autoAdvanceRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev === events.length - 1 ? 0 : prev + 1));
     }, 2000);
-  };
+  }, [events.length, stopAutoAdvance]);
 
+  // El carrusel solo arranca cuando todas las imágenes están listas
   useEffect(() => {
-    if (!isHovered) startAutoAdvance();
+    if (!allReady || isHovered) return;
+    startAutoAdvance();
     return () => stopAutoAdvance();
-  }, [events.length, isHovered]);
+  }, [allReady, isHovered, startAutoAdvance, stopAutoAdvance]);
+
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? events.length - 1 : prev - 1));
     if (!isHovered) startAutoAdvance();
@@ -98,6 +113,7 @@ const EventsPage = () => {
     navigate(`/evento/${eventId}`);
   };
 
+  // ── Estados de carga / error / vacío ─────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="events-page">
@@ -120,9 +136,7 @@ const EventsPage = () => {
           </svg>
           <h2>Error al cargar eventos</h2>
           <p>{error?.message || 'Error desconocido'}</p>
-          <button className="btn btn-primary" onClick={refetch}>
-            Reintentar
-          </button>
+          <button className="btn btn-primary" onClick={refetch}>Reintentar</button>
         </div>
       </div>
     );
@@ -146,64 +160,63 @@ const EventsPage = () => {
   }
 
   const currentEvent = events[currentIndex];
-  const eventId = currentEvent._id || currentEvent.id || currentEvent.event_id;
+  const nextEvent    = events[nextIndex];
+  const eventId      = currentEvent._id || currentEvent.id || currentEvent.event_id;
+  const nextEventId  = nextEvent._id    || nextEvent.id    || nextEvent.event_id;
+
+  const currentImageUrl = imageMap?.[eventId]    ?? null;
+  const nextImageUrl    = imageMap?.[nextEventId] ?? null;
+
+  const placeholderSVG = (
+    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <polyline points="21 15 16 10 5 21"></polyline>
+    </svg>
+  );
 
   return (
     <div className="events-page">
-      {/* Carrusel de galería */}
       <div className="gallery-container">
         <div className="gallery-main">
-          {/* Carrusel de imágenes */}
           <div className="gallery-carousel">
-            {/* Imagen actual (enfocada) */}
-            {imageUrls.current ? (
-              <img 
-                src={imageUrls.current} 
-                alt={currentEvent.name} 
-                className="gallery-image gallery-image-current" 
+
+            {/* Imagen actual */}
+            {!allReady ? (
+              <div className="gallery-image-placeholder gallery-image-current gallery-image-skeleton" />
+            ) : currentImageUrl ? (
+              <img
+                src={currentImageUrl}
+                alt={currentEvent.name}
+                className="gallery-image gallery-image-current"
               />
             ) : (
-              <div className="gallery-image-placeholder gallery-image-current">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-              </div>
+              <div className="gallery-image-placeholder gallery-image-current">{placeholderSVG}</div>
             )}
 
             {/* Imagen siguiente */}
-            {imageUrls.next ? (
-              <img 
-                src={imageUrls.next} 
-                alt="Siguiente evento" 
+            {!allReady ? (
+              <div className="gallery-image-placeholder gallery-image-next gallery-image-skeleton" />
+            ) : nextImageUrl ? (
+              <img
+                src={nextImageUrl}
+                alt="Siguiente evento"
                 className="gallery-image gallery-image-next"
                 onClick={handleNext}
               />
             ) : (
-              <div className="gallery-image-placeholder gallery-image-next">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-              </div>
+              <div className="gallery-image-placeholder gallery-image-next" onClick={handleNext}>{placeholderSVG}</div>
             )}
+
           </div>
-          
-          <div 
+
+          <div
             className="gallery-info"
-            onMouseEnter={() => {
-              setIsHovered(true);
-              stopAutoAdvance();
-            }}
-            onMouseLeave={() => {
-              setIsHovered(false);
-              startAutoAdvance();
-            }}
+            onMouseEnter={() => { setIsHovered(true);  stopAutoAdvance();  }}
+            onMouseLeave={() => { setIsHovered(false); startAutoAdvance(); }}
           >
             <h1 className="gallery-title">{currentEvent.name}</h1>
-            
+
             <div className="gallery-details">
               <div className="detail-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -214,7 +227,7 @@ const EventsPage = () => {
                 </svg>
                 <span>{formatEventDate(currentEvent.start_date)}</span>
               </div>
-              
+
               <div className="detail-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
@@ -235,7 +248,6 @@ const EventsPage = () => {
           </div>
         </div>
 
-        {/* Navegación */}
         <button className="gallery-nav prev" onClick={handlePrevious} title="Evento anterior">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -247,7 +259,6 @@ const EventsPage = () => {
           </svg>
         </button>
       </div>
-
 
       <div className="events-container">
         <h2 className="events-list-title">Eventos</h2>
