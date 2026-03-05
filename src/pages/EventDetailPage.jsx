@@ -176,8 +176,6 @@ const EventDetailPage = () => {
 
           {isVideoLoading ? (
             <div className="event-video"><div className="spinner" /><p>Cargando video...</p></div>
-          ) : isVideoError ? (
-            <div className="event-video"><p style={{color: 'red'}}>No se pudo cargar el video.</p></div>
           ) : videoContent}
         </div>
 

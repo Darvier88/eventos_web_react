@@ -17,9 +17,6 @@ const PayphonePaymentBox = ({
   tip,
   storeId,
   reference,
-  phoneNumber,
-  email,
-  documentId,
   identificationType = 1,
   onPaymentSuccess,
   onPaymentError,
@@ -78,9 +75,6 @@ const PayphonePaymentBox = ({
           lang: 'es',
           defaultMethod: 'payphone', // Mostrar Payphone por defecto
           timeZone: -3, // Argentina UTC-3
-          phoneNumber,
-          email,
-          documentId,
           identificationType,
         });
 
@@ -119,7 +113,7 @@ const PayphonePaymentBox = ({
     return () => {
       document.removeEventListener('DOMContentLoaded', initPaymentBox);
     };
-  }, [token, clientTransactionId, amount, currency, storeId, reference, phoneNumber, email, documentId, identificationType, onPaymentSuccess, onPaymentError]);
+  }, [token, clientTransactionId, amount, currency, storeId, reference, identificationType, onPaymentSuccess, onPaymentError]);
 
   return (
     <div

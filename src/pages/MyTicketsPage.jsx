@@ -89,8 +89,17 @@ const MyTicketsPage = () => {
   };
 
   const filteredTickets = purchaseTickets.filter(
-    (ticket) => ticket?.purchase_ticket?.purchase_date != null
+    (ticket) =>
+      ticket?.purchase_ticket?.purchase_date != null &&
+      ticket?.purchase_ticket?.status === 'completed'
   );
+
+  // Loguear solo los tickets filtrados (los que se muestran en pantalla)
+  if (filteredTickets && filteredTickets.length > 0) {
+    filteredTickets.forEach((ticket, idx) => {
+      console.log(`Ticket filtrado #${idx + 1}:`, ticket);
+    });
+  }
 
   const sortedTickets = [...filteredTickets].sort((a, b) =>
     getPurchaseTimestamp(b) - getPurchaseTimestamp(a)
@@ -103,6 +112,7 @@ const MyTicketsPage = () => {
         if (!eventDate) return true;
         return new Date(eventDate) >= now;
       });
+
 
   return (
     <div className="my-tickets-page">

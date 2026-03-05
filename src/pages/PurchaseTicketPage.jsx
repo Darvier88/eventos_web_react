@@ -244,7 +244,8 @@ const PurchaseTicketsPage = () => {
         userProfile._id,
         { 
           toBuyTickets,
-          observation: observation.trim() || undefined 
+          observation: observation.trim() || undefined,
+          status: 'pending',
         }
       );
 
@@ -447,9 +448,6 @@ const PurchaseTicketsPage = () => {
               currency={import.meta.env.VITE_PAYPHONE_CURRENCY || 'USD'}
               storeId={event?.store_id || event?.storeId || import.meta.env.VITE_PAYPHONE_STORE_ID}
               reference={`Compra de tickets para ${event.name}`}
-              phoneNumber={purchaseCreated.userProfile.phone}
-              email={purchaseCreated.userProfile.email}
-              documentId={purchaseCreated.userProfile.idDocument}
             />
 
             <button className="btn-back-to-form" onClick={() => setShowPaymentBox(false)}>

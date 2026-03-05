@@ -51,7 +51,8 @@ const PaymentCallbackPage = () => {
         // Confirmar pago con el backend
         const confirmPayload = { 
           paymentId: txId, 
-          clientTxId: clientTxId || txId // usar txId como fallback si clientTxId no existe
+          clientTxId: clientTxId || txId,
+          purchaseId: purchaseId // usar txId como fallback si clientTxId no existe
         };
 
 
