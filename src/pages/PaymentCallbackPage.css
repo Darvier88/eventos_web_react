@@ -1,124 +1,92 @@
 /* PaymentCallbackPage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px  Small phones | 321–480px Standard phones
-   481–600px Large phones | 601–768px Tablets portrait
-   769–1024px Tablets landscape | 1025px+ Desktops | 1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
-
 .payment-callback-page {
-  background: #1a1a1a;
+  background: #0f0f1a;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-family: system-ui;
-  box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; font-family: system-ui; box-sizing: border-box;
 }
 
 .callback-container {
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 500px;
-  width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
-  text-align: center;
-  box-sizing: border-box;
+  background: #141428;
+  border: 1px solid rgba(57,232,122,0.12);
+  border-radius: 12px;
+  padding: 28px 24px;
+  max-width: 420px; width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  text-align: center; box-sizing: border-box;
 }
 
-.loading { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-.loading p, .pending p { color: #cfcfcf; }
+.loading { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.loading p, .pending p { color: #a0a0b8; font-size: 13px; }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #3a3a3a;
-  border-top: 4px solid #c8752e;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  width: 36px; height: 36px;
+  border: 3px solid #252545; border-top: 3px solid #0033cc;
+  border-radius: 50%; animation: spin 1s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .success { animation: slideIn 0.5s ease-out; }
-.success-icon { font-size: 60px; color: #10b981; margin-bottom: 20px; font-weight: 700; }
-.success h2 { color: #10b981; margin-bottom: 10px; font-size: 24px; }
-.success p { color: #cfcfcf; }
+.success-icon { font-size: 48px; color: #39e87a; margin-bottom: 14px; font-weight: 700; }
+.success h2 { color: #39e87a; margin-bottom: 8px; font-size: 18px; }
+.success p { color: #a0a0b8; font-size: 13px; }
 
 .failure { animation: slideIn 0.5s ease-out; }
-.failure-icon { font-size: 60px; color: #ff6b6b; margin-bottom: 20px; font-weight: 700; }
-.failure h2 { color: #ff6b6b; margin-bottom: 10px; font-size: 24px; }
-.failure p { color: #cfcfcf; }
+.failure-icon { font-size: 48px; color: #ff6b6b; margin-bottom: 14px; font-weight: 700; }
+.failure h2 { color: #ff6b6b; margin-bottom: 8px; font-size: 18px; }
+.failure p { color: #a0a0b8; font-size: 13px; }
 
 .error { animation: slideIn 0.5s ease-out; }
-.error h2 { color: #ff6b6b; margin-bottom: 10px; font-size: 24px; }
-.error p { color: #cfcfcf; }
+.error h2 { color: #ff6b6b; margin-bottom: 8px; font-size: 18px; }
+.error p { color: #a0a0b8; font-size: 13px; }
 
-.pending { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-.pending h2 { color: #f59e0b; margin-bottom: 10px; font-size: 24px; }
+.pending { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.pending h2 { color: #ffc107; margin-bottom: 8px; font-size: 18px; }
 
-.transaction-id { font-size: 12px; color: #bdbdbd; margin-top: 20px; word-break: break-all; }
+.transaction-id { font-size: 11px; color: #7a7a9a; margin-top: 14px; word-break: break-all; }
 
 .btn-retry {
-  margin-top: 30px;
-  padding: 12px 30px;
-  background: #c8752e;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  margin-top: 20px; padding: 10px 24px;
+  background: #0033cc; color: white;
+  border: none; border-radius: 7px;
+  font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s ease;
 }
 
-.btn-retry:hover { background: #b06727; }
+.btn-retry:hover { background: #0026a8; }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 320px) {
-  .payment-callback-page { padding: 10px; align-items: flex-end; }
-  .callback-container { padding: 20px 14px; border-radius: 14px 14px 0 0; max-width: 100%; }
-  .success-icon, .failure-icon { font-size: 44px; margin-bottom: 14px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 17px; }
-  .spinner { width: 36px; height: 36px; }
-  .btn-retry { padding: 10px 20px; font-size: 13px; margin-top: 18px; }
-  .transaction-id { font-size: 10px; }
+  .payment-callback-page { padding: 8px; align-items: flex-end; }
+  .callback-container { padding: 18px 12px; border-radius: 12px 12px 0 0; max-width: 100%; }
+  .success-icon, .failure-icon { font-size: 36px; margin-bottom: 10px; }
+  .success h2, .failure h2, .error h2, .pending h2 { font-size: 15px; }
+  .spinner { width: 28px; height: 28px; }
+  .btn-retry { padding: 9px 16px; font-size: 12px; margin-top: 14px; }
+  .transaction-id { font-size: 9px; }
 }
 
 @media (min-width: 321px) and (max-width: 480px) {
-  .payment-callback-page { padding: 12px; }
-  .callback-container { padding: 26px 18px; max-width: 100%; border-radius: 14px; }
-  .success-icon, .failure-icon { font-size: 50px; margin-bottom: 16px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 19px; }
-  .btn-retry { padding: 11px 24px; font-size: 14px; }
+  .payment-callback-page { padding: 10px; }
+  .callback-container { padding: 20px 16px; max-width: 100%; border-radius: 12px; }
+  .success-icon, .failure-icon { font-size: 40px; margin-bottom: 12px; }
+  .success h2, .failure h2, .error h2, .pending h2 { font-size: 16px; }
+  .btn-retry { padding: 10px 18px; font-size: 13px; }
 }
 
 @media (min-width: 481px) and (max-width: 600px) {
-  .callback-container { padding: 30px 22px; max-width: 440px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 20px; }
+  .callback-container { padding: 24px 18px; max-width: 380px; }
 }
 
 @media (min-width: 601px) and (max-width: 768px) {
-  .callback-container { padding: 34px 28px; max-width: 460px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 22px; }
+  .callback-container { padding: 26px 20px; max-width: 400px; }
 }
 
 @media (min-width: 1025px) {
-  .callback-container { padding: 48px; max-width: 520px; border-radius: 18px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 26px; }
-  .success-icon, .failure-icon { font-size: 68px; }
-  .btn-retry { padding: 14px 36px; font-size: 17px; }
-}
-
-@media (min-width: 1441px) {
-  .callback-container { padding: 56px; max-width: 560px; }
-  .success h2, .failure h2, .error h2, .pending h2 { font-size: 30px; }
-  .success-icon, .failure-icon { font-size: 76px; }
+  .callback-container { padding: 32px 28px; max-width: 420px; border-radius: 14px; }
 }

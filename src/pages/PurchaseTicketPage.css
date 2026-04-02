@@ -1,477 +1,280 @@
 /* PurchaseTicketPage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px   Small phones  |  321–480px  Standard phones
-   481–600px Large phones  |  601–768px  Tablets portrait
-   769–1024px Tablets landscape / small laptops
-   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
-
 .purchase-page {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #0f0f1a;
   color: #f3f3f3;
-  padding-bottom: 64px;
+  padding-bottom: 48px;
 }
 
 .event-banner {
-  width: min(100% - 48px, 1400px);
-  height: auto;
-  overflow: hidden;
-  background-color: #1f1f1f;
-  position: relative;
-  margin: 0 auto;
-  aspect-ratio: 16/6;
+  width: min(100% - 32px, 960px);
+  height: auto; overflow: hidden;
+  background-color: #141428;
+  position: relative; margin: 0 auto;
+  aspect-ratio: 16/6; border-radius: 10px;
 }
 
-.event-banner-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.event-banner-image { width: 100%; height: 100%; object-fit: cover; }
 
 .event-banner-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background-color: #1f1f1f;
-  color: #bdbdbd;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; background-color: #141428; color: #7a7a9a;
 }
 
 .purchase-container {
-  width: min(100% - 48px, 1200px);
-  margin: 0 auto;
-  padding: 40px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-sizing: border-box;
+  width: min(100% - 32px, 900px);
+  margin: 0 auto; padding: 24px 0;
+  display: flex; flex-direction: column; gap: 16px; box-sizing: border-box;
 }
 
-.purchase-title {
-  font-size: 36px;
-  font-weight: 700;
-  margin: 0;
-  color: #ffffff;
-}
-
+.purchase-title { font-size: 18px; font-weight: 700; margin: 0; color: #fff; }
 .purchase-step {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #e0e0e0;
-  font-size: 20px;
-  font-weight: 500;
+  display: flex; align-items: center; gap: 8px;
+  color: #a0a0b8; font-size: 13px; font-weight: 500;
 }
 
 .step-badge { display: none; }
-
-.purchase-event-name {
-  margin: 0;
-  color: #ffffff;
-  font-size: 32px;
-  font-weight: 700;
-}
+.purchase-event-name { margin: 0; color: #fff; font-size: 16px; font-weight: 700; }
 
 .purchase-card {
-  background-color: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
+  background-color: #141428;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3); box-sizing: border-box;
 }
 
 .purchase-table-header {
-  display: grid;
-  grid-template-columns: 1fr 140px 180px;
-  gap: 16px;
-  padding: 12px 8px 20px;
-  color: #e0e0e0;
-  font-size: 16px;
-  font-weight: 700;
-  border-bottom: 2px solid #3a3a3a;
-  margin-bottom: 16px;
+  display: grid; grid-template-columns: 1fr 120px 150px;
+  gap: 12px; padding: 10px 8px 14px;
+  color: #a0a0b8; font-size: 12px; font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 12px;
 }
 
-.purchase-table {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+.purchase-table { display: flex; flex-direction: column; gap: 10px; }
 
 .purchase-empty {
-  padding: 32px;
-  border-radius: 12px;
-  border: 2px dashed #4a4a4a;
-  color: #bdbdbd;
-  text-align: center;
-  font-size: 16px;
+  padding: 24px; border-radius: 10px;
+  border: 1px dashed rgba(255,255,255,0.08);
+  color: #a0a0b8; text-align: center; font-size: 13px;
 }
 
 .purchase-row {
-  display: grid;
-  grid-template-columns: 1fr 140px 180px;
-  gap: 16px;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #3a3a3a;
-  background-color: #252525;
-  transition: all 0.2s ease;
+  display: grid; grid-template-columns: 1fr 120px 150px;
+  gap: 12px; padding: 14px;
+  border-radius: 9px; border: 1px solid rgba(255,255,255,0.06);
+  background-color: #1e1e2e; transition: all 0.2s ease;
 }
 
-.purchase-row:hover {
-  background-color: #2d2d2d;
-  border-color: #4a4a4a;
-}
+.purchase-row:hover { background-color: #252545; border-color: rgba(57,232,122,0.1); }
 
-.purchase-locality {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.purchase-locality { display: flex; flex-direction: column; gap: 5px; }
 
 .locality-name {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
-  text-transform: uppercase;
+  font-size: 14px; font-weight: 700; color: #fff;
+  text-transform: uppercase; letter-spacing: 0.3px;
 }
 
-.locality-desc { font-size: 15px; color: #c0c0c0; line-height: 1.4; }
-.locality-hint { font-size: 13px; color: #9c9c9c; font-style: italic; }
+.locality-desc { font-size: 12px; color: #a0a0b8; line-height: 1.4; }
+.locality-hint { font-size: 11px; color: #7a7a9a; font-style: italic; }
 
 .purchase-price {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  font-weight: 700;
-  font-size: 24px;
-  color: #ff6b35;
+  display: flex; align-items: center; justify-content: flex-end;
+  font-weight: 700; font-size: 15px; color: #39e87a;
 }
 
-.purchase-qty {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
+.purchase-qty { display: flex; align-items: center; justify-content: flex-end; }
 
 .purchase-page .ticket-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #3a3a3a;
-  border-radius: 10px;
-  padding: 8px;
+  display: inline-flex; align-items: center; gap: 7px;
+  background-color: #0d0d1a; border-radius: 8px; padding: 5px;
 }
 
 .purchase-page .ticket-actions button {
-  height: 38px;
-  width: 38px;
-  border-radius: 8px;
-  border: none;
-  background-color: #4a4a4a;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 18px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  height: 30px; width: 30px; border-radius: 6px;
+  border: none; background-color: #1e1e38; color: #fff;
+  font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center;
 }
 
 .purchase-page .ticket-actions button:hover:not(:disabled) {
-  background-color: #ff6b35;
-  transform: scale(1.05);
+  background-color: #0033cc; transform: scale(1.05);
 }
 
 .purchase-page .ticket-actions button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .purchase-page .ticket-actions .ticket-qty {
-  min-width: 40px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 18px;
-  color: #ffffff;
+  min-width: 28px; text-align: center;
+  font-weight: 700; font-size: 14px; color: #fff;
 }
 
 .form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-  color: #e0e0e0;
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 14px; color: #e0e0e0;
 }
 
-.form-field span { font-size: 18px; font-weight: 700; color: #ffffff; }
+.form-field span { font-size: 13px; font-weight: 700; color: #fff; }
 
 .form-field textarea,
 .form-field input {
-  width: 100%;
-  min-height: 100px;
-  padding: 16px;
-  border: 2px solid #4a4a4a;
-  border-radius: 10px;
-  background-color: #1f1f1f;
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  width: 100%; min-height: 80px; padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; background-color: #0d0d1a;
+  color: #fff; font-size: 13px; font-weight: 500;
+  transition: all 0.2s ease; box-sizing: border-box;
 }
 
-.form-field input { min-height: auto; height: 52px; }
+.form-field input { min-height: auto; height: 42px; }
 
 .form-field textarea:focus,
 .form-field input:focus {
-  outline: none;
-  border-color: #ff6b35;
-  background-color: #252525;
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+  outline: none; border-color: #39e87a; background-color: #0a0a14;
+  box-shadow: 0 0 0 2px rgba(57,232,122,0.1);
 }
 
 .form-field textarea::placeholder,
-.form-field input::placeholder { color: #888888; font-size: 15px; }
+.form-field input::placeholder { color: #5a5a7a; font-size: 12px; }
 
 .purchase-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 16px;
-  padding: 24px;
-  background-color: #2a2a2a;
-  border-radius: 16px;
-  border: 1px solid #3a3a3a;
-  box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 12px; padding: 18px;
+  background-color: #141428; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.06); box-sizing: border-box;
 }
 
 .purchase-subtotal {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #e0e0e0;
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 14px; font-weight: 600; color: #a0a0b8;
 }
 
-.purchase-subtotal strong { font-size: 28px; color: #ff6b35; font-weight: 800; }
+.purchase-subtotal strong { font-size: 18px; color: #39e87a; font-weight: 800; }
 
 .purchase-error {
-  color: #ff6b6b;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 12px 16px;
-  background-color: rgba(255, 107, 107, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-  width: 100%;
-  box-sizing: border-box;
+  color: #ff7070; font-size: 12px; font-weight: 500;
+  padding: 10px 13px; background-color: rgba(255,85,85,0.08);
+  border-radius: 7px; border: 1px solid rgba(255,85,85,0.2);
+  width: 100%; box-sizing: border-box;
 }
 
 .purchase-next-btn {
-  background-color: #ff6b35;
-  color: #ffffff;
-  border: none;
-  padding: 16px 32px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 17px;
-  cursor: pointer;
-  min-width: 160px;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  background-color: #0033cc; color: #fff; border: none;
+  padding: 11px 24px; border-radius: 8px; font-weight: 700;
+  font-size: 13px; cursor: pointer; min-width: 130px;
+  transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 0.3px;
 }
 
 .purchase-next-btn:hover:not(:disabled) {
-  background-color: #ff8c5a;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 107, 53, 0.4);
+  background-color: #0026a8; transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,51,204,0.35);
 }
 
 .purchase-next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .payment-box-container {
-  background-color: #2a2a2a;
-  border-radius: 16px;
-  padding: 32px;
-  text-align: center;
-  border: 1px solid #3a3a3a;
+  background-color: #141428; border-radius: 12px; padding: 24px;
+  text-align: center; border: 1px solid rgba(255,255,255,0.06);
 }
 
-.payment-box-container h2 { margin-top: 0; color: #ffffff; font-size: 32px; }
-.payment-info { color: #d0d0d0; margin-bottom: 24px; font-size: 16px; }
-#payphone-payment-box { margin: 32px 0; }
+.payment-box-container h2 { margin-top: 0; color: #fff; font-size: 17px; }
+.payment-info { color: #a0a0b8; margin-bottom: 16px; font-size: 13px; }
+#payphone-payment-box { margin: 20px 0; }
 
 .btn-back-to-form {
-  background: #3a3a3a;
-  color: #ffffff;
-  border: 1px solid #4a4a4a;
-  padding: 14px 28px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 24px;
-  font-weight: 600;
-  font-size: 15px;
-  transition: all 0.2s ease;
+  background: #1e1e38; color: #a0a0b8;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 20px; border-radius: 8px;
+  cursor: pointer; margin-top: 16px;
+  font-weight: 600; font-size: 13px; transition: all 0.2s ease;
 }
 
-.btn-back-to-form:hover { background: #4a4a4a; transform: translateY(-1px); }
+.btn-back-to-form:hover { background: #252545; color: #fff; transform: translateY(-1px); }
 
-/* ─── ≤320px — Small phones ────────────────────────────────────── */
 @media (max-width: 320px) {
-  .event-banner { width: 100%; aspect-ratio: 16/5; }
-
-  .purchase-container { width: 100%; padding: 14px 10px; gap: 14px; }
-  .purchase-title { font-size: 18px; }
-  .purchase-event-name { font-size: 16px; }
-  .purchase-step { font-size: 13px; }
-
-  .purchase-card { padding: 14px; border-radius: 10px; }
+  .event-banner { width: 100%; height: 100px; aspect-ratio: unset; border-radius: 0; }
+  .purchase-container { width: 100%; padding: 10px; gap: 10px; }
+  .purchase-title { font-size: 15px; }
+  .purchase-event-name { font-size: 14px; }
+  .purchase-step { font-size: 11px; }
+  .purchase-card { padding: 11px; border-radius: 8px; }
   .purchase-table-header { display: none; }
-
-  .purchase-row { grid-template-columns: 1fr; gap: 10px; padding: 14px; }
-  .locality-name { font-size: 15px; }
-  .locality-desc { font-size: 12px; }
-  .purchase-price { justify-content: flex-start; font-size: 18px; }
+  .purchase-row { grid-template-columns: 1fr; gap: 8px; padding: 11px; }
+  .locality-name { font-size: 13px; }
+  .locality-desc { font-size: 11px; }
+  .purchase-price { justify-content: flex-start; font-size: 14px; }
   .purchase-qty { justify-content: flex-start; }
-
-  .purchase-page .ticket-actions button { height: 32px; width: 32px; font-size: 15px; }
-  .purchase-page .ticket-actions .ticket-qty { min-width: 32px; font-size: 15px; }
-
-  .form-field span { font-size: 14px; }
-  .form-field textarea, .form-field input { font-size: 14px; padding: 12px; }
-
-  .purchase-actions { padding: 14px; align-items: stretch; gap: 12px; border-radius: 10px; }
-  .purchase-subtotal { font-size: 16px; justify-content: space-between; }
-  .purchase-subtotal strong { font-size: 20px; }
-  .purchase-next-btn { width: 100%; font-size: 14px; padding: 13px 20px; }
-
-  .payment-box-container { padding: 18px 14px; border-radius: 10px; }
-  .payment-box-container h2 { font-size: 20px; }
-  .payment-info { font-size: 13px; }
-  .btn-back-to-form { padding: 11px 18px; font-size: 13px; }
+  .purchase-page .ticket-actions button { height: 28px; width: 28px; font-size: 13px; }
+  .purchase-page .ticket-actions .ticket-qty { min-width: 24px; font-size: 13px; }
+  .form-field span { font-size: 12px; }
+  .form-field textarea, .form-field input { font-size: 13px; padding: 9px 10px; }
+  .purchase-actions { padding: 11px; align-items: stretch; gap: 9px; border-radius: 8px; }
+  .purchase-subtotal { font-size: 13px; justify-content: space-between; }
+  .purchase-subtotal strong { font-size: 16px; }
+  .purchase-next-btn { width: 100%; font-size: 12px; padding: 11px; }
+  .payment-box-container { padding: 14px 11px; border-radius: 8px; }
+  .payment-box-container h2 { font-size: 15px; }
+  .payment-info { font-size: 12px; }
+  .btn-back-to-form { padding: 9px 14px; font-size: 12px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .event-banner { width: 100%; }
-
-  .purchase-container { width: 100%; padding: 16px 12px; gap: 16px; }
-  .purchase-title { font-size: 20px; }
-  .purchase-event-name { font-size: 18px; }
-  .purchase-step { font-size: 14px; }
-
-  .purchase-card { padding: 16px; }
+  .event-banner { width: 100%; border-radius: 0; }
+  .purchase-container { width: 100%; padding: 12px; gap: 12px; }
+  .purchase-title { font-size: 16px; }
+  .purchase-event-name { font-size: 15px; }
+  .purchase-step { font-size: 12px; }
+  .purchase-card { padding: 13px; }
   .purchase-table-header { display: none; }
-
-  .purchase-row { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
-  .locality-name { font-size: 17px; }
-  .purchase-price { justify-content: flex-start; font-size: 20px; }
+  .purchase-row { grid-template-columns: 1fr; gap: 10px; padding: 13px; }
+  .locality-name { font-size: 14px; }
+  .purchase-price { justify-content: flex-start; font-size: 14px; }
   .purchase-qty { justify-content: flex-start; }
-
-  .purchase-actions { padding: 16px; align-items: stretch; gap: 12px; }
-  .purchase-subtotal { font-size: 18px; justify-content: space-between; }
-  .purchase-subtotal strong { font-size: 22px; }
-  .purchase-next-btn { width: 100%; font-size: 15px; padding: 14px 22px; }
-
-  .form-field span { font-size: 15px; }
+  .purchase-actions { padding: 13px; align-items: stretch; gap: 10px; }
+  .purchase-subtotal { font-size: 13px; justify-content: space-between; }
+  .purchase-subtotal strong { font-size: 16px; }
+  .purchase-next-btn { width: 100%; font-size: 13px; padding: 11px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .event-banner { width: 100%; }
-
-  .purchase-container { width: 100%; padding: 20px 16px; gap: 18px; }
-  .purchase-title { font-size: 22px; }
-  .purchase-event-name { font-size: 20px; }
-  .purchase-step { font-size: 15px; }
-
+  .event-banner { width: 100%; border-radius: 0; }
+  .purchase-container { width: 100%; padding: 16px; gap: 14px; }
+  .purchase-title { font-size: 16px; }
+  .purchase-event-name { font-size: 15px; }
   .purchase-table-header { display: none; }
-  .purchase-row { grid-template-columns: 1fr; gap: 14px; }
-  .locality-name { font-size: 18px; }
-  .purchase-price { justify-content: flex-start; font-size: 21px; }
+  .purchase-row { grid-template-columns: 1fr; gap: 11px; }
+  .purchase-price { justify-content: flex-start; }
   .purchase-qty { justify-content: flex-start; }
-
-  .purchase-actions { align-items: stretch; }
-  .purchase-subtotal { justify-content: space-between; font-size: 19px; }
-  .purchase-subtotal strong { font-size: 24px; }
-  .purchase-next-btn { width: 100%; font-size: 16px; }
-}
-
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
-@media (min-width: 601px) and (max-width: 768px) {
-  .purchase-container { width: 100%; padding: 24px 16px; }
-  .purchase-title { font-size: 24px; }
-  .purchase-event-name { font-size: 22px; }
-  .purchase-step { font-size: 16px; }
-
-  .purchase-table-header { display: none; }
-  .purchase-row { grid-template-columns: 1fr; gap: 14px; }
-  .purchase-price { justify-content: flex-start; font-size: 22px; }
-  .purchase-qty { justify-content: flex-start; }
-
-  .purchase-actions { align-items: stretch; }
-  .purchase-subtotal { justify-content: space-between; font-size: 20px; }
-  .purchase-next-btn { width: 100%; }
-}
-
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .event-banner { width: 100%; }
-
-  .purchase-container { width: 100%; padding: 24px 20px; }
-  .purchase-title { font-size: 26px; }
-  .purchase-event-name { font-size: 24px; }
-  .purchase-step { font-size: 17px; }
-
-  .locality-name { font-size: 20px; }
   .purchase-actions { align-items: stretch; }
   .purchase-subtotal { justify-content: space-between; }
   .purchase-next-btn { width: 100%; }
 }
 
-/* ─── 1025–1280px — Standard laptops ──────────────────────────── */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .purchase-title { font-size: 32px; }
-  .purchase-event-name { font-size: 28px; }
+@media (min-width: 601px) and (max-width: 768px) {
+  .purchase-container { width: 100%; padding: 18px; }
+  .purchase-title { font-size: 17px; }
+  .purchase-event-name { font-size: 16px; }
+  .purchase-table-header { display: none; }
+  .purchase-row { grid-template-columns: 1fr; }
+  .purchase-price { justify-content: flex-start; }
+  .purchase-qty { justify-content: flex-start; }
+  .purchase-actions { align-items: stretch; }
+  .purchase-subtotal { justify-content: space-between; }
+  .purchase-next-btn { width: 100%; }
 }
 
-/* ─── 1281–1440px — Large desktops ────────────────────────────── */
-@media (min-width: 1281px) and (max-width: 1440px) {
-  .purchase-title { font-size: 36px; }
-  .purchase-event-name { font-size: 32px; }
+@media (min-width: 769px) and (max-width: 1024px) {
+  .event-banner { width: 100%; }
+  .purchase-container { width: 100%; padding: 20px; }
+  .purchase-title { font-size: 17px; }
+  .purchase-event-name { font-size: 16px; }
+  .purchase-actions { align-items: stretch; }
+  .purchase-subtotal { justify-content: space-between; }
+  .purchase-next-btn { width: 100%; }
 }
 
-/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
-@media (min-width: 1441px) {
-  .purchase-container { padding: 56px 0; }
-  .purchase-title { font-size: 40px; }
-  .purchase-event-name { font-size: 36px; }
-  .purchase-step { font-size: 22px; }
-
-  .purchase-card { padding: 36px; }
-  .locality-name { font-size: 26px; }
-  .locality-desc { font-size: 17px; }
-  .purchase-price { font-size: 28px; }
-
-  .purchase-table-header { font-size: 18px; }
-
-  .purchase-page .ticket-actions button { height: 44px; width: 44px; font-size: 20px; }
-  .purchase-page .ticket-actions .ticket-qty { min-width: 48px; font-size: 20px; }
-
-  .form-field span { font-size: 20px; }
-  .form-field textarea, .form-field input { font-size: 18px; padding: 18px; }
-
-  .purchase-actions { padding: 28px; }
-  .purchase-subtotal { font-size: 26px; }
-  .purchase-subtotal strong { font-size: 34px; }
-  .purchase-next-btn { font-size: 20px; padding: 20px 40px; }
-
-  .payment-box-container { padding: 40px; }
-  .payment-box-container h2 { font-size: 36px; }
-  .payment-info { font-size: 18px; }
-  .btn-back-to-form { padding: 16px 36px; font-size: 17px; }
+@media (min-width: 1025px) {
+  .purchase-container { padding: 24px 0; }
+  .purchase-title { font-size: 18px; }
+  .purchase-event-name { font-size: 16px; }
 }

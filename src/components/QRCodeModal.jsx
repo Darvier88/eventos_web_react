@@ -1,3 +1,4 @@
+
 import React, { useMemo, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import './QRCodeModal.css';
@@ -9,6 +10,19 @@ const QRCodeModal = ({ ticket, onClose }) => {
     ? ticket.purchase_ticket.purchase_ticket_items
     : [];
   const purchaseId = ticket.purchase_ticket?._id || ticket.purchase_ticket?.id;
+
+
+  // Obtener la fecha de inicio del evento
+  const eventStartDate = ticket.event?.start_date ? new Date(ticket.event.start_date) : null;
+  const now = new Date();
+  // Restar 5 horas a now para el cálculo local
+  const nowMinus5h = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+  let isMasked = false;
+  if (eventStartDate) {
+    const diffMs = eventStartDate.getTime() - nowMinus5h.getTime();
+    const diffHrs = diffMs / (1000 * 60 * 60);
+    isMasked = diffHrs > 24;
+  }
 
   const qrList = useMemo(() => {
     return items.map((item, i) => ({
@@ -25,6 +39,9 @@ const QRCodeModal = ({ ticket, onClose }) => {
   const goPrev = () => setIndex((i) => (i === 0 ? qrList.length - 1 : i - 1));
   const goNext = () => setIndex((i) => (i === qrList.length - 1 ? 0 : i + 1));
 
+  // QR masking: si faltan más de 24 horas, mostrar QR enmascarado
+  const maskedQrValue = 'QR DISPONIBLE 24H ANTES DEL EVENTO';
+
   return (
     <div className="qr-modal-backdrop" onClick={onClose}>
       <div className="qr-modal" onClick={(e) => e.stopPropagation()}>
@@ -34,9 +51,21 @@ const QRCodeModal = ({ ticket, onClose }) => {
         </div>
 
         <div className="qr-modal-body">
-          <div className={`qr-box ${current.isRead ? 'used' : ''}`}>
-            <QRCodeCanvas value={current.qrData} size={200} includeMargin={true} level="H" />
-            {current.isRead && <span className="qr-used">Usado</span>}
+          <div className={`qr-box ${current.isRead ? 'used' : ''}`}> 
+            {isMasked ? (
+              <div className="qr-blur-container">
+                <QRCodeCanvas value={maskedQrValue} size={200} includeMargin={true} level="H" />
+                <div className="qr-blur-overlay" />
+                <span className="qr-masked-msg">
+                  El QR real estará disponible <br />24 horas antes del inicio del evento.
+                </span>
+              </div>
+            ) : (
+              <>
+                <QRCodeCanvas value={current.qrData} size={200} includeMargin={true} level="H" />
+                {current.isRead && <span className="qr-used">Usado</span>}
+              </>
+            )}
           </div>
           <div className="qr-info">
             <strong>{current.name}</strong>

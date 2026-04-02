@@ -1,420 +1,108 @@
 /* ExplorePage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px   Small phones  |  321–480px  Standard phones
-   481–600px Large phones  |  601–768px  Tablets portrait
-   769–1024px Tablets landscape / small laptops
-   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
-
 .explore-page {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #0f0f1a;
 }
 
 .explore-container {
-  max-width: 1200px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 40px 24px 48px;
+  padding: 24px 20px 40px;
   box-sizing: border-box;
 }
 
 .explore-title {
   color: #fff;
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 32px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
 }
 
 .explore-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 12px;
 }
 
 .category-card {
   position: relative;
-  background-color: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 16px;
-  padding: 40px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  background-color: #1e1e2e;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 24px 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  min-height: 160px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  min-height: 100px;
 }
 
 .category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-  background-color: #2f2f2f;
-  border-color: #4a4a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,51,204,0.2);
+  border-color: rgba(57,232,122,0.15);
 }
 
-.category-card.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
+.category-card.disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
-.category-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-}
+.category-icon { display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.category-icon svg { stroke: currentColor; width: 28px; height: 28px; }
 
-.category-icon svg {
-  stroke: currentColor;
-  width: 48px;
-  height: 48px;
-}
-
-.category-name {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 0.3px;
-}
+.category-name { font-size: 12px; font-weight: 600; text-align: center; letter-spacing: 0.2px; }
 
 .category-badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  min-width: 28px;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background-color: #f44336;
-  color: white;
-  font-size: 13px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(244, 67, 54, 0.4);
+  position: absolute; top: 8px; right: 8px;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 999px; background-color: #0033cc;
+  color: white; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
 }
 
 .category-card.purple { color: #a066ff; }
-.category-card.green  { color: #5edc7b; }
+.category-card.green  { color: #39e87a; }
 .category-card.blue   { color: #5aa9ff; }
 .category-card.red    { color: #ff6a6a; }
 .category-card.amber  { color: #ffc857; }
 .category-card.teal   { color: #40c4b8; }
 
-/* ─── ≤320px — Small phones ────────────────────────────────────── */
 @media (max-width: 320px) {
-  .explore-container {
-    padding: 14px 10px 28px;
-  }
-
-  .explore-title {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .category-card {
-    min-height: 100px;
-    padding: 20px 10px;
-    border-radius: 10px;
-    gap: 10px;
-  }
-
-  .category-icon {
-    font-size: 28px;
-  }
-
-  .category-icon svg {
-    width: 28px;
-    height: 28px;
-  }
-
-  .category-name {
-    font-size: 12px;
-    letter-spacing: 0;
-  }
-
-  .category-badge {
-    top: 8px;
-    right: 8px;
-    min-width: 20px;
-    height: 20px;
-    font-size: 10px;
-    padding: 0 6px;
-  }
+  .explore-container { padding: 10px 10px 20px; }
+  .explore-title { font-size: 15px; margin-bottom: 12px; }
+  .explore-grid { gap: 7px; }
+  .category-card { min-height: 80px; padding: 16px 8px; border-radius: 8px; gap: 6px; }
+  .category-icon { font-size: 22px; }
+  .category-icon svg { width: 22px; height: 22px; }
+  .category-name { font-size: 11px; }
+  .category-badge { top: 5px; right: 5px; min-width: 15px; height: 15px; font-size: 9px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .explore-container {
-    padding: 20px 14px 36px;
-  }
-
-  .explore-title {
-    font-size: 23px;
-    margin-bottom: 20px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .category-card {
-    min-height: 120px;
-    padding: 26px 16px;
-    border-radius: 12px;
-  }
-
-  .category-icon {
-    font-size: 34px;
-  }
-
-  .category-icon svg {
-    width: 34px;
-    height: 34px;
-  }
-
-  .category-name {
-    font-size: 14px;
-  }
-
-  .category-badge {
-    top: 10px;
-    right: 10px;
-    min-width: 22px;
-    height: 22px;
-    font-size: 11px;
-  }
+  .explore-container { padding: 14px 12px 26px; }
+  .explore-title { font-size: 16px; margin-bottom: 14px; }
+  .explore-grid { gap: 9px; }
+  .category-card { min-height: 90px; padding: 20px 10px; }
+  .category-icon { font-size: 24px; }
+  .category-icon svg { width: 24px; height: 24px; }
+  .category-name { font-size: 12px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .explore-container {
-    padding: 24px 16px 40px;
-  }
-
-  .explore-title {
-    font-size: 26px;
-    margin-bottom: 24px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-
-  .category-card {
-    min-height: 130px;
-    padding: 30px 18px;
-  }
-
-  .category-icon {
-    font-size: 38px;
-  }
-
-  .category-icon svg {
-    width: 38px;
-    height: 38px;
-  }
-
-  .category-name {
-    font-size: 15px;
-  }
+  .explore-container { padding: 18px 14px 30px; }
+  .explore-title { font-size: 17px; }
+  .explore-grid { gap: 10px; }
+  .category-card { min-height: 95px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
 @media (min-width: 601px) and (max-width: 768px) {
-  .explore-container {
-    padding: 28px 20px 44px;
-  }
-
-  .explore-title {
-    font-size: 28px;
-    margin-bottom: 28px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .category-card {
-    min-height: 150px;
-    padding: 36px 20px;
-  }
-
-  .category-icon {
-    font-size: 42px;
-  }
-
-  .category-icon svg {
-    width: 42px;
-    height: 42px;
-  }
-
-  .category-name {
-    font-size: 16px;
-  }
+  .explore-container { padding: 20px 16px 32px; }
+  .explore-title { font-size: 18px; }
+  .explore-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .category-card { min-height: 100px; }
 }
 
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .explore-container {
-    padding: 36px 24px 52px;
-  }
-
-  .explore-title {
-    font-size: 30px;
-    margin-bottom: 34px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .category-card {
-    min-height: 170px;
-    padding: 44px 24px;
-  }
-
-  .category-icon {
-    font-size: 50px;
-  }
-
-  .category-icon svg {
-    width: 50px;
-    height: 50px;
-  }
-
-  .category-name {
-    font-size: 18px;
-  }
-}
-
-/* ─── 1025–1280px — Laptops / desktops ────────────────────────── */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .explore-container {
-    padding: 44px 28px 52px;
-  }
-
-  .explore-title {
-    font-size: 34px;
-    margin-bottom: 38px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-  }
-
-  .category-card {
-    min-height: 190px;
-    padding: 50px 28px;
-  }
-
-  .category-icon {
-    font-size: 54px;
-  }
-
-  .category-icon svg {
-    width: 54px;
-    height: 54px;
-  }
-
-  .category-name {
-    font-size: 19px;
-  }
-}
-
-/* ─── 1281–1440px — Large desktops ────────────────────────────── */
-@media (min-width: 1281px) and (max-width: 1440px) {
-  .explore-container {
-    padding: 48px 32px 56px;
-  }
-
-  .explore-title {
-    font-size: 36px;
-    margin-bottom: 40px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
-  }
-
-  .category-card {
-    min-height: 200px;
-    padding: 56px 32px;
-  }
-
-  .category-icon {
-    font-size: 56px;
-  }
-
-  .category-icon svg {
-    width: 56px;
-    height: 56px;
-  }
-
-  .category-name {
-    font-size: 20px;
-  }
-}
-
-/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
-@media (min-width: 1441px) {
-  .explore-container {
-    max-width: 1400px;
-    padding: 56px 40px 64px;
-  }
-
-  .explore-title {
-    font-size: 40px;
-    margin-bottom: 48px;
-  }
-
-  .explore-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 32px;
-  }
-
-  .category-card {
-    min-height: 220px;
-    padding: 64px 36px;
-    border-radius: 20px;
-  }
-
-  .category-icon {
-    font-size: 64px;
-  }
-
-  .category-icon svg {
-    width: 64px;
-    height: 64px;
-  }
-
-  .category-name {
-    font-size: 22px;
-  }
-
-  .category-badge {
-    top: 24px;
-    right: 24px;
-    min-width: 32px;
-    height: 32px;
-    font-size: 15px;
-  }
+@media (min-width: 769px) {
+  .explore-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .category-card { min-height: 100px; padding: 24px 14px; }
 }

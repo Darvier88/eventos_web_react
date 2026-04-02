@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useViewMode } from '../context/ViewContext';
+import logo from '../components/logo.png';
 import './Header.css';
 
 const Header = () => {
@@ -48,7 +49,7 @@ const Header = () => {
               </svg>
             </button>
             <Link to="/" className="logo">
-                <span className="logo-text">MACAK Eventos</span>
+              <img src={logo} alt="MACAK Eventos" className="logo-img" />
             </Link>
           </div>
           
@@ -99,18 +100,20 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Drawer - ahora aparece para autenticados y no autenticados, pero cambia el contenido */}
       {drawerOpen && (
         <>
           <div className={`drawer-overlay open`} onClick={() => setDrawerOpen(false)} />
           <div className={`drawer open`}>
             <div className="drawer-content">
-              <button className="drawer-close" onClick={() => setDrawerOpen(false)}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
+              <div className="drawer-header">
+                <img src={logo} alt="MACAK" className="drawer-logo" />
+                <button className="drawer-close" onClick={() => setDrawerOpen(false)}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
 
               <div className="drawer-menu">
                 {isAuthenticated ? (
@@ -145,7 +148,7 @@ const Header = () => {
                       </svg>
                       <span>Explorar</span>
                     </button>
-                    <button className="drawer-item" onClick={handleLogout}> 
+                    <button className="drawer-item drawer-logout" onClick={handleLogout}> 
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4m7 14l5-5m0 0l-5-5m5 5H9" />
                       </svg>

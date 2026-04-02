@@ -1,35 +1,27 @@
 /* DeleteAccountModal.css — Fully Responsive */
 
-/* ─── Breakpoints reference ───────────────────────────────────────
-   320px   → Small phones (iPhone SE, Galaxy A series)
-   480px   → Large phones (iPhone 14, Pixel 7)
-   600px   → Phablets / large phones landscape
-   768px   → Tablets portrait (iPad mini, iPad)
-   1024px  → Tablets landscape / small laptops
-   1280px  → Laptops / desktops
-   1440px+ → Large desktops / 4K
-──────────────────────────────────────────────────────────────────── */
-
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   padding: 16px;
   box-sizing: border-box;
+  backdrop-filter: blur(3px);
 }
 
 .modal-content {
-  background: #181818;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
-  padding: 32px 24px;
+  background: #141428;
+  border: 1px solid rgba(57, 232, 122, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  padding: 28px 24px;
   width: 100%;
   max-width: 400px;
   display: flex;
@@ -39,43 +31,44 @@
 }
 
 .modal-content h2 {
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
   margin-bottom: 10px;
-  color: #ff2222;
+  color: #ff5555;
   text-align: center;
 }
 
 .modal-content p {
-  color: #fff;
-  margin-bottom: 14px;
+  color: #a0a0b8;
+  margin-bottom: 12px;
   text-align: center;
-  font-weight: 600;
-  font-size: 1rem;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .modal-content ul {
-  color: #fff;
-  margin-bottom: 18px;
-  font-size: 1.05rem;
-  padding-left: 18px;
+  color: #a0a0b8;
+  margin-bottom: 16px;
+  font-size: 13px;
+  padding-left: 16px;
   text-align: left;
   width: 100%;
+  line-height: 1.7;
 }
 
 .modal-content ul li {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .modal-content input[type="password"] {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ff2222;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-bottom: 16px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 85, 85, 0.4);
+  border-radius: 7px;
+  font-size: 13px;
+  margin-bottom: 14px;
   outline: none;
-  background: #222;
+  background: #0d0d1a;
   color: #fff;
   transition: border-color 0.2s;
   box-sizing: border-box;
@@ -87,177 +80,87 @@
 
 .modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .modal-actions button {
   flex: 1;
-  padding: 10px 0;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
+  padding: 9px 0;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
   border: none;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
 
 .modal-actions button:first-child {
-  background: #fff;
-  color: #222;
-  border: 1.5px solid #fff;
+  background: #1e1e38;
+  color: #a0a0b8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-actions button:first-child:hover {
+  background: #252545;
+  color: #fff;
 }
 
 .modal-actions button:last-child {
-  background: #ff2222;
+  background: #cc2222;
   color: #fff;
-  border: 1.5px solid #ff2222;
+}
+
+.modal-actions button:last-child:hover {
+  background: #aa1111;
 }
 
 .modal-actions button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .modal-error {
-  color: #ff2222;
-  font-size: 0.98rem;
+  color: #ff5555;
+  font-size: 12px;
   margin-bottom: 8px;
   text-align: center;
 }
 
 .modal-success {
-  color: #43a047;
-  font-size: 0.98rem;
+  color: #39e87a;
+  font-size: 12px;
   margin-bottom: 8px;
   text-align: center;
 }
 
-/* ─── 320px — Small phones ─────────────────────────────────────── */
+/* ─── ≤320px ────────────────────────────────────────────────────── */
 @media (max-width: 320px) {
-  .modal-overlay {
-    padding: 8px;
-    align-items: flex-end;
-  }
-
-  .modal-content {
-    padding: 20px 14px;
-    border-radius: 14px 14px 0 0;
-    max-width: 100%;
-  }
-
-  .modal-content h2 {
-    font-size: 1.2rem;
-  }
-
-  .modal-content p {
-    font-size: 0.85rem;
-  }
-
-  .modal-content ul {
-    font-size: 0.85rem;
-    padding-left: 14px;
-  }
-
-  .modal-content input[type="password"] {
-    font-size: 0.9rem;
-    padding: 8px 10px;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .modal-actions button {
-    font-size: 0.9rem;
-    padding: 11px 0;
-  }
+  .modal-overlay { padding: 8px; align-items: flex-end; }
+  .modal-content { padding: 18px 12px; border-radius: 12px 12px 0 0; max-width: 100%; }
+  .modal-content h2 { font-size: 15px; }
+  .modal-content p, .modal-content ul { font-size: 12px; }
+  .modal-actions { flex-direction: column; gap: 7px; }
+  .modal-actions button { font-size: 12px; padding: 10px 0; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
+/* ─── 321–480px ─────────────────────────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .modal-overlay {
-    padding: 12px;
-    align-items: flex-end;
-  }
-
-  .modal-content {
-    padding: 24px 16px;
-    border-radius: 16px 16px 0 0;
-    max-width: 100%;
-  }
-
-  .modal-content h2 {
-    font-size: 1.35rem;
-  }
-
-  .modal-content p {
-    font-size: 0.9rem;
-  }
-
-  .modal-content ul {
-    font-size: 0.9rem;
-  }
-
-  .modal-actions button {
-    font-size: 0.95rem;
-    padding: 11px 0;
-  }
+  .modal-overlay { padding: 10px; align-items: flex-end; }
+  .modal-content { padding: 20px 14px; border-radius: 12px 12px 0 0; max-width: 100%; }
+  .modal-content h2 { font-size: 16px; }
+  .modal-content p, .modal-content ul { font-size: 12px; }
+  .modal-actions button { font-size: 12px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+/* ─── 481–600px ─────────────────────────────────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .modal-overlay {
-    padding: 16px;
-  }
-
-  .modal-content {
-    padding: 28px 20px;
-    max-width: 440px;
-  }
-
-  .modal-content h2 {
-    font-size: 1.5rem;
-  }
+  .modal-content { padding: 24px 18px; max-width: 420px; }
+  .modal-content h2 { font-size: 17px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
-@media (min-width: 601px) and (max-width: 768px) {
-  .modal-content {
-    max-width: 420px;
-    padding: 30px 22px;
-  }
-}
-
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .modal-content {
-    max-width: 400px;
-  }
-}
-
-/* ─── 1025px+ — Desktops / large screens ──────────────────────── */
-@media (min-width: 1025px) {
-  .modal-content {
-    max-width: 420px;
-    padding: 36px 28px;
-  }
-
-  .modal-content h2 {
-    font-size: 1.9rem;
-  }
-
-  .modal-actions button {
-    font-size: 1.05rem;
-    padding: 12px 0;
-  }
-}
-
-/* ─── 1440px+ — Large desktops ────────────────────────────────── */
-@media (min-width: 1440px) {
-  .modal-content {
-    max-width: 440px;
-  }
+/* ─── 601px+ ────────────────────────────────────────────────────── */
+@media (min-width: 601px) {
+  .modal-content { max-width: 400px; }
 }

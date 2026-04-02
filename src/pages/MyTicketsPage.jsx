@@ -9,6 +9,13 @@ const MyTicketsPage = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showAllTickets, setShowAllTickets] = useState(false);
+  const [blockedMsg, setBlockedMsg] = useState('');
+  const handleBlockedAction = (msg) => {
+    setBlockedMsg(msg);
+  };
+  const handleCloseBlockedModal = () => {
+    setBlockedMsg('');
+  };
 
   const userId = localStorage.getItem('user_id');
 
@@ -81,6 +88,8 @@ const MyTicketsPage = () => {
   }
 
   const now = new Date();
+  // Restar 5 horas a now para comparación local
+  const nowMinus5h = new Date(now.getTime() - 5 * 60 * 60 * 1000);
 
   const getPurchaseTimestamp = (ticket) => {
     const purchase = ticket?.purchase_ticket || {};
@@ -110,7 +119,7 @@ const MyTicketsPage = () => {
     : sortedTickets.filter((ticket) => {
         const eventDate = ticket?.event?.start_date;
         if (!eventDate) return true;
-        return new Date(eventDate) >= now;
+        return new Date(eventDate) >= nowMinus5h;
       });
 
 
@@ -135,9 +144,7 @@ const MyTicketsPage = () => {
               Todos
             </button>
           </div>
-          <button className="refresh-btn" onClick={() => refetch()}>
-            Actualizar
-          </button>
+            {/* Botón de actualizar eliminado */}
         </div>
       </div>
 
@@ -162,8 +169,20 @@ const MyTicketsPage = () => {
               ticket={ticket}
               onShowQr={() => handleShowQr(ticket)}
               onDownloadPdf={() => handleDownloadPdf(ticket)}
+              onBlockedAction={handleBlockedAction}
             />
           ))}
+              {/* Modal global para mensaje de acción bloqueada */}
+              {blockedMsg && (
+                <div className="blocked-modal-backdrop" onClick={handleCloseBlockedModal}>
+                  <div className="blocked-modal" onClick={e => e.stopPropagation()}>
+                    <div className="blocked-modal-content">
+                      <span>{blockedMsg}</span>
+                      <button className="blocked-modal-close" onClick={handleCloseBlockedModal} aria-label="Cerrar">&times;</button>
+                    </div>
+                  </div>
+                </div>
+              )}
         </div>
       )}
 

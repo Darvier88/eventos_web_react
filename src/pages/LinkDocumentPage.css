@@ -1,77 +1,48 @@
 /* LinkDocumentPage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px   Small phones  |  321–480px  Standard phones
-   481–600px Large phones  |  601–768px  Tablets portrait
-   769–1024px Tablets landscape / small laptops
-   1025px+  Laptops / desktops  |  1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
-
 .link-document-page {
-  background: #1a1a1a;
+  background: #0f0f1a;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   padding: 20px;
   font-family: system-ui;
   box-sizing: border-box;
 }
 
 .link-document-container {
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 16px;
-  padding: 40px;
-  max-width: 500px;
+  background: #141428;
+  border: 1px solid rgba(57,232,122,0.12);
+  border-radius: 12px;
+  padding: 28px 24px;
+  max-width: 460px;
   width: 100%;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
   box-sizing: border-box;
 }
 
-.link-document-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
+.link-document-header { text-align: center; margin-bottom: 22px; }
 
 .link-document-header h1 {
-  font-size: 28px;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 10px;
-}
-
-.link-document-header p {
-  color: #cfcfcf;
-  font-size: 16px;
-  margin: 0;
-}
-
-.link-document-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
+  font-size: 18px;
   font-weight: 700;
   color: #fff;
-  font-size: 14px;
+  margin: 0 0 8px;
 }
+
+.link-document-header p { color: #a0a0b8; font-size: 13px; margin: 0; }
+
+.link-document-form { display: flex; flex-direction: column; gap: 14px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-weight: 700; color: #e0e0e0; font-size: 12px; }
 
 .form-group select,
 .form-group input {
-  padding: 12px;
-  border: 1px solid #4a4a4a;
-  border-radius: 10px;
-  font-size: 14px;
-  background-color: #1f1f1f;
+  padding: 9px 11px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  font-size: 13px;
+  background-color: #0d0d1a;
   color: #f3f3f3;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -81,189 +52,86 @@
 .form-group select:focus,
 .form-group input:focus {
   outline: none;
-  border-color: #c8752e;
-  box-shadow: 0 0 0 3px rgba(200, 117, 46, 0.15);
+  border-color: #39e87a;
+  box-shadow: 0 0 0 2px rgba(57,232,122,0.1);
 }
 
 .form-group input:disabled,
-.form-group select:disabled {
-  background-color: #2a2a2a;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
+.form-group select:disabled { background-color: #1a1a2e; cursor: not-allowed; opacity: 0.6; }
 
 .error-message {
-  padding: 12px;
-  background: rgba(244, 67, 54, 0.15);
+  padding: 10px 12px;
+  background: rgba(255,85,85,0.1);
   color: #ff9c9c;
-  border: 1px solid rgba(244, 67, 54, 0.3);
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
+  border: 1px solid rgba(255,85,85,0.25);
+  border-radius: 8px;
+  font-size: 12px; font-weight: 600;
 }
 
-.success-message {
-  text-align: center;
-  animation: slideIn 0.5s ease-out;
-}
+.success-message { text-align: center; animation: slideIn 0.5s ease-out; }
 
-.success-icon {
-  font-size: 60px;
-  color: #10b981;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-.success-message h2 { color: #10b981; margin: 0 0 10px; font-size: 22px; }
-.success-message p { color: #cfcfcf; margin: 0; }
+.success-icon { font-size: 48px; color: #39e87a; margin-bottom: 14px; font-weight: 700; }
+.success-message h2 { color: #39e87a; margin: 0 0 8px; font-size: 17px; }
+.success-message p { color: #a0a0b8; margin: 0; font-size: 13px; }
 
 .btn-submit,
 .btn-cancel {
-  padding: 14px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 8px;
   border: none;
-  font-weight: 800;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
   box-sizing: border-box;
 }
 
-.btn-submit {
-  background: #c8752e;
-  color: white;
-  box-shadow: 0 8px 18px rgba(200, 117, 46, 0.25);
-}
-
-.btn-submit:hover:not(:disabled) { background: #b06727; }
+.btn-submit { background: #0033cc; color: white; box-shadow: 0 4px 12px rgba(0,51,204,0.25); }
+.btn-submit:hover:not(:disabled) { background: #0026a8; }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
 
-.btn-cancel {
-  background: #3a3a3a;
-  color: #fff;
-  border: 1px solid #4a4a4a;
-}
-
-.btn-cancel:hover:not(:disabled) { background: #4a4a4a; }
+.btn-cancel { background: #1e1e38; color: #a0a0b8; border: 1px solid rgba(255,255,255,0.08); }
+.btn-cancel:hover:not(:disabled) { background: #252545; color: #fff; }
 .btn-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── ≤320px — Small phones ────────────────────────────────────── */
 @media (max-width: 320px) {
-  .link-document-page {
-    padding: 10px;
-    align-items: flex-end;
-  }
-
-  .link-document-container {
-    padding: 18px 14px;
-    border-radius: 14px 14px 0 0;
-    max-width: 100%;
-  }
-
-  .link-document-header h1 { font-size: 18px; }
-  .link-document-header p { font-size: 12px; }
-  .link-document-header { margin-bottom: 18px; }
-
-  .form-group label { font-size: 12px; }
-  .form-group select, .form-group input { font-size: 13px; padding: 9px; }
-
-  .btn-submit, .btn-cancel { padding: 11px; font-size: 13px; }
-  .error-message { font-size: 12px; padding: 9px; }
-  .success-icon { font-size: 44px; }
-  .success-message h2 { font-size: 16px; }
-  .link-document-form { gap: 14px; }
+  .link-document-page { padding: 8px; align-items: flex-end; }
+  .link-document-container { padding: 16px 12px; border-radius: 12px 12px 0 0; max-width: 100%; }
+  .link-document-header h1 { font-size: 15px; }
+  .link-document-header p { font-size: 11px; }
+  .link-document-header { margin-bottom: 14px; }
+  .form-group label { font-size: 11px; }
+  .form-group select, .form-group input { font-size: 13px; padding: 8px; }
+  .btn-submit, .btn-cancel { padding: 10px; font-size: 12px; }
+  .error-message { font-size: 11px; padding: 8px; }
+  .success-icon { font-size: 36px; }
+  .success-message h2 { font-size: 14px; }
+  .link-document-form { gap: 10px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .link-document-page {
-    padding: 12px;
-    align-items: flex-end;
-  }
-
-  .link-document-container {
-    padding: 22px 16px;
-    border-radius: 14px 14px 0 0;
-    max-width: 100%;
-  }
-
-  .link-document-header h1 { font-size: 20px; }
-  .link-document-header p { font-size: 13px; }
-  .link-document-header { margin-bottom: 20px; }
-
-  .form-group label { font-size: 13px; }
-  .form-group select, .form-group input { font-size: 14px; padding: 10px; }
-
-  .btn-submit, .btn-cancel { padding: 12px; font-size: 14px; }
-  .link-document-form { gap: 16px; }
+  .link-document-page { padding: 10px; align-items: flex-end; }
+  .link-document-container { padding: 18px 14px; border-radius: 12px 12px 0 0; max-width: 100%; }
+  .link-document-header h1 { font-size: 16px; }
+  .link-document-header p { font-size: 12px; }
+  .link-document-header { margin-bottom: 16px; }
+  .btn-submit, .btn-cancel { padding: 10px; font-size: 13px; }
+  .link-document-form { gap: 12px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .link-document-page { padding: 16px; }
-
-  .link-document-container {
-    padding: 28px 20px;
-    max-width: 440px;
-  }
-
-  .link-document-header h1 { font-size: 22px; }
-  .link-document-header p { font-size: 14px; }
-
-  .form-group label { font-size: 13px; }
-  .btn-submit, .btn-cancel { padding: 13px; font-size: 15px; }
+  .link-document-page { padding: 14px; }
+  .link-document-container { padding: 22px 18px; max-width: 400px; }
+  .link-document-header h1 { font-size: 17px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
-@media (min-width: 601px) and (max-width: 768px) {
-  .link-document-container {
-    padding: 32px 24px;
-    max-width: 480px;
-  }
-
-  .link-document-header h1 { font-size: 24px; }
-  .link-document-header p { font-size: 15px; }
-}
-
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .link-document-container {
-    padding: 36px 28px;
-    max-width: 500px;
-  }
-
-  .link-document-header h1 { font-size: 26px; }
-}
-
-/* ─── 1025px+ — Desktops ───────────────────────────────────────── */
-@media (min-width: 1025px) {
-  .link-document-container {
-    padding: 40px;
-    max-width: 500px;
-  }
-
-  .link-document-header h1 { font-size: 28px; }
-  .form-group label { font-size: 14px; }
-  .btn-submit, .btn-cancel { font-size: 16px; }
-}
-
-/* ─── 1441px+ — Large desktops / 4K ───────────────────────────── */
-@media (min-width: 1441px) {
-  .link-document-container {
-    padding: 48px;
-    max-width: 560px;
-    border-radius: 20px;
-  }
-
-  .link-document-header h1 { font-size: 32px; }
-  .link-document-header p { font-size: 17px; }
-  .form-group label { font-size: 16px; }
-  .form-group select, .form-group input { font-size: 16px; padding: 14px; }
-  .btn-submit, .btn-cancel { padding: 16px; font-size: 18px; }
+@media (min-width: 601px) {
+  .link-document-container { padding: 28px 24px; max-width: 460px; }
+  .link-document-header h1 { font-size: 18px; }
 }

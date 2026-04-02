@@ -1,11 +1,13 @@
 /* EventsPage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px   Small phones  |  321–480px  Standard phones
-   481–600px Large phones  |  601–768px  Tablets portrait
-   769–1024px Tablets landscape / small laptops
-   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
+:root {
+  --brand-blue: #0033cc;
+  --brand-blue-dark: #0026a8;
+  --brand-green: #39e87a;
+  --bg-dark: #0f0f1a;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0b8;
+}
 
 * {
   margin: 0;
@@ -33,10 +35,11 @@ body {
   padding: 0;
 }
 
+/* ── Contenedor lista ── */
 .events-container {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 32px 48px;
 }
 
 .events-header {
@@ -53,14 +56,15 @@ body {
 .events-list {
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .events-list-title {
   color: #ffffff;
   text-align: center;
   font-weight: 700;
-  font-size: 48px;
-  margin-bottom: 3rem;
+  font-size: 28px;
+  margin-bottom: 24px;
 }
 
 /* ── View toggle button ── */
@@ -96,19 +100,9 @@ body {
   stroke: #333;
 }
 
-/* ── Gallery View ── */
-.gallery-view {
-  background-color: #1a1a1a;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  display: flex;
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-}
+/* ══════════════════════════════════════════════════════════════════
+   CARRUSEL — valores originales restaurados exactamente
+══════════════════════════════════════════════════════════════════ */
 
 .gallery-container {
   position: relative;
@@ -229,7 +223,7 @@ body {
 .detail-item svg {
   width: clamp(16px, 0.8vw + 8px, 22px);
   height: clamp(16px, 0.8vw + 8px, 22px);
-  stroke: #ff6b35;
+  stroke: var(--brand-green);
   flex-shrink: 0;
 }
 
@@ -237,68 +231,71 @@ body {
 
 .gallery-buttons {
   display: flex;
-  gap: 28px;
+  gap: 16px;
   margin-top: 32px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.btn-gallery {
-  padding: 28px 40px !important;
+/* ── Botones galería ── */
+.btn {
+  padding: 10px 22px;
   border: none;
-  border-radius: 12px;
-  font-size: 25px !important;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-primary {
+  background: var(--brand-blue);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--brand-blue-dark);
+}
+
+.btn-gallery {
+  padding: 14px 32px !important;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px !important;
   font-weight: 700 !important;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 220px;
+  min-width: 160px;
   line-height: 1.1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
+.btn-gallery.btn-primary {
+  background: var(--brand-green);
+  color: #071407;
+  box-shadow: 0 2px 12px rgba(57, 232, 122, 0.3);
+}
+
+.btn-gallery.btn-primary:hover {
+  background: #4dffa0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(57, 232, 122, 0.45);
+}
+
 .btn-gallery-secondary {
   background-color: white;
   color: black;
-  border: 3px solid white;
+  border: 2px solid white;
 }
 
 .btn-gallery-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.88);
+  transform: translateY(-1px);
 }
 
-.gallery-thumbnails {
-  position: absolute;
-  bottom: 48px;
-  left: 48px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  max-width: 500px;
-}
-
-.thumbnail {
-  width: 56px;
-  height: 56px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 2px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.thumbnail:hover { background-color: rgba(255, 255, 255, 0.2); }
-.thumbnail.active { border-color: #ff6b35; background-color: rgba(255, 107, 53, 0.2); }
-.thumbnail-index { font-size: 12px; }
-
+/* ── Nav arrows ── */
 .gallery-nav {
   position: absolute;
   top: 50%;
@@ -326,6 +323,15 @@ body {
 .loading-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; }
 .loading-text { color: #666; font-size: 16px; }
 
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid rgba(57, 232, 122, 0.15);
+  border-top-color: var(--brand-green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .error-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; text-align: center; padding: 32px; }
 .error-container h2 { color: #333; font-size: 20px; }
 .error-container p { color: #666; font-size: 14px; max-width: 400px; }
@@ -335,150 +341,140 @@ body {
 .no-events h2 { color: #333; font-size: 20px; }
 .no-events p { color: #666; font-size: 14px; }
 
-/* ─── ≤320px — Small phones ────────────────────────────────────── */
+/* ── Skeleton shimmer ── */
+.gallery-image-skeleton {
+  background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── ≤320px ────────────────────────────────────────────────────── */
 @media (max-width: 320px) {
   .view-toggle-btn { top: 58px; left: 8px; padding: 6px 10px; font-size: 10px; }
   .view-toggle-btn svg { width: 12px; height: 12px; }
-
   .events-container { padding: 10px; }
-  .events-header { margin-bottom: 12px; }
-  .events-subtitle { font-size: 12px; }
-  .events-list-title { font-size: 26px; margin-bottom: 1.5rem; }
+  .events-list-title { font-size: 18px; margin-bottom: 14px; }
+  .events-list { gap: 12px; }
 
   .gallery-main { flex-direction: column; padding: 10px; gap: 10px; }
   .gallery-carousel { width: 100%; height: 30vh; max-height: 260px; order: 1; justify-content: center; }
-  .gallery-image-current { width: 65%; height: 65%; transform: translateX(-12%) scale(1); }
-  .gallery-image-next { width: 42%; height: 42%; transform: translateX(52%) scale(0.7); opacity: 0.38; }
+  .gallery-image-current { width: 70%; height: 70%; transform: translateX(0) scale(1); }
+  .gallery-image-next { width: 38%; height: 38%; transform: translateX(90%) scale(0.7); opacity: 0.38; }
   .gallery-info { width: 100%; max-width: 100%; padding: 0; order: 2; margin-right: 0; }
   .gallery-title { font-size: 16px; margin-bottom: 10px; }
   .gallery-subtitle { font-size: 10px; }
-  .gallery-details { gap: 6px; margin-bottom: 10px; margin-top: 12px; }
+  .gallery-details { flex-direction: column; align-items: center; gap: 6px; margin-bottom: 10px; margin-top: 12px; margin-left: 0; }
   .detail-item { font-size: 11px; flex-direction: row; }
   .detail-item svg { width: 13px; height: 13px; }
   .gallery-description { font-size: 12px; margin-bottom: 10px; }
   .gallery-buttons { flex-direction: column; gap: 10px; }
-  .btn-gallery { width: 100%; padding: 14px 20px !important; font-size: 14px !important; min-width: auto; }
-  .gallery-thumbnails { position: relative; bottom: auto; left: auto; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 10px; max-width: 100%; }
-  .thumbnail { width: 36px; height: 36px; font-size: 9px; }
+  .btn-gallery { width: 100%; padding: 11px 20px !important; font-size: 13px !important; min-width: auto; }
   .gallery-nav { width: 28px; height: 28px; }
   .gallery-nav svg { width: 14px; height: 14px; stroke: white; }
   .gallery-nav.prev { left: 5px; }
   .gallery-nav.next { right: 5px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
+/* ─── 321–480px ─────────────────────────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
   .view-toggle-btn { top: 64px; left: 12px; padding: 8px 16px; font-size: 12px; }
   .view-toggle-btn svg { width: 14px; height: 14px; }
-
   .events-container { padding: 12px; }
-  .events-header { margin-bottom: 14px; }
-  .events-subtitle { font-size: 13px; }
-  .events-list-title { font-size: 30px; margin-bottom: 2rem; }
+  .events-list-title { font-size: 20px; margin-bottom: 16px; }
+  .events-list { gap: 14px; }
 
   .gallery-main { flex-direction: column; padding: 12px; gap: 12px; align-items: stretch; }
   .gallery-carousel { width: 100%; height: 35vh; max-height: 300px; order: 1; justify-content: center; }
-  .gallery-image-current { width: 65%; height: 65%; transform: translateX(-15%) scale(1); }
-  .gallery-image-next { width: 45%; height: 45%; transform: translateX(55%) scale(0.7); opacity: 0.4; }
+  .gallery-image-current { width: 70%; height: 70%; transform: translateX(0) scale(1); }
+  .gallery-image-next { width: 42%; height: 42%; transform: translateX(90%) scale(0.7); opacity: 0.4; }
   .gallery-info { width: 100%; max-width: 100%; padding: 0; order: 2; margin-right: 0; }
   .gallery-title { font-size: 20px; margin-bottom: 16px; }
   .gallery-subtitle { font-size: 11px; line-height: 1.5; }
-  .gallery-details { gap: 10px; margin-bottom: 16px; }
+  .gallery-details { flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; margin-left: 0; }
   .detail-item { font-size: 13px; flex-direction: row; }
   .detail-item svg { min-width: 16px; width: 16px; height: 16px; }
   .gallery-description { font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
   .gallery-buttons { flex-direction: column; gap: 16px; }
-  .btn-gallery { width: 100%; padding: 20px 28px !important; font-size: 18px !important; min-width: auto; }
-  .btn-gallery-secondary { background-color: transparent; border: 3px solid white; color: white; }
-  .gallery-thumbnails { position: relative; bottom: auto; left: auto; right: auto; top: auto; flex-direction: row; flex-wrap: wrap; gap: 8px; margin-top: 16px; max-width: 100%; justify-content: center; }
-  .thumbnail { width: 40px; height: 40px; font-size: 11px; }
+  .btn-gallery { width: 100%; padding: 12px 28px !important; font-size: 14px !important; min-width: auto; }
+  .btn-gallery-secondary { background-color: transparent; border: 2px solid white; color: white; }
   .gallery-nav { position: absolute; width: 32px; height: 32px; background-color: transparent; border: 2px solid white; }
   .gallery-nav svg { width: 16px; height: 16px; stroke: white; }
   .gallery-nav.prev { left: 8px; }
   .gallery-nav.next { right: 8px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+/* ─── 481–600px ─────────────────────────────────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
   .view-toggle-btn { top: 64px; left: 12px; padding: 8px 16px; font-size: 12px; }
   .events-container { padding: 12px; }
-  .events-list-title { font-size: 34px; }
+  .events-list-title { font-size: 22px; }
+  .events-list { gap: 16px; }
 
   .gallery-main { flex-direction: column; padding: 16px; gap: 16px; align-items: stretch; }
   .gallery-carousel { width: 100%; height: 40vh; max-height: 400px; order: 1; justify-content: center; }
-  .gallery-image-current { width: 70%; height: 70%; transform: translateX(-12%) scale(1); }
-  .gallery-image-next { width: 50%; height: 50%; transform: translateX(50%) scale(0.75); opacity: 0.45; }
+  .gallery-image-current { width: 72%; height: 72%; transform: translateX(0) scale(1); }
+  .gallery-image-next { width: 45%; height: 45%; transform: translateX(88%) scale(0.75); opacity: 0.45; }
   .gallery-info { width: 100%; max-width: 100%; padding: 0; order: 2; margin-right: 0; }
   .gallery-title { font-size: 22px; margin-bottom: 16px; }
-  .gallery-details { gap: 10px; margin-bottom: 16px; }
+  .gallery-details { flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; margin-left: 0; }
   .gallery-buttons { flex-direction: column; gap: 16px; }
-  .btn-gallery { width: 100%; padding: 22px 32px !important; font-size: 20px !important; min-width: auto; }
-  .gallery-thumbnails { position: relative; flex-direction: row; gap: 8px; margin-top: 16px; max-width: 100%; justify-content: center; }
-  .thumbnail { width: 44px; height: 44px; }
+  .btn-gallery { width: 100%; padding: 13px 32px !important; font-size: 14px !important; min-width: auto; }
   .gallery-nav { position: absolute; width: 36px; height: 36px; border: 2px solid white; }
   .gallery-nav.prev { left: 8px; }
   .gallery-nav.next { right: 8px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+/* ─── 601–768px ─────────────────────────────────────────────────── */
 @media (min-width: 601px) and (max-width: 768px) {
   .view-toggle-btn { top: 70px; left: 16px; padding: 10px 20px; font-size: 13px; }
-
   .events-container { max-width: 100%; }
-  .events-list-title { font-size: 38px; }
+  .events-list-title { font-size: 24px; }
+  .events-list { gap: 18px; }
 
   .gallery-main { flex-direction: column; padding: 24px; gap: 32px; align-items: center; }
   .gallery-carousel { width: 100%; max-width: 600px; height: 50vh; order: 1; justify-content: center; }
-  .gallery-image-current { width: 75%; height: 75%; transform: translateX(-10%) scale(1); }
-  .gallery-image-next { width: 55%; height: 55%; transform: translateX(45%) scale(0.85); opacity: 0.5; }
+  .gallery-image-current { width: 78%; height: 78%; transform: translateX(0) scale(1); }
+  .gallery-image-next { width: 50%; height: 50%; transform: translateX(88%) scale(0.85); opacity: 0.5; }
   .gallery-info { width: 100%; max-width: 100%; text-align: center; order: 2; margin-right: 0; }
   .gallery-title { font-size: 30px; }
-  .detail-item { flex-direction: column; align-items: center; }
+  .gallery-details { flex-direction: column; align-items: center; gap: 12px; margin-left: 0; }
+  .detail-item { flex-direction: row; align-items: center; }
   .gallery-subtitle { font-size: 13px; }
   .gallery-description { font-size: 15px; }
   .gallery-buttons { flex-direction: row; justify-content: center; gap: 20px; }
-  .btn-gallery { padding: 24px 36px !important; font-size: 22px !important; min-width: 200px; }
-  .gallery-thumbnails { bottom: auto; left: auto; top: 24px; right: 24px; flex-direction: column; max-width: 60px; }
-  .thumbnail { width: 50px; height: 50px; }
+  .btn-gallery { padding: 13px 28px !important; font-size: 14px !important; min-width: 160px; }
   .gallery-nav.prev { left: 12px; width: 40px; height: 40px; }
   .gallery-nav.next { right: 12px; width: 40px; height: 40px; }
 }
 
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
+/* ─── 769–1024px ────────────────────────────────────────────────── */
 @media (min-width: 769px) and (max-width: 1024px) {
   .view-toggle-btn { top: 70px; left: 16px; padding: 10px 20px; font-size: 13px; }
+  .events-list-title { font-size: 26px; }
+  .events-list { gap: 18px; }
 
   .gallery-main { gap: 32px; padding: 32px; }
   .gallery-title { font-size: 36px; }
   .gallery-carousel { width: 58%; }
   .gallery-image-current { width: 88%; height: 88%; transform: translateX(-12%) scale(1); }
   .gallery-image-next { width: 70%; height: 70%; transform: translateX(38%) scale(0.88); }
-  .btn-gallery { padding: 26px 38px !important; font-size: 23px !important; min-width: 200px; }
-  .events-list-title { font-size: 42px; }
+  .btn-gallery { padding: 13px 28px !important; font-size: 14px !important; min-width: 160px; }
 }
 
-/* ─── 1025–1280px — Laptops / desktops ────────────────────────── */
+/* ─── 1025–1280px ───────────────────────────────────────────────── */
 @media (min-width: 1025px) and (max-width: 1280px) {
   .gallery-main { gap: 48px; }
   .gallery-title { font-size: 48px; }
   .gallery-carousel { width: 55%; }
-  .events-list-title { font-size: 44px; }
+  .events-list-title { font-size: 27px; }
 }
 
-/* ─── 1281px+ — Large desktops / 4K ───────────────────────────── */
+/* ─── 1281px+ ───────────────────────────────────────────────────── */
 @media (min-width: 1281px) {
   .gallery-title { font-size: clamp(48px, 4vw + 12px, 72px); }
-  .events-list-title { font-size: 48px; }
-}
-
-/* Skeleton shimmer mientras las imágenes precargan */
-.gallery-image-skeleton {
-  background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.5s infinite ease-in-out;
-}
-
-@keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  .events-list-title { font-size: 28px; }
 }

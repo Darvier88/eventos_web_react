@@ -43,6 +43,15 @@ const PrivateRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" state={{ from: location }} replace />;
 };
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
+  return null;
+};
+
 function AppContent() {
   const [netBlocked, setNetBlocked] = useState(false);
   const [netMsg, setNetMsg] = useState('');
@@ -69,6 +78,7 @@ function AppContent() {
 
   return (
     <div className="app">
+      <ScrollToTop />
       <NetworkBlocker show={netBlocked} message={netMsg} />
       <Header />
       <main>

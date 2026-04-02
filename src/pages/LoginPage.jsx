@@ -29,9 +29,29 @@ const LoginPage = () => {
     setError('');
     setLoading(true);
 
+    // Mostrar detalles de la petición
+    const url = `${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/attender/login`;
+    const headers = { 'Content-Type': 'application/json' };
+    const bodySent = JSON.stringify({ email, password });
+    console.log('[LOGIN_ATTENDER] URL:', url);
+    console.log('[LOGIN_ATTENDER] Headers:', headers);
+    console.log('[LOGIN_ATTENDER] Body enviado:', bodySent);
+
     try {
       const result = await loginAttender(email, password);
-      
+
+      // Mostrar detalles de la respuesta (si están disponibles)
+      if (result && result.data) {
+        if (result.data.statusCode) {
+          console.log('[LOGIN_ATTENDER] Status code:', result.data.statusCode);
+        }
+        console.log('[LOGIN_ATTENDER] Body respuesta:', result.data);
+      } else if (result && result.success) {
+        console.log('[LOGIN_ATTENDER] Login exitoso:', result);
+      } else if (result && result.error) {
+        console.log('[LOGIN_ATTENDER] Error:', result.error);
+      }
+
       if (result.success) {
         console.log('[Login] Usuario ID:', result.data?.userId);
         console.log('[Login] Datos completos:', result.data);

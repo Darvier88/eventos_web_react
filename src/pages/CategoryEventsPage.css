@@ -1,190 +1,67 @@
 /* CategoryEventsPage.css — Fully Responsive */
 
-/* ─── Breakpoints ─────────────────────────────────────────────────
-   ≤320px   Small phones  |  321–480px  Standard phones
-   481–600px Large phones  |  601–768px  Tablets portrait
-   769–1024px Tablets landscape / small laptops
-   1025–1280px Laptops    |  1281–1440px Desktops  |  1441px+ 4K
-──────────────────────────────────────────────────────────────────── */
-
 .category-events-page {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #0f0f1a;
 }
 
 .category-events-container {
-  max-width: 1400px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 32px 24px 48px;
+  padding: 20px 20px 40px;
   box-sizing: border-box;
 }
 
 .category-title {
   color: #fff;
-  font-size: 32px;
-  font-weight: bold;
-  margin: 24px 0 32px;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 14px 0 18px;
 }
 
 .category-events-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 20px;
+  gap: 14px;
   align-items: start;
 }
 
-.category-events-grid > * {
-  height: auto;
-  display: flex;
-  flex-direction: column;
-}
+.category-events-grid > * { height: auto; display: flex; flex-direction: column; }
 
 .empty-state {
-  padding: 24px;
-  background-color: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 12px;
+  padding: 20px;
+  background-color: #1e1e2e;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
   text-align: center;
-  color: #bdbdbd;
-  font-size: 15px;
+  color: #a0a0b8;
+  font-size: 13px;
 }
 
-/* ─── ≤320px — Small phones ────────────────────────────────────── */
 @media (max-width: 320px) {
-  .category-events-container {
-    padding: 14px 10px 28px;
-  }
-
-  .category-title {
-    font-size: 20px;
-    margin: 14px 0 18px;
-  }
-
-  .category-events-grid {
-    gap: 10px;
-  }
-
-  .empty-state {
-    padding: 16px;
-    font-size: 13px;
-    border-radius: 8px;
-  }
+  .category-events-container { padding: 10px 10px 20px; }
+  .category-title { font-size: 15px; margin: 8px 0 12px; }
+  .category-events-grid { gap: 8px; }
+  .empty-state { padding: 12px; font-size: 12px; border-radius: 8px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .category-events-container {
-    padding: 16px 12px 32px;
-  }
-
-  .category-title {
-    font-size: 22px;
-    margin: 16px 0 20px;
-  }
-
-  .category-events-grid {
-    gap: 12px;
-  }
+  .category-events-container { padding: 12px 12px 24px; }
+  .category-title { font-size: 16px; margin: 10px 0 14px; }
+  .category-events-grid { gap: 10px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .category-events-container {
-    padding: 20px 16px 36px;
-  }
-
-  .category-title {
-    font-size: 24px;
-    margin: 18px 0 24px;
-  }
-
-  .category-events-grid {
-    gap: 14px;
-  }
+  .category-events-container { padding: 16px 14px 28px; }
+  .category-title { font-size: 17px; }
+  .category-events-grid { gap: 12px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
 @media (min-width: 601px) and (max-width: 768px) {
-  .category-events-container {
-    padding: 24px 20px 40px;
-  }
-
-  .category-title {
-    font-size: 26px;
-    margin: 20px 0 26px;
-  }
-
-  .category-events-grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 16px;
-  }
+  .category-events-container { padding: 18px 16px 32px; }
+  .category-title { font-size: 18px; }
 }
 
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .category-events-container {
-    padding: 28px 20px 44px;
-  }
-
-  .category-title {
-    font-size: 28px;
-    margin: 22px 0 28px;
-  }
-
-  .category-events-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
-  }
-}
-
-/* ─── 1025–1280px — Laptops / desktops ────────────────────────── */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .category-events-container {
-    max-width: 1200px;
-    padding: 32px 24px 48px;
-  }
-
-  .category-title {
-    font-size: 30px;
-  }
-
-  .category-events-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
-  }
-}
-
-/* ─── 1281–1440px — Large desktops ────────────────────────────── */
-@media (min-width: 1281px) and (max-width: 1440px) {
-  .category-events-container {
-    max-width: 1400px;
-    padding: 32px 24px 48px;
-  }
-
-  .category-title {
-    font-size: 32px;
-  }
-
-  .category-events-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 24px;
-  }
-}
-
-/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
-@media (min-width: 1441px) {
-  .category-events-container {
-    max-width: 1600px;
-    padding: 40px 32px 56px;
-  }
-
-  .category-title {
-    font-size: 36px;
-    margin: 28px 0 36px;
-  }
-
-  .category-events-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px;
-  }
+@media (min-width: 769px) {
+  .category-events-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 }

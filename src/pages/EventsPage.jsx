@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import EventCard from '../components/EventCard';
+import Footer from '../components/Footer';
 import apiService from '../services/apiService';
 import secureStorage from '../services/secureStorage';
 import { useNavigate } from 'react-router-dom';
@@ -29,24 +30,17 @@ const useEvents = () =>
     staleTime: 1000 * 60 * 2,
   });
 
-// Descarga las URLs de TODAS las imágenes y las precarga en el browser de una vez.
-// El carrusel no avanza hasta que todas estén listas → cero parpadeo.
 const useAllEventImages = (events) =>
   useQuery({
     queryKey: ['allEventImages', events.map((e) => e._id || e.id || e.event_id).join(',')],
     queryFn: async () => {
-      // 1. Obtener todas las URLs en paralelo
       const urls = await Promise.all(
         events.map((e) => {
           const id = e._id || e.id || e.event_id;
           return apiService.getImageFileByEvent(id, 'square').catch(() => null);
         })
       );
-
-      // 2. Precargar todas las imágenes en el browser antes de devolver nada
       await Promise.all(urls.map(preloadImage));
-
-      // Devuelve un mapa { eventId: url } para acceso O(1)
       return Object.fromEntries(
         events.map((e, i) => [e._id || e.id || e.event_id, urls[i]])
       );
@@ -63,8 +57,6 @@ const EventsPage = () => {
   const navigate = useNavigate();
 
   const { data: events = [], isLoading, isError, error, refetch } = useEvents();
-
-  // imageMap es null mientras carga, luego { eventId: url, ... }
   const { data: imageMap = null, isLoading: isLoadingImages } = useAllEventImages(events);
 
   const allReady = !isLoading && !isLoadingImages && imageMap !== null;
@@ -88,7 +80,6 @@ const EventsPage = () => {
     }, 2000);
   }, [events.length, stopAutoAdvance]);
 
-  // El carrusel solo arranca cuando todas las imágenes están listas
   useEffect(() => {
     if (!allReady || isHovered) return;
     startAutoAdvance();
@@ -155,6 +146,7 @@ const EventsPage = () => {
           <h2>No hay eventos disponibles</h2>
           <p>Vuelve pronto para ver nuevos eventos</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -268,6 +260,8 @@ const EventsPage = () => {
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };

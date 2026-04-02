@@ -1,5 +1,5 @@
 // src/pages/EventDetailPage.jsx
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -10,11 +10,6 @@ import { useAuth } from '../context/AuthContext';
 import './EventDetailPage.css';
 
 const EventDetailPage = () => {
-  // Scroll al top al montar
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, []);
-
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -107,12 +102,30 @@ const EventDetailPage = () => {
     }
   }
 
+  
+
   const visibleTickets = useMemo(
     () => tickets.filter((t) => !t.hidden).sort((a, b) => a.price - b.price),
     [tickets]
   );
 
+  // Estado para modal de evento finalizado
+  const [showEndedModal, setShowEndedModal] = useState(false);
+
+  // Determinar si el evento ya terminó
+  let isEventOver = false;
+  if (event && event.end_date) {
+    isEventOver = new Date() > new Date(event.end_date);
+  } else if (event && event.start_date) {
+    // Si no hay end_date, usar start_date como referencia
+    isEventOver = new Date() > new Date(event.start_date);
+  }
+
   const handleGoToPurchase = () => {
+    if (isEventOver) {
+      setShowEndedModal(true);
+      return;
+    }
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -147,6 +160,8 @@ const EventDetailPage = () => {
       </div>
     );
   }
+
+  
 
   return (
     <div className="event-detail-page">
@@ -201,6 +216,17 @@ const EventDetailPage = () => {
                 <button className="btn btn-primary btn-buy" onClick={handleGoToPurchase}>
                   Comprar tickets
                 </button>
+                    {/* Modal global para evento finalizado */}
+                    {showEndedModal && (
+                      <div className="blocked-modal-backdrop" onClick={() => setShowEndedModal(false)}>
+                        <div className="blocked-modal" onClick={e => e.stopPropagation()}>
+                          <div className="blocked-modal-content">
+                            <span>El evento ya se acabó. No es posible comprar tickets.</span>
+                            <button className="blocked-modal-close" onClick={() => setShowEndedModal(false)} aria-label="Cerrar">&times;</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
               </>
             )}
           </div>

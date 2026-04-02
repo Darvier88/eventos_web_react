@@ -1,34 +1,26 @@
 /* QRCodeModal.css — Fully Responsive */
 
-/* ─── Breakpoints reference ───────────────────────────────────────
-   320px   → Small phones (iPhone SE, Galaxy A series)
-   480px   → Large phones (iPhone 14, Pixel 7)
-   600px   → Phablets / large phones landscape
-   768px   → Tablets portrait (iPad mini, iPad)
-   1024px  → Tablets landscape / small laptops
-   1280px  → Laptops / desktops
-   1440px+ → Large desktops / 4K
-──────────────────────────────────────────────────────────────────── */
-
 .qr-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 16px;
   box-sizing: border-box;
+  backdrop-filter: blur(3px);
 }
 
 .qr-modal {
-  background: #2a2a2a;
+  background: #141428;
+  border: 1px solid rgba(57, 232, 122, 0.12);
   border-radius: 12px;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   padding: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   box-sizing: border-box;
 }
 
@@ -41,18 +33,19 @@
 
 .qr-modal-header h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 15px;
+  font-weight: 600;
   color: #fff;
 }
 
 .qr-close {
   border: none;
   background: transparent;
-  font-size: 22px;
+  font-size: 20px;
   cursor: pointer;
-  color: #bdbdbd;
-  min-width: 32px;
-  min-height: 32px;
+  color: #a0a0b8;
+  min-width: 28px;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,48 +54,83 @@
   flex-shrink: 0;
 }
 
-.qr-close:hover {
-  color: #fff;
-}
+.qr-close:hover { color: #fff; }
 
 .qr-modal-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .qr-box {
   position: relative;
   padding: 10px;
-  border: 1px solid #3a3a3a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  background: #2f2f2f;
+  background: #0d0d1a;
 }
 
 .qr-box.used {
-  border-color: #16a34a;
-  background: rgba(22, 163, 74, 0.1);
+  border-color: #39e87a;
+  background: rgba(57, 232, 122, 0.06);
 }
 
 .qr-used {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #16a34a;
-  color: #fff;
-  padding: 2px 6px;
+  background: #39e87a;
+  color: #071407;
+  padding: 2px 7px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.qr-blur-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  backdrop-filter: blur(7px);
+  background: rgba(20, 20, 40, 0.25);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.qr-masked-msg {
+  display: block;
+  margin-top: 10px;
+  color: #ffb347;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 600;
+  z-index: 3;
+  position: relative;
+  background: rgba(20, 20, 40, 0.85);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-bottom: 4px;
 }
 
 .qr-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  color: #cfcfcf;
-  font-size: 14px;
+  gap: 3px;
+  color: #a0a0b8;
+  font-size: 12px;
   text-align: center;
 }
 
@@ -112,177 +140,45 @@
 }
 
 .qr-nav-btn {
-  border: 1px solid #3a3a3a;
-  background: #2f2f2f;
-  padding: 8px 12px;
-  border-radius: 8px;
+  border: 1px solid rgba(57, 232, 122, 0.15);
+  background: #1e1e38;
+  padding: 7px 12px;
+  border-radius: 7px;
   cursor: pointer;
-  color: #cfcfcf;
-  font-size: 14px;
-  min-width: 44px;
-  min-height: 44px;
+  color: #a0a0b8;
+  font-size: 13px;
+  min-width: 40px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .qr-nav-btn:hover {
-  background: #3a3a3a;
+  background: rgba(57, 232, 122, 0.1);
+  color: #39e87a;
+  border-color: rgba(57, 232, 122, 0.3);
 }
 
-/* ─── 320px — Small phones ─────────────────────────────────────── */
+/* ─── ≤320px ────────────────────────────────────────────────────── */
 @media (max-width: 320px) {
-  .qr-modal-backdrop {
-    padding: 8px;
-    align-items: flex-end;
-  }
-
-  .qr-modal {
-    border-radius: 12px 12px 0 0;
-    padding: 12px;
-    max-width: 100%;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 14px;
-  }
-
-  .qr-close {
-    font-size: 18px;
-  }
-
-  .qr-box {
-    padding: 8px;
-    border-radius: 8px;
-  }
-
-  .qr-info {
-    font-size: 11px;
-  }
-
-  .qr-nav-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-width: 38px;
-    min-height: 38px;
-  }
+  .qr-modal-backdrop { padding: 8px; align-items: flex-end; }
+  .qr-modal { border-radius: 12px 12px 0 0; padding: 12px; max-width: 100%; }
+  .qr-modal-header h2 { font-size: 13px; }
+  .qr-info { font-size: 11px; }
+  .qr-nav-btn { padding: 6px 10px; font-size: 12px; min-width: 36px; min-height: 36px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
+/* ─── 321–480px ─────────────────────────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .qr-modal-backdrop {
-    padding: 10px;
-    align-items: flex-end;
-  }
-
-  .qr-modal {
-    border-radius: 12px 12px 0 0;
-    padding: 14px;
-    max-width: 100%;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 15px;
-  }
-
-  .qr-info {
-    font-size: 12px;
-  }
-
-  .qr-nav-btn {
-    padding: 7px 10px;
-    font-size: 13px;
-  }
+  .qr-modal-backdrop { padding: 10px; align-items: flex-end; }
+  .qr-modal { border-radius: 12px 12px 0 0; padding: 14px; max-width: 100%; }
+  .qr-modal-header h2 { font-size: 14px; }
+  .qr-info { font-size: 12px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
-@media (min-width: 481px) and (max-width: 600px) {
-  .qr-modal-backdrop {
-    padding: 12px;
-  }
-
-  .qr-modal {
-    max-width: 380px;
-    padding: 16px;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 16px;
-  }
-
-  .qr-info {
-    font-size: 13px;
-  }
-}
-
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
-@media (min-width: 601px) and (max-width: 768px) {
-  .qr-modal {
-    max-width: 400px;
-    padding: 18px;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 17px;
-  }
-}
-
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .qr-modal {
-    max-width: 420px;
-    padding: 18px;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 18px;
-  }
-}
-
-/* ─── 1025px+ — Desktops ───────────────────────────────────────── */
-@media (min-width: 1025px) {
-  .qr-modal {
-    max-width: 440px;
-    padding: 20px;
-    border-radius: 14px;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 20px;
-  }
-
-  .qr-info {
-    font-size: 15px;
-  }
-
-  .qr-nav-btn {
-    padding: 10px 16px;
-    font-size: 15px;
-  }
-
-  .qr-box {
-    padding: 12px;
-    border-radius: 12px;
-  }
-}
-
-/* ─── 1440px+ — Large desktops ────────────────────────────────── */
-@media (min-width: 1440px) {
-  .qr-modal {
-    max-width: 460px;
-    padding: 24px;
-  }
-
-  .qr-modal-header h2 {
-    font-size: 22px;
-  }
-
-  .qr-modal-body {
-    gap: 16px;
-  }
-
-  .qr-info {
-    font-size: 16px;
-  }
+/* ─── 481px+ ────────────────────────────────────────────────────── */
+@media (min-width: 481px) {
+  .qr-modal { max-width: 380px; }
 }

@@ -9,10 +9,6 @@ import secureStorage from '../services/secureStorage';
 import './PurchaseTicketPage.css';
 
 const PurchaseTicketsPage = () => {
-  // Scroll al top al montar
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, []);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { state } = useLocation();
@@ -132,16 +128,21 @@ const PurchaseTicketsPage = () => {
 
   // Inicializar cantidades
   useEffect(() => {
+    const visibles = tickets.filter((t) => !t.hidden);
     const initial = {};
-    tickets
-      .filter((t) => !t.hidden)
-      .forEach((t) => {
+    if (visibles.length > 1) {
+      visibles.forEach((t) => {
+        initial[t._id] = 0;
+      });
+    } else {
+      visibles.forEach((t) => {
         const min = Number(t.minimum_to_buy ?? t.minimumToBuy ?? 0);
         const maxRaw = Number(t.max_to_buy ?? t.maximum_to_buy ?? t.maxToBuy ?? 0);
-        const max = maxRaw > 0 ? maxRaw : 9999; // si no viene max, permitimos crecer
+        const max = maxRaw > 0 ? maxRaw : 9999;
         const isFixed = min > 0 && min === maxRaw && maxRaw > 0;
-        initial[t._id] = isFixed ? min : Math.max(0, min); // arranca en min si hay min
+        initial[t._id] = isFixed ? min : Math.max(0, min);
       });
+    }
     setQuantities(initial);
   }, [tickets]);
 
@@ -266,6 +267,28 @@ const PurchaseTicketsPage = () => {
         items,
         userProfile,
       });
+
+      if (totalCost === 0) {
+        const purchaseId = await apiService.createPurchaseTicket(
+          resolvedEventId,
+          userProfile._id,
+          { 
+            toBuyTickets,
+            observation: observation.trim() || undefined,
+            status: 'pending',
+          }
+        );
+
+        navigate('/payment-callback', {
+          state: {
+            purchaseId,
+            ticketsAcomprar: toBuyTickets,
+            event,
+            isFree: true,
+          },
+        });
+        return;
+      }
 
       // Mostrar Cajita de Payphone
       setShowPaymentBox(true);

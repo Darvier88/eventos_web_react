@@ -1,22 +1,21 @@
 /* Header.css — Fully Responsive */
 
-/* ─── Breakpoints reference ───────────────────────────────────────
-   320px   → Small phones (iPhone SE, Galaxy A series)
-   480px   → Large phones (iPhone 14, Pixel 7)
-   600px   → Phablets / large phones landscape
-   768px   → Tablets portrait (iPad mini, iPad)
-   1024px  → Tablets landscape / small laptops
-   1280px  → Laptops / desktops
-   1440px+ → Large desktops / 4K
-──────────────────────────────────────────────────────────────────── */
+:root {
+  --brand-blue: #0033cc;
+  --brand-blue-dark: #0026a8;
+  --brand-green: #39e87a;
+  --brand-green-dim: rgba(57, 232, 122, 0.15);
+  --header-height: 56px;
+}
 
 .header {
-  background-color: #0066ff;
-  padding: 20px 0;
+  background: linear-gradient(135deg, #0033cc 0%, #0026a8 100%);
+  padding: 0;
+  height: var(--header-height);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 12px rgba(0, 38, 168, 0.4);
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -26,23 +25,24 @@
   width: 100%;
   max-width: none;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100%;
   box-sizing: border-box;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
 }
 
 .menu-btn,
@@ -51,47 +51,46 @@
   border: none;
   color: white !important;
   cursor: pointer;
-  padding: 12px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 6px;
   transition: background-color 0.2s;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .menu-btn svg,
 .icon-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   stroke: white !important;
 }
 
 .menu-btn:hover,
 .icon-btn:hover {
-  background-color: rgba(255, 107, 53, 0.2);
+  background-color: rgba(57, 232, 122, 0.18);
 }
 
 .menu-btn:hover svg,
 .icon-btn:hover svg {
-  stroke: #ff6b35 !important;
+  stroke: var(--brand-green) !important;
 }
 
+/* ─── Logo ──────────────────────────────────────────────────────── */
 .logo {
   text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
   display: flex;
   align-items: center;
 }
 
-.logo-text {
-  color: white;
-}
-
-.logo-accent {
-  color: var(--accent-color);
+.logo-img {
+  height: 34px;
+  width: auto;
+  object-fit: contain;
+  /* logo has black bg, make it blend */
+  filter: brightness(0) invert(1);
 }
 
 /* ─── Drawer ────────────────────────────────────────────────────── */
@@ -101,12 +100,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+  transition: opacity 0.25s, visibility 0.25s;
   z-index: 1998;
 }
 
@@ -120,13 +119,14 @@
   left: 0;
   top: 0;
   height: 100vh;
-  width: 320px;
-  background-color: #fff;
+  width: 260px;
+  background: #0d0d1a;
+  border-right: 1px solid rgba(57, 232, 122, 0.15);
   transform: translateX(-100%);
-  transition: transform 0.3s ease-out;
+  transition: transform 0.28s ease-out;
   z-index: 1999;
   overflow-y: auto;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
 }
 
 .drawer.open {
@@ -134,87 +134,112 @@
 }
 
 .drawer-content {
-  padding: 24px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
 }
 
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(57, 232, 122, 0.12);
+}
+
+.drawer-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
 .drawer-close {
-  align-self: flex-end;
   background: none;
   border: none;
-  color: #333;
+  color: #888;
   cursor: pointer;
-  padding: 10px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
   transition: color 0.2s;
+  border-radius: 4px;
 }
 
 .drawer-close:hover {
-  color: #0066ff;
+  color: var(--brand-green);
 }
 
 .drawer-close svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .drawer-menu {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .drawer-item {
   background: none;
   border: none;
-  color: #333;
+  color: #ccc;
   cursor: pointer;
-  padding: 18px 16px;
+  padding: 11px 12px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 17px;
+  gap: 10px;
+  font-size: 14px;
   transition: background-color 0.2s, color 0.2s;
   text-align: left;
-  border-radius: 8px;
+  border-radius: 6px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .drawer-item:hover {
-  background-color: rgba(0, 102, 255, 0.08);
-  color: #0066ff;
+  background-color: rgba(57, 232, 122, 0.08);
+  color: var(--brand-green);
 }
 
 .drawer-item svg {
   stroke: currentColor;
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .drawer-login {
-  background-color: rgba(0, 102, 255, 0.1);
-  color: #0066ff;
+  background-color: rgba(0, 51, 204, 0.2);
+  color: #7aadff;
   font-weight: 600;
-  margin-top: 12px;
+  border: 1px solid rgba(0, 51, 204, 0.3);
 }
 
 .drawer-login:hover {
-  background-color: rgba(0, 102, 255, 0.15);
+  background-color: rgba(0, 51, 204, 0.3);
+  color: #aac8ff;
 }
 
-/* ─── Logout Confirmation Modal ─────────────────────────────────── */
+.drawer-logout {
+  color: #ff7a7a;
+  margin-top: 8px;
+}
+
+.drawer-logout:hover {
+  background-color: rgba(255, 80, 80, 0.08);
+  color: #ff5555;
+}
+
+/* ─── Logout Modal ──────────────────────────────────────────────── */
 .logout-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -224,12 +249,13 @@
 }
 
 .logout-modal {
-  background: #2a2a2a;
-  border-radius: 12px;
+  background: #141428;
+  border: 1px solid rgba(57, 232, 122, 0.15);
+  border-radius: 10px;
   width: 100%;
-  max-width: 550px;
-  padding: 32px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 400px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   box-sizing: border-box;
 }
 
@@ -237,24 +263,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .logout-modal-header h2 {
   margin: 0;
-  font-size: 32px !important;
+  font-size: 18px !important;
   color: #fff;
+  font-weight: 600;
 }
 
 .logout-close {
   border: none;
   background: transparent;
-  font-size: 28px;
+  font-size: 22px;
   cursor: pointer;
-  color: #bdbdbd;
+  color: #888;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -267,434 +294,118 @@
 }
 
 .logout-modal-body {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .logout-modal-body p {
   margin: 0;
-  font-size: 24px;
-  color: #cfcfcf;
+  font-size: 14px;
+  color: #aaa;
   line-height: 1.6;
 }
 
 .logout-modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: flex-end;
 }
 
 .logout-btn-cancel,
 .logout-btn-confirm {
-  padding: 12px 24px;
+  padding: 9px 20px;
   border: none;
-  border-radius: 8px;
-  font-size: 20px !important;
+  border-radius: 6px;
+  font-size: 13px !important;
   cursor: pointer;
   transition: all 0.2s;
   font-weight: 600;
 }
 
 .logout-btn-cancel {
-  background: #3a3a3a;
-  color: #cfcfcf;
+  background: #2a2a3a;
+  color: #aaa;
+  border: 1px solid #333;
 }
 
 .logout-btn-cancel:hover {
-  background: #4a4a4a;
+  background: #333348;
   color: #fff;
 }
 
 .logout-btn-confirm {
-  background: #c8752e;
+  background: var(--brand-blue);
   color: #fff;
 }
 
 .logout-btn-confirm:hover {
-  background: #b06727;
+  background: var(--brand-blue-dark);
 }
 
 /* ─── 320px — Small phones ─────────────────────────────────────── */
 @media (max-width: 320px) {
-  .header {
-    padding: 10px 0;
-  }
-
-  .header-container {
-    padding: 0 10px;
-  }
-
-  .header-left {
-    gap: 8px;
-  }
-
-  .header-right {
-    gap: 4px;
-  }
-
-  .logo {
-    font-size: 18px;
-  }
-
-  .menu-btn,
-  .icon-btn {
-    min-width: 34px;
-    min-height: 34px;
-    padding: 5px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .drawer {
-    width: 92%;
-  }
-
-  .drawer-content {
-    padding: 14px;
-  }
-
-  .drawer-item {
-    padding: 12px 8px;
-    font-size: 13px;
-    gap: 8px;
-  }
-
-  .drawer-item svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .drawer-close {
-    margin-bottom: 14px;
-  }
-
-  .drawer-close svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Logout modal */
-  .logout-modal {
-    padding: 18px 14px;
-    border-radius: 10px;
-  }
-
-  .logout-modal-header h2 {
-    font-size: 18px !important;
-  }
-
-  .logout-modal-body p {
-    font-size: 14px;
-  }
-
-  .logout-modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .logout-btn-cancel,
-  .logout-btn-confirm {
-    padding: 10px 16px;
-    font-size: 14px !important;
-    text-align: center;
-  }
+  :root { --header-height: 48px; }
+  .header-container { padding: 0 10px; }
+  .header-left { gap: 6px; }
+  .logo-img { height: 24px; }
+  .menu-btn, .icon-btn { min-width: 30px; min-height: 30px; padding: 5px; }
+  .menu-btn svg, .icon-btn svg { width: 15px; height: 15px; }
+  .drawer { width: 88%; }
+  .drawer-item { font-size: 13px; padding: 10px 10px; }
+  .logout-modal { padding: 16px; }
+  .logout-modal-header h2 { font-size: 15px !important; }
+  .logout-modal-body p { font-size: 13px; }
+  .logout-modal-actions { flex-direction: column; }
+  .logout-btn-cancel, .logout-btn-confirm { font-size: 13px !important; text-align: center; }
 }
 
 /* ─── 321–480px — Standard phones ─────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .header {
-    padding: 12px 0;
-  }
-
-  .header-container {
-    padding: 0 12px;
-  }
-
-  .header-right {
-    gap: 6px;
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .menu-btn,
-  .icon-btn {
-    min-width: 36px;
-    min-height: 36px;
-    padding: 6px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .drawer {
-    width: 90%;
-  }
-
-  .drawer-item {
-    padding: 12px 10px;
-    font-size: 14px;
-  }
-
-  /* Logout modal */
-  .logout-modal {
-    padding: 20px 16px;
-  }
-
-  .logout-modal-header h2 {
-    font-size: 20px !important;
-  }
-
-  .logout-modal-body p {
-    font-size: 15px;
-  }
-
-  .logout-modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .logout-btn-cancel,
-  .logout-btn-confirm {
-    padding: 10px 18px;
-    font-size: 15px !important;
-  }
+  :root { --header-height: 50px; }
+  .header-container { padding: 0 12px; }
+  .header-right { gap: 2px; }
+  .logo-img { height: 26px; }
+  .menu-btn, .icon-btn { min-width: 32px; min-height: 32px; padding: 6px; }
+  .menu-btn svg, .icon-btn svg { width: 16px; height: 16px; }
+  .drawer { width: 85%; }
+  .logout-modal { padding: 18px; }
+  .logout-modal-header h2 { font-size: 16px !important; }
+  .logout-modal-actions { flex-direction: column; gap: 8px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+/* ─── 481–600px ─────────────────────────────────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .header {
-    padding: 14px 0;
-  }
-
-  .header-container {
-    padding: 0 16px;
-  }
-
-  .header-left {
-    gap: 12px;
-  }
-
-  .header-right {
-    gap: 8px;
-  }
-
-  .logo {
-    font-size: 22px;
-  }
-
-  .menu-btn,
-  .icon-btn {
-    padding: 8px;
-    min-width: 38px;
-    min-height: 38px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .drawer {
-    width: 85%;
-    max-width: 300px;
-  }
-
-  .drawer-content {
-    padding: 18px;
-  }
-
-  .drawer-close {
-    margin-bottom: 18px;
-  }
-
-  .drawer-close svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .drawer-item {
-    padding: 14px 12px;
-    font-size: 15px;
-    gap: 10px;
-  }
-
-  .drawer-item svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  /* Logout modal */
-  .logout-modal {
-    padding: 24px 18px;
-  }
-
-  .logout-modal-header h2 {
-    font-size: 22px !important;
-  }
-
-  .logout-modal-body p {
-    font-size: 16px;
-  }
-
-  .logout-btn-cancel,
-  .logout-btn-confirm {
-    padding: 10px 20px;
-    font-size: 16px !important;
-  }
+  .header-container { padding: 0 14px; }
+  .logo-img { height: 28px; }
+  .drawer { width: 75%; max-width: 280px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+/* ─── 601–768px ─────────────────────────────────────────────────── */
 @media (min-width: 601px) and (max-width: 768px) {
-  .header {
-    padding: 16px 0;
-  }
-
-  .header-container {
-    padding: 0 20px;
-  }
-
-  .header-left {
-    gap: 16px;
-  }
-
-  .header-right {
-    gap: 12px;
-  }
-
-  .logo {
-    font-size: 24px;
-  }
-
-  .menu-btn,
-  .icon-btn {
-    padding: 10px;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .drawer {
-    width: 280px;
-  }
-
-  .drawer-content {
-    padding: 20px;
-  }
-
-  .drawer-item {
-    padding: 16px 14px;
-    font-size: 16px;
-    gap: 12px;
-  }
-
-  .drawer-item svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .drawer-close {
-    margin-bottom: 20px;
-  }
-
-  .drawer-close svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  /* Logout modal */
-  .logout-modal-header h2 {
-    font-size: 26px !important;
-  }
-
-  .logout-modal-body p {
-    font-size: 18px;
-  }
-
-  .logout-btn-cancel,
-  .logout-btn-confirm {
-    font-size: 17px !important;
-  }
+  .header-container { padding: 0 18px; }
+  .logo-img { height: 30px; }
 }
 
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
+/* ─── 769–1024px ────────────────────────────────────────────────── */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .header {
-    padding: 18px 0;
-  }
-
-  .header-container {
-    padding: 0 24px;
-  }
-
-  .logo {
-    font-size: 26px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 22px;
-    height: 22px;
-  }
+  .header-container { padding: 0 24px; }
 }
 
-/* ─── 1025–1280px — Standard laptops / desktops ───────────────── */
+/* ─── 1025–1280px ───────────────────────────────────────────────── */
 @media (min-width: 1025px) and (max-width: 1280px) {
-  .header {
-    padding: 20px 0;
-  }
-
-  .header-container {
-    padding: 0 32px;
-  }
+  .header-container { padding: 0 32px; }
 }
 
-/* ─── 1281–1440px — Large desktops ────────────────────────────── */
+/* ─── 1281–1440px ───────────────────────────────────────────────── */
 @media (min-width: 1281px) and (max-width: 1440px) {
-  .header-container {
-    padding: 0 48px;
-  }
+  .header-container { padding: 0 48px; }
 }
 
-/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
+/* ─── 1441px+ ───────────────────────────────────────────────────── */
 @media (min-width: 1441px) {
-  .header {
-    padding: 24px 0;
-  }
-
-  .header-container {
-    padding: 0 64px;
-  }
-
-  .logo {
-    font-size: 32px;
-  }
-
-  .menu-btn svg,
-  .icon-btn svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  .drawer {
-    width: 360px;
-  }
-
-  .drawer-item {
-    font-size: 19px;
-    padding: 20px 18px;
-  }
+  :root { --header-height: 62px; }
+  .header-container { padding: 0 64px; }
+  .logo-img { height: 38px; }
+  .menu-btn svg, .icon-btn svg { width: 20px; height: 20px; }
+  .drawer { width: 300px; }
+  .drawer-item { font-size: 15px; }
 }

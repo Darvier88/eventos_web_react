@@ -64,11 +64,17 @@ export const apiService = {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await axios.post(
-        `${API_BASE_URL}/user/login`,
-        formData,
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-      );
+      const url = `${API_BASE_URL}/user/login`;
+      const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+      const bodySent = formData.toString();
+      console.log('[LOGIN] URL:', url);
+      console.log('[LOGIN] Headers:', headers);
+      console.log('[LOGIN] Body enviado:', bodySent);
+
+      const response = await axios.post(url, formData, { headers });
+
+      console.log('[LOGIN] Status code:', response.status);
+      console.log('[LOGIN] Body respuesta:', response.data);
 
       if (response.status === 200) {
         return {
@@ -80,6 +86,10 @@ export const apiService = {
         };
       }
     } catch (error) {
+      if (error.response) {
+        console.log('[LOGIN] Status code:', error.response.status);
+        console.log('[LOGIN] Body respuesta:', error.response.data);
+      }
       if (error.response?.status === 404 || error.response?.status === 401) {
         throw new Error('Usuario o contraseña incorrecta');
       }
@@ -404,6 +414,10 @@ export const apiService = {
       });
       return response.data;
     } catch (error) {
+      if (error.response?.status === 404) {
+        // Si no hay tickets, simplemente devolver vacío
+        return [];
+      }
       throw new Error(`No se pudieron obtener las órdenes: ${error.message}`);
     }
   },

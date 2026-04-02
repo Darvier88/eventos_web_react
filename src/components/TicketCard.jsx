@@ -1,11 +1,39 @@
 import React, { useState } from 'react';
 import './TicketCard.css';
 
-const TicketCard = ({ ticket, onShowQr, onDownloadPdf }) => {
+const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
   const [showMenu, setShowMenu] = useState(false);
   
   const eventName = ticket.event?.name || 'Evento';
   const createdAt = ticket.event?.start_date;
+  const eventEndDate = ticket.event?.end_date || ticket.event?.start_date;
+  // Determinar si el evento ya terminó
+  let isEventOver = false;
+  if (eventEndDate) {
+    const now = new Date();
+    const endDate = new Date(eventEndDate);
+    isEventOver = now > endDate;
+  }
+
+  // Notificar a MyTicketsPage si la acción está bloqueada
+  const handleShowQrClick = () => {
+    if (isEventOver) {
+      if (onBlockedAction) onBlockedAction('No puedes ver el QR porque el evento ya terminó.');
+      setShowMenu(false);
+      return;
+    }
+    onShowQr();
+    setShowMenu(false);
+  };
+  const handleDownloadPdfClick = () => {
+    if (isEventOver) {
+      if (onBlockedAction) onBlockedAction('No puedes descargar el PDF porque el evento ya terminó.');
+      setShowMenu(false);
+      return;
+    }
+    onDownloadPdf();
+    setShowMenu(false);
+  };
   const purchase = ticket.purchase_ticket || {};
   const items = Array.isArray(purchase.purchase_ticket_items)
     ? purchase.purchase_ticket_items
@@ -55,10 +83,16 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf }) => {
           </button>
           {showMenu && (
             <div className="dropdown-menu">
-              <button onClick={() => { onShowQr(); setShowMenu(false); }}>
+              <button
+                onClick={handleShowQrClick}
+                title={isEventOver ? 'El evento ya terminó' : ''}
+              >
                 Ver QR
               </button>
-              <button onClick={() => { onDownloadPdf(); setShowMenu(false); }}>
+              <button
+                onClick={handleDownloadPdfClick}
+                title={isEventOver ? 'El evento ya terminó' : ''}
+              >
                 Descargar PDF
               </button>
             </div>

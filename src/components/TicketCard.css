@@ -1,39 +1,53 @@
+/* Mensaje de error para acciones bloqueadas */
+.ticket-error-msg {
+  background: #ffeaea;
+  color: #b71c1c;
+  border: 1px solid #f44336;
+  padding: 8px 12px;
+  margin: 10px 0 0 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 0.97em;
+  gap: 8px;
+}
+
+.close-error-btn {
+  background: none;
+  border: none;
+  color: #b71c1c;
+  font-size: 1.2em;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0 4px;
+}
 /* TicketCard.css — Fully Responsive */
 
-/* ─── Breakpoints reference ───────────────────────────────────────
-   320px   → Small phones (iPhone SE, Galaxy A series)
-   480px   → Large phones (iPhone 14, Pixel 7)
-   600px   → Phablets / large phones landscape
-   768px   → Tablets portrait (iPad mini, iPad)
-   1024px  → Tablets landscape / small laptops
-   1280px  → Laptops / desktops
-   1440px+ → Large desktops / 4K
-──────────────────────────────────────────────────────────────────── */
-
 .ticket-card {
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 16px;
-  padding: 20px;
+  background: #1e1e2e;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   box-sizing: border-box;
   width: 100%;
 }
 
 .ticket-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 51, 204, 0.2);
+  border-color: rgba(57, 232, 122, 0.12);
+  transform: translateY(-1px);
 }
 
 .ticket-card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
 }
 
 .ticket-header-content {
@@ -42,17 +56,17 @@
 }
 
 .order-id {
-  margin: 0 0 12px;
-  color: #cfcfcf;
-  font-size: 16px;
+  margin: 0 0 8px;
+  color: #7a7a9a;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
   word-break: break-all;
 }
 
 .event-name {
-  margin: 0 0 8px;
-  font-size: 20px;
+  margin: 0 0 6px;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
   word-break: break-word;
@@ -61,12 +75,12 @@
 .ticket-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .ticket-item {
-  color: #bdbdbd;
-  font-size: 14px;
+  color: #a0a0b8;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -78,7 +92,7 @@
 .menu-btn {
   background: none;
   border: none;
-  color: #bdbdbd;
+  color: #a0a0b8;
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
@@ -86,13 +100,13 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .menu-btn:hover {
-  background: #3a3a3a;
-  color: #fff;
+  background: rgba(57, 232, 122, 0.08);
+  color: #39e87a;
 }
 
 .dropdown-menu {
@@ -100,58 +114,60 @@
   top: 100%;
   right: 0;
   margin-top: 4px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
+  background: #141428;
+  border: 1px solid rgba(57, 232, 122, 0.12);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  min-width: 160px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  min-width: 150px;
   z-index: 10;
   overflow: hidden;
 }
 
 .dropdown-menu button {
   width: 100%;
-  padding: 10px 16px;
+  padding: 9px 14px;
   background: none;
   border: none;
   text-align: left;
-  font-size: 14px;
-  color: #cfcfcf;
+  font-size: 13px;
+  color: #a0a0b8;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .dropdown-menu button:hover {
-  background: #3a3a3a;
+  background: rgba(57, 232, 122, 0.06);
+  color: #fff;
 }
 
 .dropdown-menu button:not(:last-child) {
-  border-bottom: 1px solid #4a4a4a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .unused-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(200, 117, 46, 0.15);
-  color: #c8752e;
-  padding: 6px 12px;
+  gap: 5px;
+  background: rgba(57, 232, 122, 0.1);
+  color: #39e87a;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   width: fit-content;
+  border: 1px solid rgba(57, 232, 122, 0.2);
 }
 
 .unused-badge svg {
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   flex-shrink: 0;
 }
 
 .ticket-divider {
   border: none;
-  border-top: 1px dashed #4a4a4a;
-  margin: 4px 0;
+  border-top: 1px dashed rgba(255, 255, 255, 0.06);
+  margin: 2px 0;
 }
 
 .ticket-footer {
@@ -161,356 +177,78 @@
 }
 
 .total-label {
-  color: #bdbdbd;
-  font-size: 13px;
+  color: #7a7a9a;
+  font-size: 12px;
   text-transform: lowercase;
 }
 
 .total-amount {
   color: #fff;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .ticket-note {
-  font-size: 13px;
-  color: #bdbdbd;
-  background: #2f2f2f;
-  padding: 10px 12px;
-  border-radius: 8px;
-  margin-top: 4px;
+  font-size: 12px;
+  color: #a0a0b8;
+  background: #0d0d1a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8px 10px;
+  border-radius: 7px;
+  margin-top: 2px;
   line-height: 1.5;
 }
 
-/* ─── 320px — Small phones ─────────────────────────────────────── */
+/* ─── ≤320px ────────────────────────────────────────────────────── */
 @media (max-width: 320px) {
-  .ticket-card {
-    padding: 10px;
-    gap: 8px;
-    border-radius: 10px;
-  }
-
-  .ticket-card-header {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .order-id {
-    font-size: 12px;
-    margin-bottom: 6px;
-  }
-
-  .event-name {
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-
-  .ticket-item {
-    font-size: 11px;
-  }
-
-  .menu-btn {
-    padding: 2px;
-    min-width: 28px;
-    min-height: 28px;
-  }
-
-  .dropdown-menu {
-    min-width: 110px;
-    right: -6px;
-  }
-
-  .dropdown-menu button {
-    padding: 7px 8px;
-    font-size: 11px;
-  }
-
-  .unused-badge {
-    padding: 3px 8px;
-    font-size: 10px;
-    gap: 4px;
-  }
-
-  .unused-badge svg {
-    width: 12px;
-    height: 12px;
-  }
-
-  .ticket-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .total-label {
-    font-size: 11px;
-  }
-
-  .total-amount {
-    font-size: 16px;
-  }
-
-  .ticket-note {
-    padding: 7px 8px;
-    font-size: 11px;
-  }
+  .ticket-card { padding: 10px; gap: 8px; border-radius: 8px; }
+  .ticket-card-header { flex-direction: column; gap: 5px; }
+  .order-id { font-size: 11px; margin-bottom: 5px; }
+  .event-name { font-size: 13px; margin-bottom: 5px; }
+  .ticket-item { font-size: 11px; }
+  .menu-btn { min-width: 26px; min-height: 26px; }
+  .dropdown-menu { min-width: 100px; }
+  .dropdown-menu button { padding: 7px 8px; font-size: 11px; }
+  .unused-badge { padding: 3px 8px; font-size: 10px; }
+  .unused-badge svg { width: 11px; height: 11px; }
+  .ticket-footer { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .total-label { font-size: 11px; }
+  .total-amount { font-size: 14px; }
+  .ticket-note { padding: 6px 8px; font-size: 11px; }
 }
 
-/* ─── 321–480px — Standard phones ─────────────────────────────── */
+/* ─── 321–480px ─────────────────────────────────────────────────── */
 @media (min-width: 321px) and (max-width: 480px) {
-  .ticket-card {
-    padding: 10px;
-    gap: 8px;
-  }
-
-  .order-id {
-    font-size: 13px;
-  }
-
-  .event-name {
-    font-size: 13px;
-  }
-
-  .ticket-item {
-    font-size: 11px;
-  }
-
-  .menu-btn {
-    padding: 2px;
-  }
-
-  .dropdown-menu {
-    min-width: 110px;
-  }
-
-  .ticket-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .total-label {
-    font-size: 12px;
-  }
-
-  .total-amount {
-    font-size: 18px;
-  }
-
-  .dropdown-menu button {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  .unused-badge {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .unused-badge svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  .ticket-note {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
+  .ticket-card { padding: 10px; gap: 8px; }
+  .order-id { font-size: 11px; }
+  .event-name { font-size: 13px; }
+  .ticket-item { font-size: 11px; }
+  .ticket-footer { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .total-label { font-size: 11px; }
+  .total-amount { font-size: 14px; }
+  .dropdown-menu button { padding: 8px 10px; font-size: 12px; }
 }
 
-/* ─── 481–600px — Large phones / landscape ─────────────────────── */
+/* ─── 481–600px ─────────────────────────────────────────────────── */
 @media (min-width: 481px) and (max-width: 600px) {
-  .ticket-card {
-    padding: 12px;
-    gap: 10px;
-    border-radius: 12px;
-  }
-
-  .ticket-card-header {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .order-id {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-
-  .event-name {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-
-  .ticket-item {
-    font-size: 12px;
-  }
-
-  .ticket-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .total-label {
-    font-size: 12px;
-  }
-
-  .total-amount {
-    font-size: 20px;
-  }
-
-  .dropdown-menu {
-    right: -10px;
-    min-width: 120px;
-  }
-
-  .dropdown-menu button {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
-
-  .unused-badge {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  .ticket-note {
-    padding: 8px 10px;
-    font-size: 12px;
-  }
+  .ticket-card { padding: 12px; gap: 10px; }
+  .order-id { font-size: 12px; }
+  .event-name { font-size: 14px; }
+  .ticket-item { font-size: 12px; }
+  .ticket-footer { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .total-amount { font-size: 15px; }
 }
 
-/* ─── 601–768px — Phablets / tablets portrait ──────────────────── */
+/* ─── 601–768px ─────────────────────────────────────────────────── */
 @media (min-width: 601px) and (max-width: 768px) {
-  .ticket-card {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .order-id {
-    font-size: 14px;
-  }
-
-  .event-name {
-    font-size: 15px;
-  }
-
-  .ticket-item {
-    font-size: 13px;
-  }
-
-  .total-amount {
-    font-size: 22px;
-  }
-
-  .dropdown-menu {
-    min-width: 140px;
-  }
-
-  .dropdown-menu button {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
+  .ticket-card { padding: 14px; gap: 10px; }
+  .event-name { font-size: 14px; }
+  .total-amount { font-size: 15px; }
 }
 
-/* ─── 769–1024px — Tablets landscape / small laptops ──────────── */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .ticket-card {
-    padding: 18px;
-    gap: 14px;
-  }
-
-  .order-id {
-    font-size: 15px;
-  }
-
-  .event-name {
-    font-size: 18px;
-  }
-
-  .ticket-item {
-    font-size: 13px;
-  }
-
-  .total-amount {
-    font-size: 22px;
-  }
-}
-
-/* ─── 1025–1280px — Standard laptops / desktops ───────────────── */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .ticket-card {
-    padding: 20px;
-    gap: 16px;
-  }
-
-  .event-name {
-    font-size: 20px;
-  }
-
-  .total-amount {
-    font-size: 24px;
-  }
-}
-
-/* ─── 1281–1440px — Large desktops ────────────────────────────── */
-@media (min-width: 1281px) and (max-width: 1440px) {
-  .ticket-card {
-    padding: 22px;
-  }
-
-  .event-name {
-    font-size: 21px;
-  }
-}
-
-/* ─── 1441px+ — Extra large / 4K ──────────────────────────────── */
-@media (min-width: 1441px) {
-  .ticket-card {
-    padding: 28px;
-    gap: 20px;
-    border-radius: 20px;
-  }
-
-  .order-id {
-    font-size: 18px;
-    margin-bottom: 14px;
-  }
-
-  .event-name {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-
-  .ticket-item {
-    font-size: 16px;
-  }
-
-  .total-label {
-    font-size: 15px;
-  }
-
-  .total-amount {
-    font-size: 30px;
-  }
-
-  .dropdown-menu button {
-    font-size: 16px;
-    padding: 12px 18px;
-  }
-
-  .unused-badge {
-    font-size: 15px;
-    padding: 7px 14px;
-  }
-
-  .unused-badge svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .ticket-note {
-    font-size: 15px;
-    padding: 12px 14px;
-  }
+/* ─── 769px+ ────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  .ticket-card { padding: 16px; }
+  .event-name { font-size: 15px; }
+  .total-amount { font-size: 16px; }
 }

@@ -1,18 +1,74 @@
 // src/pages/PaymentCallbackPage.jsx
 import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import './PaymentCallbackPage.css';
 
 const PaymentCallbackPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [status, setStatus] = useState('loading');
   const [message, setMessage] = useState('Verificando pago...');
   const [transactionId, setTransactionId] = useState(null);
+  const queryClient = useQueryClient();
+  const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
     const verifyPayment = async () => {
       try {
+        // Si viene por compra gratis (state.isFree)
+        if (state && state.isFree) {
+          console.log('[PaymentCallback] Entró al flujo de compra gratuita (state.isFree)');
+          const { purchaseId, ticketsAcomprar, event } = state;
+          console.log('[PaymentCallback] purchaseId recibido en flujo gratis:', purchaseId);
+          setTransactionId(purchaseId);
+          // Confirmar compra gratis con el backend usando /payments/confirm_free
+          const confirmPayload = {
+            purchaseId,
+            clientTxId: purchaseId,
+          };
+          let response;
+          try {
+            response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/payments/confirm-free`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('session_token'),
+              },
+              body: JSON.stringify(confirmPayload),
+            });
+          } catch (fetchError) {
+            console.error('[PaymentCallback] ❌ Error de red al conectar con backend:', fetchError);
+            throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+          }
+          console.log('[PaymentCallback] Payload enviado al backend (gratis):', confirmPayload);
+          if (!response.ok) {
+            let errorMessage = 'No se pudo confirmar la compra gratuita';
+            try {
+              const textError = await response.text();
+              if (textError && textError.trim()) errorMessage = textError;
+            } catch {}
+            throw new Error(errorMessage);
+          }
+          setStatus('success');
+          setMessage('¡Compra gratuita realizada con éxito!');
+          queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+          setTimeout(() => {
+            navigate('/purchase-confirmation', {
+              state: {
+                purchaseId,
+                transactionId: purchaseId,
+                ticketsAcomprar,
+                event,
+              },
+            });
+          }, 2000);
+          return;
+        }
+
+
+        // --- FLUJO NORMAL PAYPHONE ---
         // Payphone retorna "id" y "clientTransactionId" en el callback
         const txId =
           searchParams.get('id') ||
@@ -24,6 +80,7 @@ const PaymentCallbackPage = () => {
           searchParams.get('client_tx');
 
         // Log para debugging
+        console.log('[PaymentCallback] Entró al flujo normal de Payphone');
         console.log('[PaymentCallback] Parámetros recibidos:', {
           txId,
           clientTxId,
@@ -55,7 +112,6 @@ const PaymentCallbackPage = () => {
           purchaseId: purchaseId // usar txId como fallback si clientTxId no existe
         };
 
-
         let response;
         try {
           response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/payments/confirm`, {
@@ -70,7 +126,6 @@ const PaymentCallbackPage = () => {
           console.error('[PaymentCallback] ❌ Error de red al conectar con backend:', fetchError);
           throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
         }
-
 
         // Verificar si la respuesta tiene contenido
         const contentType = response.headers.get('content-type');
@@ -134,7 +189,7 @@ const PaymentCallbackPage = () => {
         
         setStatus('success');
         setMessage('¡Pago realizado con éxito!');
-
+        queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
         // Limpiar localStorage
         localStorage.removeItem('purchaseData');
 
@@ -157,7 +212,7 @@ const PaymentCallbackPage = () => {
     };
 
     verifyPayment();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, state]);
 
   return (
     <div className="payment-callback-page">
