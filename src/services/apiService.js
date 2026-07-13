@@ -328,10 +328,11 @@ export const apiService = {
     }
   },
 
-  async createPurchaseTicket(eventId, attenderId, { toBuyTickets = {}, observation, status } = {}) {
+  async createPurchaseTicket(eventId, attenderId, { toBuyTickets = {}, observation, observations, status } = {}) {
     try {
       const body = { event_id: eventId, attender_id: attenderId };
       if (observation) body.observation = observation;
+      if (observations && observations.length > 0) body.observations = observations; 
       if (status) body.status = status;
       const response = await safeRequest(apiClient.post('/purchase_ticket', body));
       if (response.status === 201) {

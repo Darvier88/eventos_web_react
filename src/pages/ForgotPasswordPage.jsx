@@ -31,9 +31,9 @@ const ForgotPasswordPage = () => {
 
     useEffect(() => {
         if(success) {
-            const timer = setTimeout(() => {
-                navigate('/change-password',{ state: { email, show_token: true } });
-            }, 1500);
+			const timer = setTimeout(() => {
+				navigate('/change-password', { state: { email, showToken: true } });
+			}, 1500);
             return () => clearTimeout(timer);
         }
     }, [success, navigate]);

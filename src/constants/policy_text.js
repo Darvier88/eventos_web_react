@@ -1,3 +1,5 @@
+// src/constants/policy_text.js
+
 export const termsContent = `
 ## Política de Compra de Boletos - De Finde
 
@@ -36,9 +38,12 @@ La información será tratada de acuerdo con la **Ley Orgánica de Protección d
 
 ---
 
-**Contacto**:  
-[De Finde]  
-[Ave. de las Américas, Edificio Sky Building Piso 4 Oficina 416]  
+**Contacto**:
+
+[De Finde]
+
+[Ave. de las Américas, Edificio Sky Building Piso 4 Oficina 416]
+
 [velecas.ec@gmail.com]
 `;
 
@@ -53,36 +58,36 @@ Esta política aplica a todos los datos personales que Velecas S.A.S. recopila, 
 ### 2. Principios Fundamentales
 Velecas S.A.S. se rige por los siguientes principios en el tratamiento de datos personales:
 
-- **Licitud**: Todos los tratamientos de datos personales se realizarán con una base jurídica válida.  
-- **Finalidad**: Los datos se recopilarán para fines específicos, explícitos, legítimos y determinados, y no serán tratados posteriormente de manera incompatible con dichos fines.  
-- **Pertinencia y Minimización**: Solo se recopilarán los datos estrictamente necesarios para cumplir con las finalidades informadas.  
-- **Calidad y Exactitud**: Se adoptarán medidas razonables para asegurar que los datos sean exactos, completos, actualizados y pertinentes.  
-- **Conservación**: Los datos personales serán conservados solo durante el tiempo necesario para cumplir con la finalidad para la que fueron recopilados, o según lo exija la ley.  
-- **Confidencialidad**: Se garantizará la confidencialidad de los datos personales.  
-- **Transparencia**: Los titulares de los datos serán informados sobre el tratamiento de sus datos personales.  
+- **Licitud**: Todos los tratamientos de datos personales se realizarán con una base jurídica válida.
+- **Finalidad**: Los datos se recopilarán para fines específicos, explícitos, legítimos y determinados, y no serán tratados posteriormente de manera incompatible con dichos fines.
+- **Pertinencia y Minimización**: Solo se recopilarán los datos estrictamente necesarios para cumplir con las finalidades informadas.
+- **Calidad y Exactitud**: Se adoptarán medidas razonables para asegurar que los datos sean exactos, completos, actualizados y pertinentes.
+- **Conservación**: Los datos personales serán conservados solo durante el tiempo necesario para cumplir con la finalidad para la que fueron recopilados, o según lo exija la ley.
+- **Confidencialidad**: Se garantizará la confidencialidad de los datos personales.
+- **Transparencia**: Los titulares de los datos serán informados sobre el tratamiento de sus datos personales.
 - **Seguridad**: Se implementarán medidas de seguridad técnicas y organizativas adecuadas.
 
 ### 3. Datos Personales Recopilados
 
 Velecas S.A.S. puede recopilar los siguientes tipos de datos personales:
 
-- **Datos de identificación**: Nombres completos, números de cédula/pasaporte, fechas de nacimiento.  
-- **Datos de contacto**: Correos electrónicos, números de teléfono, direcciones postales.  
-- **Datos financieros**: Información de pago (tarjetas, cuentas bancarias). No almacenamos esta información directamente, usamos proveedores certificados (PCI DSS).  
-- **Datos de transacciones**: Historial de compras de tickets, detalles del evento.  
-- **Datos de uso**: IP, navegador, sistema operativo, páginas visitadas, tiempo de acceso.  
+- **Datos de identificación**: Nombres completos, números de cédula/pasaporte, fechas de nacimiento.
+- **Datos de contacto**: Correos electrónicos, números de teléfono, direcciones postales.
+- **Datos financieros**: Información de pago (tarjetas, cuentas bancarias). No almacenamos esta información directamente, usamos proveedores certificados (PCI DSS).
+- **Datos de transacciones**: Historial de compras de tickets, detalles del evento.
+- **Datos de uso**: IP, navegador, sistema operativo, páginas visitadas, tiempo de acceso.
 - **Otros datos**: Información proporcionada voluntariamente por el usuario.
 
 ### 4. Finalidades del Tratamiento de Datos
 
 Los datos serán utilizados para:
 
-- **Gestión de venta de tickets**  
-- **Comunicación con el cliente**  
-- **Atención al cliente**  
-- **Marketing y publicidad** (con consentimiento)  
-- **Mejora de nuestros servicios**  
-- **Cumplimiento de obligaciones legales**  
+- **Gestión de venta de tickets**
+- **Comunicación con el cliente**
+- **Atención al cliente**
+- **Marketing y publicidad** (con consentimiento)
+- **Mejora de nuestros servicios**
+- **Cumplimiento de obligaciones legales**
 - **Gestión interna** (facturación, auditorías, etc.)
 
 ### 5. Consentimiento
@@ -93,25 +98,26 @@ Se obtendrá el consentimiento **expreso, libre, específico, informado e inequ�
 
 Velecas S.A.S. podrá compartir datos con:
 
-- **Organizadores de eventos**: Solo lo necesario.  
-- **Proveedores de servicios**: Como procesadores de pago, hosting, correo electrónico.  
+- **Organizadores de eventos**: Solo lo necesario.
+- **Proveedores de servicios**: Como procesadores de pago, hosting, correo electrónico.
 - **Autoridades competentes**: Cuando lo exija la ley.
 
 **No se venderán ni alquilarán datos a terceros** sin consentimiento explícito.
 
 ### 7. Derechos de los Titulares de los Datos (Derechos ARCO y más)
 
-- **Acceso**  
-- **Rectificación**  
-- **Eliminación (Supresión)**  
-- **Oposición**  
-- **Portabilidad**  
-- **Suspensión del tratamiento**  
-- **No ser objeto de decisiones automatizadas**  
+- **Acceso**
+- **Rectificación**
+- **Eliminación (Supresión)**
+- **Oposición**
+- **Portabilidad**
+- **Suspensión del tratamiento**
+- **No ser objeto de decisiones automatizadas**
 - **Consultar a la autoridad**
 
-**Solicitudes** a: velecas.ec@gmail.com  
-Dirección: Av. De las Américas, Edificio Sky Building Piso 4 Oficina 416
+**Solicitudes** a: \`velecas.ec@gmail.com\`
+
+Dirección: *Av. De las Américas, Edificio Sky Building Piso 4 Oficina 416*
 
 Incluir: Nombre, número de identificación, derecho que desea ejercer, detalles necesarios.
 
@@ -119,11 +125,11 @@ Incluir: Nombre, número de identificación, derecho que desea ejercer, detalles
 
 Implementamos medidas robustas:
 
-- Encriptación de datos  
-- Controles de acceso  
-- Firewalls y detección de intrusos  
-- Auditorías de seguridad  
-- Capacitación del personal  
+- Encriptación de datos
+- Controles de acceso
+- Firewalls y detección de intrusos
+- Auditorías de seguridad
+- Capacitación del personal
 - Políticas internas de seguridad
 
 ### 9. Conservación de Datos
@@ -140,13 +146,16 @@ Nos reservamos el derecho de modificar esta política. Los cambios se notificar�
 
 ---
 
-**Contacto:**  
-Velecas S.A.S.  
-Ave. de las Américas, Edificio Sky Building Piso 4 Oficina 416  
-velecas.ec@gmail.com
+**Contacto**:
+
+[Velecas S.A.S.]
+
+[Ave. de las Américas, Edificio Sky Building Piso 4 Oficina 416]
+
+[velecas.ec@gmail.com]
 `;
 
-export const rechargePolicy = ` 
+export const rechargePolicy = `
 ## Política de Carga de Dinero para Eventos mediante Plataforma NFC
 
 Esta política describe los términos y condiciones para la carga de dinero en **pulseras o tarjetas NFC** que serán utilizadas como método de pago dentro de un evento específico. Al cargar dinero en su dispositivo NFC, usted acepta los siguientes términos:
@@ -157,10 +166,10 @@ Esta política describe los términos y condiciones para la carga de dinero en *
 
 ### 2. Moneda y Montos Mínimos/Máximos
 - Todas las transacciones se realizarán en **Dólares de los Estados Unidos de América (USD)**.
-- Se establecerá un **monto mínimo** de carga (ej. USD \$5) y un **monto máximo por transacción** (ej. USD \$200) determinados por el organizador del evento. Los montos exactos serán publicados en los puntos de carga y en la plataforma en línea.
+- Se establecerá un **monto mínimo** de carga (ej. USD $5) y un **monto máximo por transacción** (ej. USD $200) determinados por el organizador del evento. Los montos exactos serán publicados en los puntos de carga y en la plataforma en línea.
 
 ### 3. Comprobantes de Carga
-- Por cada carga de dinero, se emitirá un **comprobante electrónico o físico** con el detalle de la transacción (fecha, hora, monto cargado).  
+- Por cada carga de dinero, se emitirá un **comprobante electrónico o físico** con el detalle de la transacción (fecha, hora, monto cargado).
 - Es responsabilidad del usuario conservar este comprobante para futuras referencias o reclamos.
 
 ### 4. Uso del Saldo NFC
@@ -169,8 +178,7 @@ Esta política describe los términos y condiciones para la carga de dinero en *
 - El dispositivo NFC actúa como un **monedero electrónico**. El usuario es responsable de su custodia. En caso de **pérdida, robo o daño**, la organización **no se hace responsable** por el saldo restante.
 
 ### 5. Reembolsos
-- **No se realizarán reembolsos** de saldo no utilizado una vez finalizado el evento.  
-  Se recomienda cargar únicamente el dinero necesario para el consumo esperado.
+- **No se realizarán reembolsos** de saldo no utilizado una vez finalizado el evento. Se recomienda cargar únicamente el dinero necesario para el consumo esperado.
 - En casos excepcionales de **cancelación del evento** por parte de la organización, se establecerá un **procedimiento de reembolso**, el cual será comunicado oportunamente.
 
 ### 6. Registro de Dispositivos NFC
@@ -187,8 +195,7 @@ Esta política describe los términos y condiciones para la carga de dinero en *
 - La información personal recopilada durante el proceso de carga o registro de los dispositivos NFC será utilizada **únicamente para fines de gestión del evento** y de conformidad con las **leyes de protección de datos aplicables en Ecuador**.
 
 ### 9. Modificaciones a la Política
-- La organización del evento se reserva el derecho de **modificar esta política en cualquier momento**.  
-  Cualquier cambio será comunicado a través de los canales oficiales del evento.
+- La organización del evento se reserva el derecho de **modificar esta política en cualquier momento**. Cualquier cambio será comunicado a través de los canales oficiales del evento.
 
 ---
 

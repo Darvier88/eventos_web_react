@@ -18,6 +18,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ChangePasswordPage from './pages/ChangePassword';
 import ProfilePage from './pages/ProfilePage';
 import AccountSettings from './pages/AccountSettings';
+import LegalPage from './pages/LegalPage';
 import './styles/global.css';
 import NetworkBlocker from './components/NetworkBlocker';
 import { isOnline, quickPing } from './utils/networkUtils';
@@ -120,6 +121,7 @@ function AppContent() {
           <Route path="/link-document" element={<LinkDocumentPage />} />
           <Route path="/payment-callback" element={<PaymentCallbackPage />} />
           <Route path="/purchase-confirmation" element={<PurchaseConfirmationPage />} />
+          <Route path="/legal/:slug" element={<LegalPage />} />
         </Routes>
       </main>
     </div>

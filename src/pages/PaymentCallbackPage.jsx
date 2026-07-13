@@ -1,8 +1,56 @@
 // src/pages/PaymentCallbackPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import './PaymentCallbackPage.css';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+
+const createPayphoneTransaction = async ({
+  attenderId,
+  eventId,
+  tickets,
+  clientTransactionId,
+  observations,
+  observation,
+  payphoneId,   // ← NUEVO
+  statusCode = 3,
+}) => {
+  try {
+    const body = {
+      attender_id:          attenderId,
+      event_id:             eventId,
+      tickets:              tickets.map(t => ({ ticket_id: t.id, quantity: t.quantity })),
+      clientTransaction_id: clientTransactionId,
+      statusCode,
+      payphone_id:          payphoneId ?? null, // ← NUEVO
+    };
+
+    if (observations && observations.length > 0) body.observations = observations;
+    if (observation) body.observation = observation;
+
+    const response = await fetch(`${BACKEND_URL}/payphone_transaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': localStorage.getItem('session_token') || '',
+      },
+      body: JSON.stringify(body),
+    });
+
+    console.log('[payphone_transaction] status:', response.status);
+    const text = await response.text();
+    console.log('[payphone_transaction] response:', text);
+
+    if (!response.ok) {
+      console.error('❌ Error al crear payphone_transaction:', text);
+    } else {
+      console.log('✅ payphone_transaction creada correctamente');
+    }
+  } catch (err) {
+    console.error('❌ Error al crear payphone_transaction:', err);
+  }
+};
 
 const PaymentCallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -14,62 +62,72 @@ const PaymentCallbackPage = () => {
   const queryClient = useQueryClient();
   const userId = localStorage.getItem('user_id');
 
+  const payphoneCreatedRef = useRef(false);
+
   useEffect(() => {
+    if (payphoneCreatedRef.current) return;
+    payphoneCreatedRef.current = true;
+
     const verifyPayment = async () => {
       try {
-        // Si viene por compra gratis (state.isFree)
+        // ── FLUJO COMPRA GRATUITA ────────────────────────────────────
         if (state && state.isFree) {
-          console.log('[PaymentCallback] Entró al flujo de compra gratuita (state.isFree)');
-          const { purchaseId, ticketsAcomprar, event } = state;
-          console.log('[PaymentCallback] purchaseId recibido en flujo gratis:', purchaseId);
+          console.log('[PaymentCallback] Flujo de compra gratuita (state.isFree)');
+          const { purchaseId, ticketsAcomprar, event, attenderId, observations, observation } = state;
+
           setTransactionId(purchaseId);
-          // Confirmar compra gratis con el backend usando /payments/confirm_free
-          const confirmPayload = {
-            purchaseId,
-            clientTxId: purchaseId,
-          };
+
           let response;
           try {
-            response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/payments/confirm-free`, {
+            response = await fetch(`${BACKEND_URL}/payments/confirm-free`, {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type':  'application/json',
                 'Authorization': localStorage.getItem('session_token'),
               },
-              body: JSON.stringify(confirmPayload),
+              body: JSON.stringify({ purchaseId, clientTxId: purchaseId }),
             });
           } catch (fetchError) {
-            console.error('[PaymentCallback] ❌ Error de red al conectar con backend:', fetchError);
-            throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+            throw new Error('No se pudo conectar con el servidor.');
           }
-          console.log('[PaymentCallback] Payload enviado al backend (gratis):', confirmPayload);
+
           if (!response.ok) {
             let errorMessage = 'No se pudo confirmar la compra gratuita';
-            try {
-              const textError = await response.text();
-              if (textError && textError.trim()) errorMessage = textError;
-            } catch {}
+            try { const t = await response.text(); if (t?.trim()) errorMessage = t; } catch {}
             throw new Error(errorMessage);
           }
+
+          const ticketsArray = Object.entries(ticketsAcomprar || {}).map(([keyStr, qty]) => {
+            try { return { ...JSON.parse(keyStr), quantity: qty }; } catch { return null; }
+          }).filter(Boolean);
+
+          // Crear payphone_transaction con payphone_id: 'Gratis'
+          if (attenderId && event?._id) {
+            await createPayphoneTransaction({
+              attenderId,
+              eventId:              event._id,
+              tickets:              ticketsArray,
+              clientTransactionId:  purchaseId,
+              observations,
+              observation,
+              payphoneId:           'Gratis', // ← gratuito
+              statusCode:           3,
+            });
+          }
+
           setStatus('success');
           setMessage('¡Compra gratuita realizada con éxito!');
           queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+
           setTimeout(() => {
             navigate('/purchase-confirmation', {
-              state: {
-                purchaseId,
-                transactionId: purchaseId,
-                ticketsAcomprar,
-                event,
-              },
+              state: { purchaseId, transactionId: purchaseId, ticketsAcomprar, event },
             });
           }, 2000);
           return;
         }
 
-
-        // --- FLUJO NORMAL PAYPHONE ---
-        // Payphone retorna "id" y "clientTransactionId" en el callback
+        // ── FLUJO NORMAL PAYPHONE ────────────────────────────────────
         const txId =
           searchParams.get('id') ||
           searchParams.get('transaction_id') ||
@@ -79,131 +137,96 @@ const PaymentCallbackPage = () => {
           searchParams.get('reference') ||
           searchParams.get('client_tx');
 
-        // Log para debugging
-        console.log('[PaymentCallback] Entró al flujo normal de Payphone');
-        console.log('[PaymentCallback] Parámetros recibidos:', {
-          txId,
-          clientTxId,
-          allParams: Array.from(searchParams.entries()),
-        });
+        console.log('[PaymentCallback] Flujo normal Payphone:', { txId, clientTxId });
 
-        if (!txId) {
-          throw new Error('No se encontró ID de transacción');
-        }
-
-        if (!clientTxId) {
-          console.warn('[PaymentCallback] clientTxId no encontrado, usando txId como fallback');
-        }
+        if (!txId) throw new Error('No se encontró ID de transacción');
 
         setTransactionId(txId);
 
-        // Recuperar datos guardados en localStorage
         const purchaseDataStr = localStorage.getItem('purchaseData');
-        if (!purchaseDataStr) {
-          throw new Error('No se encontraron datos de la compra');
-        }
+        if (!purchaseDataStr) throw new Error('No se encontraron datos de la compra');
 
-        const { purchaseId, ticketsAcomprar, event } = JSON.parse(purchaseDataStr);
-
-        // Confirmar pago con el backend
-        const confirmPayload = { 
-          paymentId: txId, 
-          clientTxId: clientTxId || txId,
-          purchaseId: purchaseId // usar txId como fallback si clientTxId no existe
-        };
+        const {
+          purchaseId,
+          ticketsAcomprar,
+          event,
+          attenderId,
+          observations,
+          observation,
+        } = JSON.parse(purchaseDataStr);
 
         let response;
         try {
-          response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/payments/confirm`, {
+          response = await fetch(`${BACKEND_URL}/payments/confirm`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type':  'application/json',
               'Authorization': localStorage.getItem('session_token'),
             },
-            body: JSON.stringify(confirmPayload),
+            body: JSON.stringify({
+              paymentId:  txId,
+              clientTxId: clientTxId || txId,
+              purchaseId,
+            }),
           });
         } catch (fetchError) {
-          console.error('[PaymentCallback] ❌ Error de red al conectar con backend:', fetchError);
-          throw new Error('No se pudo conectar con el servidor. Verifica que el backend esté corriendo.');
+          throw new Error('No se pudo conectar con el servidor.');
         }
 
-        // Verificar si la respuesta tiene contenido
         const contentType = response.headers.get('content-type');
-        const hasJsonContent = contentType && contentType.includes('application/json');
-        
+        const hasJson = contentType && contentType.includes('application/json');
+
         if (!response.ok) {
           let errorMessage = 'No se pudo confirmar el pago';
-          let errorDetails = null;
-          
-          if (hasJsonContent) {
+          if (hasJson) {
             try {
-              errorDetails = await response.json();
-              console.error('[PaymentCallback] Error del servidor (JSON):', errorDetails);
-              errorMessage = errorDetails?.error || errorDetails?.details || errorMessage;
-            } catch (e) {
-              console.error('[PaymentCallback] Error parseando JSON de error:', e);
-              // Intentar obtener texto plano
-              try {
-                const textError = await response.text();
-                console.error('[PaymentCallback] Longitud de respuesta texto:', textError.length);
-                console.error('[PaymentCallback] Respuesta como texto:', `"${textError}"`);
-                if (textError && textError.trim()) {
-                  errorMessage = textError;
-                } else {
-                  errorMessage = `Error del servidor (código ${response.status})`;
-                }
-              } catch (e2) {
-                console.error('[PaymentCallback] No se pudo leer respuesta:', e2);
-                errorMessage = `Error del servidor (código ${response.status})`;
-              }
+              const errData = await response.json();
+              errorMessage = errData?.error || errData?.details || errorMessage;
+            } catch {
+              const t = await response.text().catch(() => '');
+              if (t?.trim()) errorMessage = t;
+              else errorMessage = `Error del servidor (${response.status})`;
             }
           } else {
-            // No es JSON, intentar leer como texto
-            try {
-              const textError = await response.text();
-              console.error('[PaymentCallback] Longitud de respuesta texto:', textError.length);
-              console.error('[PaymentCallback] Error del servidor (texto):', `"${textError}"`);
-              if (textError && textError.trim()) {
-                errorMessage = textError;
-              } else {
-                errorMessage = `Error del servidor (código ${response.status}). Backend devolvió respuesta vacía.`;
-              }
-            } catch (e) {
-              console.error('[PaymentCallback] No se pudo leer respuesta:', e);
-              errorMessage = `Error del servidor (código ${response.status})`;
-            }
+            const t = await response.text().catch(() => '');
+            errorMessage = t?.trim() || `Error del servidor (${response.status})`;
           }
-          
           throw new Error(errorMessage);
         }
 
-        // Parsear respuesta exitosa si hay contenido JSON
-        let confirmResult = null;
-        if (hasJsonContent) {
-          try {
-            confirmResult = await response.json();
-          } catch (e) {
-            console.warn('No se pudo parsear JSON de respuesta exitosa:', e);
-          }
+        if (hasJson) {
+          try { await response.json(); } catch {}
         }
-        
+
+        const ticketsArray = Object.entries(ticketsAcomprar || {}).map(([keyStr, qty]) => {
+          try { return { ...JSON.parse(keyStr), quantity: qty }; } catch { return null; }
+        }).filter(Boolean);
+
+        // Crear payphone_transaction con payphone_id: txId (ID real de Payphone)
+        if (attenderId && event?._id) {
+          await createPayphoneTransaction({
+            attenderId,
+            eventId:              event._id,
+            tickets:              ticketsArray,
+            clientTransactionId:  clientTxId || txId,
+            observations,
+            observation,
+            payphoneId:           txId, // ← ID real de Payphone
+            statusCode:           3,
+          });
+        }
+
         setStatus('success');
         setMessage('¡Pago realizado con éxito!');
         queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
-        // Limpiar localStorage
         localStorage.removeItem('purchaseData');
 
-        // Redirigir a confirmación después de 2 segundos
         setTimeout(() => {
           navigate('/purchase-confirmation', {
-            state: { 
-              purchaseId, 
-              transactionId: txId,
-              ticketsAcomprar,
-              event,
-            },
+            state: { purchaseId, transactionId: txId, ticketsAcomprar, event },
           });
         }, 2000);
+
       } catch (error) {
         console.error('Error verificando pago:', error);
         setStatus('error');

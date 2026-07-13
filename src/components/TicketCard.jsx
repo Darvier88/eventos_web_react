@@ -7,6 +7,7 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
   const eventName = ticket.event?.name || 'Evento';
   const createdAt = ticket.event?.start_date;
   const eventEndDate = ticket.event?.end_date || ticket.event?.start_date;
+
   // Determinar si el evento ya terminó
   let isEventOver = false;
   if (eventEndDate) {
@@ -25,6 +26,7 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
     onShowQr();
     setShowMenu(false);
   };
+
   const handleDownloadPdfClick = () => {
     if (isEventOver) {
       if (onBlockedAction) onBlockedAction('No puedes descargar el PDF porque el evento ya terminó.');
@@ -34,6 +36,7 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
     onDownloadPdf();
     setShowMenu(false);
   };
+
   const purchase = ticket.purchase_ticket || {};
   const items = Array.isArray(purchase.purchase_ticket_items)
     ? purchase.purchase_ticket_items
@@ -41,7 +44,7 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
 
   // Contar tickets sin usar
   const unusedCount = items.filter(item => !item.isRead && !item.is_read).length;
-  
+
   // Agrupar tickets por nombre
   const groupedTickets = items.reduce((acc, item) => {
     const name = item.ticket_name || 'Ticket';
@@ -54,6 +57,15 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
 
   const totalAmount = purchase.total_amount || 0;
   const orderId = purchase._id || 'N/A';
+
+  // Determinar qué sistema de observaciones usar
+  const hasNewObservations = Array.isArray(purchase.observations) && purchase.observations.length > 0;
+  const hasLegacyObservation =
+    !hasNewObservations &&
+    purchase.observation &&
+    purchase.observation.trim() !== '' &&
+    purchase.observation.trim().toUpperCase() !== 'NA' &&
+    purchase.observation.trim().toUpperCase() !== 'N/A';
 
   return (
     <div className="ticket-card">
@@ -70,8 +82,8 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
           </div>
         </div>
         <div className="ticket-menu">
-          <button 
-            className="menu-btn" 
+          <button
+            className="menu-btn"
             onClick={() => setShowMenu(!showMenu)}
             aria-label="Más opciones"
           >
@@ -118,10 +130,19 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
         <span className="total-amount">${totalAmount.toFixed(2)}</span>
       </div>
 
-      {purchase.observation && 
-       purchase.observation.trim() !== '' && 
-       purchase.observation.trim().toUpperCase() !== 'NA' &&
-       purchase.observation.trim().toUpperCase() !== 'N/A' && (
+      {/* Nuevo sistema: observations array */}
+      {hasNewObservations && (
+        <div className="ticket-note">
+          {purchase.observations.map((obs, idx) => (
+            <div key={idx}>
+              <strong>{obs.name}:</strong> {obs.value}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Legacy: observation string */}
+      {hasLegacyObservation && (
         <div className="ticket-note">{purchase.observation}</div>
       )}
     </div>
