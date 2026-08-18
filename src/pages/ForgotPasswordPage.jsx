@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import apiService from '../services/apiService';
 import './LoginPage.css';
 import './ForgotPassword.css';
@@ -108,9 +108,9 @@ const ForgotPasswordPage = () => {
 						)}
 					</button>
 					<div className="login-footer">
-						<a href="/login" className="login-link">
+						<Link to="/login" className="login-link">
 							¿Ya tienes cuenta? Inicia sesión
-						</a>
+						</Link>
 					</div>
 				</form>
 			</div>

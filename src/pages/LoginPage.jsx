@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
@@ -171,12 +171,12 @@ const LoginPage = () => {
           </button>
 
           <div className="login-footer">
-            <a href="/register" className="login-link">
+            <Link to="/register" className="login-link">
               ¿No tienes cuenta? Regístrate
-            </a>
-            <a href="/forgot-password" className="login-link">
+            </Link>
+            <Link to="/forgot-password" className="login-link">
               ¿Olvidaste tu contraseña?
-            </a>
+            </Link>
           </div>
         </form>
       </div>
