@@ -1,0 +1,17 @@
+{
+    "Preescolar": [
+        "KIGA 1", "KIGA 3", "KIGA 4", "KIGA 5", "KIGA 6", "KIGA 7", "KIGA 8", "KIGA 9", "KIGA 10", "KIGA 11", "KIGA 12", "KIGA 13", "KIGA 14", "KIGA 15", "KRIPPE 1", "KRIPPE 2", "KRIPPE 3"
+    ],
+    "2° a 5° EGB": [
+        "2A", "2B", "2C", "2D", "2E", "3A", "3B", "3C", "3D", "3E", "4A", "4B", "4C", "4D", "4E", "5A", "5B", "5C", "5D", "5E"
+    ],
+    "6° a 9° EGB": [
+        "6A", "6B", "6C", "6D", "6E", "7A", "7B", "7C", "7D", "7E", "8A", "8B", "8C", "8D", "8E", "9A", "9B", "9C", "9D"
+    ],
+    "10° - Bachillerato": [
+        "10A", "10B", "10C", "10D", "I Bach. A", "I Bach. B", "I Bach. C", "I Bach. D", "I Bach. E", "II Bach. A", "II Bach.  B", "II Bach.  C", "II Bach. D", "III Bach. A", "III Bach. B", "III Bach. C", "III Bach. D", "III Bach. E"
+    ],
+    "Ident. adicional": [
+        "PERSONAL ADMINISTRATIVO", "EX ALUMNO"
+    ]
+}

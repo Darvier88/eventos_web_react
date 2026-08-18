@@ -8,6 +8,8 @@ import TicketQuantitySelector from '../components/TicketQuantitySelector';
 import secureStorage from '../services/secureStorage';
 import './PurchaseTicketPage.css';
 
+import COURSE_GROUPS from '../assets/aleman_courses.json';
+
 const PurchaseTicketsPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -35,6 +37,31 @@ const PurchaseTicketsPage = () => {
   // ── Campos del formulario ────────────────────────────────────────
   // observations: { [name]: value } para el nuevo sistema
   const [observationValues, setObservationValues] = useState({});
+  const [selectedCourseGroup, setSelectedCourseGroup] = useState('');
+
+  const handleObservationChange = (obsName, value) => {
+    setObservationValues(prev => {
+      const next = { ...prev, [obsName]: value };
+      
+      // Auto-fill student name if Ident. adicional is selected
+      if (obsName.toLowerCase().includes('curso')) {
+        const isAdicional = COURSE_GROUPS["Ident. adicional"].includes(value);
+        const studentObsName = event?.observations?.find(o => 
+          o.name.toLowerCase().includes('nombre') && o.name.toLowerCase().includes('estudiante')
+        )?.name;
+        
+        if (studentObsName) {
+          if (isAdicional) {
+            next[studentObsName] = 'No aplica';
+          } else if (prev[studentObsName] === 'No aplica') {
+            next[studentObsName] = '';
+          }
+        }
+      }
+      
+      return next;
+    });
+  };
   // observation: string para el legacy (observation_obligatory)
   const [observation, setObservation] = useState('');
   const [code, setCode] = useState('');
@@ -166,7 +193,9 @@ const PurchaseTicketsPage = () => {
     if (event?.observations?.length > 0) {
       for (const obs of event.observations) {
         if (obs.required && !observationValues[obs.name]?.trim()) {
-          return `El campo "${obs.name}" es obligatorio`;
+          const isStudentName = obs.name.toLowerCase().includes('nombre') && obs.name.toLowerCase().includes('estudiante');
+          const displayName = isStudentName ? 'Nombre hijo menor' : obs.name;
+          return `El campo "${displayName}" es obligatorio`;
         }
       }
       return null;
@@ -398,18 +427,68 @@ const PurchaseTicketsPage = () => {
             <section className="purchase-card">
 
               {/* Nuevo sistema: campos dinámicos */}
-              {hasNewObservations && event.observations.map((obs) => (
-                <label key={obs.name} className="form-field">
-                  <span>{obs.name}{obs.required ? ' (Obligatorio)' : ' (Opcional)'}</span>
-                  <textarea
-                    value={observationValues[obs.name] || ''}
-                    onChange={(e) =>
-                      setObservationValues((prev) => ({ ...prev, [obs.name]: e.target.value }))
-                    }
-                    placeholder={`Ingresa ${obs.name.toLowerCase()}...`}
-                  />
-                </label>
-              ))}
+              {hasNewObservations && [...event.observations].sort((a, b) => {
+                const isStudentA = a.name.toLowerCase().includes('nombre') && a.name.toLowerCase().includes('estudiante');
+                const isStudentB = b.name.toLowerCase().includes('nombre') && b.name.toLowerCase().includes('estudiante');
+                if (isStudentA) return 1;
+                if (isStudentB) return -1;
+                return 0;
+              }).map((obs) => {
+                const isCourse = obs.name.toLowerCase().includes('curso');
+                const isStudentName = obs.name.toLowerCase().includes('nombre') && obs.name.toLowerCase().includes('estudiante');
+                
+                // Determinar si el curso seleccionado actualmente es "Ident. adicional"
+                const currentCourseObsName = event.observations.find(o => o.name.toLowerCase().includes('curso'))?.name;
+                const currentCourseValue = currentCourseObsName ? observationValues[currentCourseObsName] : '';
+                const isAdicional = currentCourseValue && COURSE_GROUPS["Ident. adicional"].includes(currentCourseValue);
+                const isDisabledStudentName = isStudentName && isAdicional && observationValues[obs.name] === 'No aplica';
+
+                const displayName = isStudentName ? 'Nombre hijo menor' : obs.name;
+
+                return (
+                  <label key={obs.name} className="form-field">
+                    <span>{displayName}{obs.required ? ' (Obligatorio)' : ' (Opcional)'}</span>
+                    {isCourse ? (
+                      <div className="course-selection-container">
+                        <div className="course-group-buttons">
+                          {Object.keys(COURSE_GROUPS).map(group => (
+                            <button
+                              key={group}
+                              type="button"
+                              className={`course-group-btn ${selectedCourseGroup === group ? 'active' : ''}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setSelectedCourseGroup(group);
+                                handleObservationChange(obs.name, '');
+                              }}
+                            >
+                              {group}
+                            </button>
+                          ))}
+                        </div>
+                        {selectedCourseGroup && (
+                          <select
+                            value={observationValues[obs.name] || ''}
+                            onChange={(e) => handleObservationChange(obs.name, e.target.value)}
+                          >
+                            <option value="">Selecciona un curso en {selectedCourseGroup}...</option>
+                            {COURSE_GROUPS[selectedCourseGroup].map(course => (
+                              <option key={course} value={course}>{course}</option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                    ) : (
+                      <textarea
+                        value={observationValues[obs.name] || ''}
+                        onChange={(e) => handleObservationChange(obs.name, e.target.value)}
+                        placeholder={`Ingresa ${displayName.toLowerCase()}...`}
+                        disabled={isDisabledStudentName}
+                      />
+                    )}
+                  </label>
+                );
+              })}
 
               {/* Legacy: campo único */}
               {!hasNewObservations && hasLegacyObservation && (
