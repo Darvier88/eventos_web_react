@@ -70,6 +70,13 @@ const Header = () => {
                     <line x1="10" y1="14" x2="14" y2="14" />
                   </svg>
                 </Link>
+                <Link className="icon-btn" to="/recharges" title="Recargas" aria-label="Recargas">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 7H5a2 2 0 0 1 0-4h13v4" />
+                    <path d="M3 5v14a2 2 0 0 0 2 2h15V7" />
+                    <circle cx="16" cy="14" r="1.5" />
+                  </svg>
+                </Link>
                 <button className="icon-btn" onClick={() => navigate('/profile')} title="Perfil">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <circle cx="12" cy="8" r="4" />
@@ -133,6 +140,14 @@ const Header = () => {
                         <line x1="10" y1="14" x2="14" y2="14" />
                       </svg>
                       <span>Mis tickets</span>
+                    </button>
+                    <button className="drawer-item" onClick={() => handleNavigate('/recharges')}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 7H5a2 2 0 0 1 0-4h13v4" />
+                        <path d="M3 5v14a2 2 0 0 0 2 2h15V7" />
+                        <circle cx="16" cy="14" r="1.5" />
+                      </svg>
+                      <span>Recargas</span>
                     </button>
                     <button className="drawer-item" onClick={() => handleNavigate('/profile')}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

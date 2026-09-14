@@ -26,20 +26,16 @@ const LinkDocumentPage = () => {
 
     setLoading(true);
     try {
-      // Actualizar perfil del usuario con documento de identidad
-      const userProfile = await apiService.getCurrentUserProfile();
-      
-      await apiService.updateUserProfile(userProfile._id, {
-        idDocumentType: documentType,
-        idDocument: documentNumber.trim(),
+      await apiService.linkDocument({
+        documentNumber: documentNumber.trim(),
       });
 
       setSuccess(true);
-      
+
       // Redirigir después de 2 segundos
       setTimeout(() => {
-        navigate(returnTo, { 
-          state: { eventId } 
+        navigate(returnTo, {
+          state: { eventId }
         });
       }, 2000);
     } catch (err) {

@@ -416,12 +416,25 @@ export const apiService = {
       return response.data;
     } catch (error) {
       if (error.response?.status === 404) {
-        // Si no hay tickets, simplemente devolver vacío
+        // Distinguir entre "sin tickets" (vacío) y un error real del backend
+        // (p.ej. evento huérfano que ya no existe → ObjectNotFound)
+        const body = error.response?.data;
+        const isRealError =
+          body?.name === 'ObjectNotFound' ||
+          body?.description ||
+          body?.db_message_error !== undefined;
+
+        if (isRealError) {
+          const desc = body?.description || 'Error al cargar las órdenes (referencia inválida en backend)';
+          throw new Error(desc);
+        }
+        // 404 limpio = sin tickets aún
         return [];
       }
       throw new Error(`No se pudieron obtener las órdenes: ${error.message}`);
     }
   },
+
 
   async getPayphoneTransactionsByAttender(attenderId) {
     try {
@@ -458,6 +471,37 @@ export const apiService = {
     } catch (error) {
       const msg = error.response?.data?.message || error.response?.data?.error;
       throw new Error(msg || `No se pudo actualizar el perfil: ${error.message}`);
+    }
+  },
+
+  /**
+   * Vincula un documento de identidad al attender autenticado.
+   * PUT /attender/link-document
+   * Body: { id_document: '1234567890' }
+   * El token JWT identifica al usuario (sin necesidad del ID en la URL).
+   */
+  async linkDocument({ documentNumber }) {
+    const token = localStorage.getItem('session_token') || '';
+    try {
+      const response = await fetch(`${API_BASE_URL}/attender/link-document`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': token,
+        },
+        body: JSON.stringify({ id_document: documentNumber }),
+      });
+      if (!response.ok) {
+        let msg = `Error al vincular documento (${response.status})`;
+        try {
+          const data = await response.json();
+          msg = data?.message || data?.error || data?.description || msg;
+        } catch {}
+        throw new Error(msg);
+      }
+      return response.json().catch(() => ({}));
+    } catch (error) {
+      throw new Error(error.message || 'No se pudo vincular el documento');
     }
   },
 
@@ -583,6 +627,128 @@ export const apiService = {
     }
   },
 
-  
+
+  // ==================== PRECARGAS ====================
+
+  /**
+   * Registra una precarga en el backend.
+   * POST /precharge_transaction { purchase_ticket_id, amount }
+   * @param {string} purchaseTicketId
+   * @param {number} amount - monto en USD (número decimal, ej: 10.50)
+   * @returns {Promise<Object>} respuesta del servidor (201)
+   */
+  async createPrechargeTransaction(purchaseTicketId, amount) {
+    try {
+      const response = await apiClient.post('/precharge_transaction', {
+        purchase_ticket_id: purchaseTicketId,
+        amount,
+      });
+      return response.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `Error al registrar precarga: ${error.message}`);
+    }
+  },
+
+  /**
+   * Confirma un pago de Payphone a través del backend.
+   * POST /payments/confirm { paymentId, clientTxId, purchaseId }
+   * Resuelve con { ok, status, raw } donde raw es el body JSON del backend. Los
+   * datos de PayPhone vienen anidados dentro (raw.raw): leerlos con
+   * readPayphoneConfirmation() de utils/payphoneConfirmation.
+   * Para precargas y recargas, pasar purchaseId = clientTxId (no el id real de orden).
+   * Timeout de 20 s (el backend puede tardar).
+   * @param {{ paymentId: string, clientTxId: string, purchaseId: string }} params
+   * @returns {Promise<{ ok: boolean, status: number, raw: Object|null }>}
+   */
+  async confirmPayphonePayment({ paymentId, clientTxId, purchaseId }) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    try {
+      const token = localStorage.getItem('session_token') || '';
+      const response = await fetch(
+        `${API_BASE_URL}/payments/confirm`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token,
+          },
+          body: JSON.stringify({ paymentId, clientTxId, purchaseId }),
+          signal: controller.signal,
+        }
+      );
+      clearTimeout(timeoutId);
+      const contentType = response.headers.get('content-type') || '';
+      const raw = contentType.includes('application/json')
+        ? await response.json().catch(() => null)
+        : null;
+      return { ok: response.ok, status: response.status, raw };
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Tiempo de espera agotado al confirmar el pago (20 s)');
+      }
+      throw new Error(`Error al confirmar pago: ${error.message}`);
+    }
+  },
+
+  // ==================== RECARGAS ====================
+
+  /**
+   * Pulseras (tokens) registradas del attender.
+   * GET /token/by_attender?attender_id=
+   * @param {string} attenderId
+   * @returns {Promise<Array<{ _id, code, name, status, balance, event, timestamp }>>}
+   */
+  async getTokensByAttender(attenderId) {
+    try {
+      const response = await apiClient.get('/token/by_attender', {
+        params: { attender_id: attenderId },
+      });
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      const msg = error.response?.data?.str_error || error.response?.data?.description;
+      throw new Error(msg || 'No se pudieron obtener tus pulseras');
+    }
+  },
+
+  /**
+   * Suma saldo a una pulsera después de un pago confirmado.
+   * POST /token/recharge_balance_attender { id, new_balance }
+   *
+   * Usa fetch (no apiClient) para que un 401 no redirija a /login en medio del
+   * callback de pago. No lanza por errores HTTP: el llamador necesita el status
+   * para saber si el saldo pudo haberse aplicado (ver classifyRechargeResponse).
+   * Solo lanza por error de red o timeout.
+   * @param {string} tokenId
+   * @param {number} amount - monto en USD (ej: 10.50)
+   * @returns {Promise<{ ok: boolean, status: number, data: Object|null }>}
+   */
+  async rechargeTokenAttender(tokenId, amount) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch(`${API_BASE_URL}/token/recharge_balance_attender`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: localStorage.getItem('session_token') || '',
+        },
+        body: JSON.stringify({ id: tokenId, new_balance: amount }),
+        signal: controller.signal,
+      });
+      const data = await response.json().catch(() => null);
+      return { ok: response.ok, status: response.status, data };
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        throw new Error('Tiempo de espera agotado al aplicar la recarga (20 s)');
+      }
+      throw new Error(`Error al aplicar la recarga: ${error.message}`);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  },
+
 };
 export default apiService;

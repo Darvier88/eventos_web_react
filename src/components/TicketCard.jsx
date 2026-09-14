@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './TicketCard.css';
 
-const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
+const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction, onPrecharge }) => {
   const [showMenu, setShowMenu] = useState(false);
   
   const eventName = ticket.event?.name || 'Evento';
@@ -37,7 +37,17 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
     setShowMenu(false);
   };
 
-  const purchase = ticket.purchase_ticket || {};
+  const handlePrechargeClick = () => {
+    if (isEventOver) {
+      if (onBlockedAction) onBlockedAction('No puedes precargar porque el evento ya terminó.');
+      setShowMenu(false);
+      return;
+    }
+    if (onPrecharge) onPrecharge();
+    setShowMenu(false);
+  };
+
+  const purchase   = ticket.purchase_ticket || {};
   const items = Array.isArray(purchase.purchase_ticket_items)
     ? purchase.purchase_ticket_items
     : [];
@@ -55,7 +65,8 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
     return acc;
   }, {});
 
-  const totalAmount = purchase.total_amount || 0;
+  const totalAmount    = purchase.total_amount || 0;
+  const prechargeAmt   = typeof purchase.precharge_amount === 'number' ? purchase.precharge_amount : 0;
   const orderId = purchase._id || 'N/A';
 
   // Determinar qué sistema de observaciones usar
@@ -107,6 +118,14 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
               >
                 Descargar PDF
               </button>
+              {onPrecharge && (
+                <button
+                  onClick={handlePrechargeClick}
+                  title={isEventOver ? 'El evento ya terminó' : ''}
+                >
+                  Precargar saldo
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -128,6 +147,14 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction }) => {
       <div className="ticket-footer">
         <span className="total-label">total de la orden</span>
         <span className="total-amount">${totalAmount.toFixed(2)}</span>
+      </div>
+
+      {/* Igual que en la app: el saldo precargado se muestra siempre, aunque sea $0.00 */}
+      <div className="ticket-footer">
+        <span className="total-label">saldo precargado</span>
+        <span className={`precharge-amount ${prechargeAmt > 0 ? 'has-balance' : ''}`}>
+          ${prechargeAmt.toFixed(2)}
+        </span>
       </div>
 
       {/* Nuevo sistema: observations array */}
