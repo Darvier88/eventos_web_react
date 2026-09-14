@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiService from '../services/apiService';
+import prechargeStore from '../services/prechargeStore';
 import TicketCard from '../components/TicketCard';
 import QRCodeModal from '../components/QRCodeModal';
 import './MyTicketsPage.css';
 
 const MyTicketsPage = () => {
+  const navigate    = useNavigate();
+  const queryClient = useQueryClient();
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showAllTickets, setShowAllTickets] = useState(false);
@@ -18,6 +22,57 @@ const MyTicketsPage = () => {
   };
 
   const userId = localStorage.getItem('user_id');
+
+  // ── Reconciliación de precargas al cargar ─────────────────────────
+  useEffect(() => {
+    const records = prechargeStore.list();
+    const now = Date.now();
+    const FIVE_MIN = 5 * 60 * 1000;
+
+    records.forEach(async (rec) => {
+      // pending de más de 5 minutos: PayPhone lo revó. Descartar.
+      if (rec.status === 'pending' && (now - rec.createdAt) > FIVE_MIN) {
+        prechargeStore.update(rec.clientTxId, { status: 'cancelled' });
+        return;
+      }
+
+      // registering: el pago se confirmó pero no se sabe si se registró.
+      // Comparar precharge_amount actual vs prechargeBefore + amount.
+      if (rec.status === 'registering') {
+        try {
+          const orders = await apiService.getPurchaseTicketsByAttender(userId);
+          const order = Array.isArray(orders)
+            ? orders.find(o => o?.purchase_ticket?._id === rec.purchaseTicketId)
+            : null;
+          const currentPrecharge = order?.purchase_ticket?.precharge_amount ?? null;
+
+          if (currentPrecharge !== null &&
+              currentPrecharge >= (rec.prechargeBefore + rec.amount - 0.01)) {
+            // Ya se refleja: marcar como done
+            prechargeStore.update(rec.clientTxId, { status: 'done' });
+            queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+          } else {
+            // Reintentar el POST
+            try {
+              await apiService.createPrechargeTransaction(rec.purchaseTicketId, rec.amount);
+              prechargeStore.update(rec.clientTxId, { status: 'done' });
+              queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+            } catch (retryErr) {
+              console.warn('[Reconciliación] Reintento fallido:', retryErr.message);
+            }
+          }
+        } catch (e) {
+          console.warn('[Reconciliación] Error al verificar orden:', e.message);
+        }
+      }
+
+      // confirming sin respuesta: caso ambiguo → avisar
+      if (rec.status === 'confirming') {
+        prechargeStore.update(rec.clientTxId, { status: 'ambiguous' });
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     data,
@@ -170,6 +225,7 @@ const MyTicketsPage = () => {
               onShowQr={() => handleShowQr(ticket)}
               onDownloadPdf={() => handleDownloadPdf(ticket)}
               onBlockedAction={handleBlockedAction}
+              onPrecharge={() => navigate('/precharge', { state: { ticket } })}
             />
           ))}
               {/* Modal global para mensaje de acción bloqueada */}
