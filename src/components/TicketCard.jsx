@@ -1,7 +1,21 @@
 import React, { useState } from 'react';
 import './TicketCard.css';
 
-const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction, onPrecharge }) => {
+/**
+ * @param {Object|null} prechargeStatus - { pending, gross, applied } del asistente
+ *   en el evento de esta orden. Null si no se pudo consultar (sin cédula
+ *   vinculada, error de red o backend anterior); en ese caso la tarjeta
+ *   muestra solo el histórico, como siempre.
+ */
+const TicketCard = ({
+  ticket,
+  onShowQr,
+  onDownloadPdf,
+  onBlockedAction,
+  onPrecharge,
+  onShowPrechargeHistory,
+  prechargeStatus = null,
+}) => {
   const [showMenu, setShowMenu] = useState(false);
   
   const eventName = ticket.event?.name || 'Evento';
@@ -67,6 +81,14 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction, onPrecha
 
   const totalAmount    = purchase.total_amount || 0;
   const prechargeAmt   = typeof purchase.precharge_amount === 'number' ? purchase.precharge_amount : 0;
+
+  // Solo tiene sentido mostrar el disponible si parte de la precarga ya se
+  // entregó a pulseras; si no, coincide con el histórico y sería redundante.
+  // `applied` es null en backends anteriores al cálculo del pendiente.
+  const showPending =
+    prechargeStatus !== null &&
+    typeof prechargeStatus.applied === 'number' &&
+    prechargeStatus.applied > 0;
   const orderId = purchase._id || 'N/A';
 
   // Determinar qué sistema de observaciones usar
@@ -126,6 +148,16 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction, onPrecha
                   Precargar saldo
                 </button>
               )}
+              {onShowPrechargeHistory && (
+                <button
+                  onClick={() => {
+                    onShowPrechargeHistory();
+                    setShowMenu(false);
+                  }}
+                >
+                  Historial de precarga
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -152,10 +184,28 @@ const TicketCard = ({ ticket, onShowQr, onDownloadPdf, onBlockedAction, onPrecha
       {/* Igual que en la app: el saldo precargado se muestra siempre, aunque sea $0.00 */}
       <div className="ticket-footer">
         <span className="total-label">saldo precargado</span>
-        <span className={`precharge-amount ${prechargeAmt > 0 ? 'has-balance' : ''}`}>
-          ${prechargeAmt.toFixed(2)}
+        <span className="precharge-value">
+          {onShowPrechargeHistory && (
+            <button className="precharge-history-link" onClick={onShowPrechargeHistory}>
+              Ver historial
+            </button>
+          )}
+          <span className={`precharge-amount ${prechargeAmt > 0 ? 'has-balance' : ''}`}>
+            ${prechargeAmt.toFixed(2)}
+          </span>
         </span>
       </div>
+
+      {/* Lo que aún se puede cargar a pulseras. Es por asistente y evento,
+          no por orden: si hay dos órdenes en el mismo evento, comparten saldo. */}
+      {showPending && (
+        <div className="ticket-footer precharge-pending-row">
+          <span className="total-label">disponible en este evento</span>
+          <span className={`precharge-amount ${prechargeStatus.pending > 0 ? 'has-balance' : ''}`}>
+            ${prechargeStatus.pending.toFixed(2)}
+          </span>
+        </div>
+      )}
 
       {/* Nuevo sistema: observations array */}
       {hasNewObservations && (

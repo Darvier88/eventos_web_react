@@ -209,6 +209,33 @@
   color: #39e87a;
 }
 
+/* Sub-fila del saldo precargado: lo que aún queda por cargar a pulseras. */
+.precharge-pending-row .total-label::before {
+  content: '↳ ';
+  color: #5a5a78;
+}
+
+.precharge-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.precharge-history-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #8b8bff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.precharge-history-link:hover {
+  color: #b3b3ff;
+}
+
 
 /* ─── ≤320px ────────────────────────────────────────────────────── */
 @media (max-width: 320px) {

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import prechargeStore from '../services/prechargeStore';
 import TicketCard from '../components/TicketCard';
 import QRCodeModal from '../components/QRCodeModal';
+import PrechargeHistoryModal from '../components/PrechargeHistoryModal';
 import './MyTicketsPage.css';
 
 const MyTicketsPage = () => {
@@ -14,6 +15,8 @@ const MyTicketsPage = () => {
   const [showQrModal, setShowQrModal] = useState(false);
   const [showAllTickets, setShowAllTickets] = useState(false);
   const [blockedMsg, setBlockedMsg] = useState('');
+  // Orden cuyo historial de precarga está abierto
+  const [historyTicket, setHistoryTicket] = useState(null);
   const handleBlockedAction = (msg) => {
     setBlockedMsg(msg);
   };
@@ -51,12 +54,14 @@ const MyTicketsPage = () => {
             // Ya se refleja: marcar como done
             prechargeStore.update(rec.clientTxId, { status: 'done' });
             queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+            queryClient.invalidateQueries({ queryKey: ['prechargeStatus'] });
           } else {
             // Reintentar el POST
             try {
               await apiService.createPrechargeTransaction(rec.purchaseTicketId, rec.amount);
               prechargeStore.update(rec.clientTxId, { status: 'done' });
               queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+              queryClient.invalidateQueries({ queryKey: ['prechargeStatus'] });
             } catch (retryErr) {
               console.warn('[Reconciliación] Reintento fallido:', retryErr.message);
             }
@@ -98,6 +103,44 @@ const MyTicketsPage = () => {
 
   const purchaseTickets = data?.purchaseTickets ?? [];
   const pendingCount    = data?.pendingCount    ?? 0;
+
+  // ── Precarga disponible ───────────────────────────────────────────
+  // El backend calcula el pendiente por asistente y evento, y lo expone a
+  // partir de la cédula. Si el asistente no la tiene vinculada, no se puede
+  // consultar y las tarjetas siguen mostrando solo el histórico.
+  const { data: profile } = useQuery({
+    queryKey: ['profile', userId],
+    queryFn: () => apiService.getCurrentUserProfile(),
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 10,
+  });
+  const idDocument = profile?.id_document || profile?.idDocument || null;
+
+  const eventIds = useMemo(() => {
+    const ids = purchaseTickets
+      .map(t => t?.event?._id)
+      .filter(Boolean);
+    return Array.from(new Set(ids));
+  }, [purchaseTickets]);
+
+  const { data: prechargeByEvent } = useQuery({
+    queryKey: ['prechargeStatus', idDocument, eventIds.join(',')],
+    queryFn: async () => {
+      const entradas = await Promise.all(
+        eventIds.map(async (eventId) => {
+          try {
+            return [eventId, await apiService.getPrechargeStatus(eventId, idDocument)];
+          } catch {
+            // Un evento que falle no debe tumbar al resto.
+            return [eventId, null];
+          }
+        })
+      );
+      return Object.fromEntries(entradas.filter(([, v]) => v));
+    },
+    enabled: !!idDocument && eventIds.length > 0,
+    staleTime: 1000 * 60 * 2,
+  });
 
   const handleShowQr = (ticket) => {
     setSelectedTicket(ticket);
@@ -226,6 +269,8 @@ const MyTicketsPage = () => {
               onDownloadPdf={() => handleDownloadPdf(ticket)}
               onBlockedAction={handleBlockedAction}
               onPrecharge={() => navigate('/precharge', { state: { ticket } })}
+              onShowPrechargeHistory={() => setHistoryTicket(ticket)}
+              prechargeStatus={prechargeByEvent?.[ticket?.event?._id] ?? null}
             />
           ))}
               {/* Modal global para mensaje de acción bloqueada */}
@@ -244,6 +289,10 @@ const MyTicketsPage = () => {
 
       {showQrModal && selectedTicket && (
         <QRCodeModal ticket={selectedTicket} onClose={handleCloseQr} />
+      )}
+
+      {historyTicket && (
+        <PrechargeHistoryModal ticket={historyTicket} onClose={() => setHistoryTicket(null)} />
       )}
     </div>
   );

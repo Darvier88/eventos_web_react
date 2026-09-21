@@ -350,6 +350,7 @@ const PaymentCallbackPage = () => {
           setStatus('success');
           setMessage(`¡Precarga de $${confirmedAmount.toFixed(2)} registrada correctamente!`);
           queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+          queryClient.invalidateQueries({ queryKey: ['prechargeStatus'] });
 
           setTimeout(() => {
             navigate(record.eventId ? `/evento/${record.eventId}` : '/my-tickets');

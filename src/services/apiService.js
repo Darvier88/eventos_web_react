@@ -750,5 +750,90 @@ export const apiService = {
     }
   },
 
+  // ==================== HISTORIALES ====================
+
+  /**
+   * Movimientos de una pulsera: recargas, compras, transferencias y activación.
+   * GET /dashboard/token?token_id=&page=&limit=
+   * El backend excluye las anuladas y ordena de la más reciente a la más antigua.
+   * @param {string} tokenId
+   * @param {{ page?: number, limit?: number }} options
+   * @returns {Promise<{ token: Object|null, transactions: Array }>}
+   */
+  async getTokenTransactions(tokenId, { page = 0, limit = 100 } = {}) {
+    try {
+      const response = await apiClient.get('/dashboard/token', {
+        params: { token_id: tokenId, page, limit },
+      });
+      return {
+        token: response.data?.token ?? null,
+        transactions: Array.isArray(response.data?.transactions) ? response.data.transactions : [],
+      };
+    } catch (error) {
+      const msg = error.response?.data?.str_error || error.response?.data?.description;
+      throw new Error(msg || 'No se pudieron obtener los movimientos de la pulsera');
+    }
+  },
+
+  /**
+   * Estado de la precarga de un asistente en un evento.
+   * GET /precharge_transaction/total?event_id=&document_id=
+   *
+   * `total` es el saldo PENDIENTE (lo precargado menos lo ya volcado a
+   * pulseras), no el histórico. El desglose viene en `gross` y `applied`.
+   * El agregado es por asistente y evento, no por orden de compra: si la
+   * persona tiene dos órdenes en el mismo evento, comparten un solo pozo.
+   *
+   * Backends anteriores a este cambio no devuelven gross ni applied, y su
+   * `total` sigue siendo el bruto: por eso se marcan como opcionales.
+   * @param {string} eventId
+   * @param {string} documentId - cédula del asistente (id_document)
+   * @returns {Promise<{ pending: number, gross: number|null, applied: number|null }>}
+   */
+  async getPrechargeStatus(eventId, documentId) {
+    try {
+      const response = await apiClient.get('/precharge_transaction/total', {
+        params: { event_id: eventId, document_id: documentId },
+      });
+      const data = response.data || {};
+      return {
+        pending: typeof data.total === 'number' ? data.total : 0,
+        gross: typeof data.gross === 'number' ? data.gross : null,
+        applied: typeof data.applied === 'number' ? data.applied : null,
+      };
+    } catch (error) {
+      const msg = error.response?.data?.message || error.response?.data?.error;
+      throw new Error(msg || `Error al consultar la precarga: ${error.message}`);
+    }
+  },
+
+  /**
+   * Historial de precarga de una orden: dinero que entró a la orden (money_in) y
+   * recargas a las pulseras del asistente en ese evento (token_recharge).
+   * GET /precharge_transaction/ticket_history?purchase_ticket_id=
+   * @param {string} purchaseTicketId
+   * @returns {Promise<{ purchaseTicket: Object|null, tokens: Array, history: Array }>}
+   */
+  async getPrechargeHistory(purchaseTicketId) {
+    try {
+      const response = await apiClient.get('/precharge_transaction/ticket_history', {
+        params: { purchase_ticket_id: purchaseTicketId },
+      });
+      const data = response.data || {};
+      return {
+        purchaseTicket: data.purchase_ticket ?? null,
+        tokens: Array.isArray(data.tokens) ? data.tokens : [],
+        history: Array.isArray(data.history) ? data.history : [],
+      };
+    } catch (error) {
+      // "Ruta no encontrada": el backend al que apunta la web todavía no tiene el endpoint
+      if (error.response?.status === 404 && error.response?.data?.error === 'Ruta no encontrada') {
+        throw new Error('El historial de precargas todavía no está disponible.');
+      }
+      const msg = error.response?.data?.str_error || error.response?.data?.description;
+      throw new Error(msg || 'No se pudo obtener el historial de precargas');
+    }
+  },
+
 };
 export default apiService;
