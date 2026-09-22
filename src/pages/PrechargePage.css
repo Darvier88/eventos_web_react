@@ -216,6 +216,14 @@
 }
 
 /* ── Error ── */
+/* Mínimo a precargar del evento, bajo el campo del monto. */
+.precharge-min-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #a0a0b8;
+  text-align: center;
+}
+
 .precharge-error {
   background: rgba(255, 85, 85, 0.1);
   color: #ff7070;

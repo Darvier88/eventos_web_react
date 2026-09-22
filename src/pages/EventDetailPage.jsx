@@ -112,6 +112,13 @@ const EventDetailPage = () => {
   // Estado para modal de evento finalizado
   const [showEndedModal, setShowEndedModal] = useState(false);
 
+  // URLs de publicidad cuya imagen no cargó: ese lado se oculta en vez de
+  // mostrar una imagen rota. Se guarda por URL, así que al navegar a otro
+  // evento con otras publicidades no arrastra fallos del anterior.
+  const [failedAdUrls, setFailedAdUrls] = useState(() => new Set());
+  const markAdFailed = (url) =>
+    setFailedAdUrls((prev) => (prev.has(url) ? prev : new Set(prev).add(url)));
+
   // Determinar si el evento ya terminó
   let isEventOver = false;
   if (event && event.end_date) {
@@ -161,61 +168,74 @@ const EventDetailPage = () => {
     );
   }
 
-  
+  // Publicidad lateral: `banner` a la izquierda y `banner2` a la derecha.
+  // Se cargan con un PUT sobre el evento; si un campo es null o su imagen no
+  // carga, ese lado no se muestra. Sin ninguna, la página queda como siempre.
+  const leftAd  = adUrl(event.banner);
+  const rightAd = adUrl(event.banner2);
+  const visibleLeftAd  = leftAd  && !failedAdUrls.has(leftAd)  ? leftAd  : null;
+  const visibleRightAd = rightAd && !failedAdUrls.has(rightAd) ? rightAd : null;
+  const hasAds = Boolean(visibleLeftAd || visibleRightAd);
 
   return (
     <div className="event-detail-page">
-      <div className="event-banner">
-        {bannerImageUrl && !imageError ? (
-          <img src={bannerImageUrl} alt={event.name} className="event-banner-image" />
-        ) : imageError ? (
-          <div className="event-banner-placeholder"><p>Imagen no disponible</p></div>
-        ) : (
-          <div className="event-banner-placeholder"><div className="spinner" /><p>Cargando imagen...</p></div>
+      <div className={`event-layout${hasAds ? ' event-layout--with-ads' : ''}`}>
+        {visibleLeftAd && (
+          <EventAd side="left" src={visibleLeftAd} eventName={event.name} onError={markAdFailed} />
         )}
-      </div>
 
-      <div className="event-detail-container">
-        <div className="event-info-section">
-          <h1 className="event-title-detail">{event.name}</h1>
-          <div className="event-details">
-            <InfoRow icon="calendar" label="Fecha"         value={formatDate(event.start_date)} />
-            <InfoRow icon="clock"    label="Hora de inicio" value={formatTime(event.start_date)} />
-            <InfoRow icon="location" label="Lugar"          value={event.location || 'Por confirmar'} />
-          </div>
-
-          <div className="event-description-section">
-            <h2 className="section-title">Descripción</h2>
-            <p className="event-description">{event.description}</p>
-          </div>
-
-          {isVideoLoading ? (
-            <div className="event-video"><div className="spinner" /><p>Cargando video...</p></div>
-          ) : videoContent}
-        </div>
-
-        <div className="tickets-section">
-          <div className="tickets-card">
-            <h2 className="tickets-title">Localidades</h2>
-            {visibleTickets.length === 0 ? (
-              <div className="no-tickets"><p>No hay tickets disponibles para este evento</p></div>
+        <div className="event-main">
+          <div className="event-banner">
+            {bannerImageUrl && !imageError ? (
+              <img src={bannerImageUrl} alt={event.name} className="event-banner-image" />
+            ) : imageError ? (
+              <div className="event-banner-placeholder"><p>Imagen no disponible</p></div>
             ) : (
-              <>
-                <div className="tickets-list">
-                  {visibleTickets.map((t) => (
-                    <div key={t._id} className="ticket-card">
-                      <div className="ticket-header">
-                        <span className="ticket-name">{t.name}</span>
-                        <span className="ticket-price">
-                          {t.price === 0 ? 'Gratis' : `$${t.price.toFixed(2)}`}
-                        </span>
-                      </div>
+              <div className="event-banner-placeholder"><div className="spinner" /><p>Cargando imagen...</p></div>
+            )}
+          </div>
+
+          <div className="event-detail-container">
+            <div className="event-info-section">
+              <h1 className="event-title-detail">{event.name}</h1>
+              <div className="event-details">
+                <InfoRow icon="calendar" label="Fecha"         value={formatDate(event.start_date)} />
+                <InfoRow icon="clock"    label="Hora de inicio" value={formatTime(event.start_date)} />
+                <InfoRow icon="location" label="Lugar"          value={event.location || 'Por confirmar'} />
+              </div>
+
+              <div className="event-description-section">
+                <h2 className="section-title">Descripción</h2>
+                <p className="event-description">{event.description}</p>
+              </div>
+
+              {isVideoLoading ? (
+                <div className="event-video"><div className="spinner" /><p>Cargando video...</p></div>
+              ) : videoContent}
+            </div>
+
+            <div className="tickets-section">
+              <div className="tickets-card">
+                <h2 className="tickets-title">Localidades</h2>
+                {visibleTickets.length === 0 ? (
+                  <div className="no-tickets"><p>No hay tickets disponibles para este evento</p></div>
+                ) : (
+                  <>
+                    <div className="tickets-list">
+                      {visibleTickets.map((t) => (
+                        <div key={t._id} className="ticket-card">
+                          <div className="ticket-header">
+                            <span className="ticket-name">{t.name}</span>
+                            <span className="ticket-price">
+                              {t.price === 0 ? 'Gratis' : `$${t.price.toFixed(2)}`}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <button className="btn btn-primary btn-buy" onClick={handleGoToPurchase}>
-                  Comprar tickets
-                </button>
+                    <button className="btn btn-primary btn-buy" onClick={handleGoToPurchase}>
+                      Comprar tickets
+                    </button>
                     {/* Modal global para evento finalizado */}
                     {showEndedModal && (
                       <div className="blocked-modal-backdrop" onClick={() => setShowEndedModal(false)}>
@@ -227,14 +247,39 @@ const EventDetailPage = () => {
                         </div>
                       </div>
                     )}
-              </>
-            )}
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+
+        {visibleRightAd && (
+          <EventAd side="right" src={visibleRightAd} eventName={event.name} onError={markAdFailed} />
+        )}
       </div>
     </div>
   );
 };
+
+/**
+ * URL de publicidad utilizable, o null si el campo viene vacío. Las subidas
+ * desde macak_tools llegan como ruta relativa a la API y se completan aquí.
+ */
+const adUrl = (value) => apiService.resolveApiUrl(value);
+
+const EventAd = ({ side, src, eventName, onError }) => (
+  <aside className={`event-ad event-ad--${side}`} aria-label="Publicidad">
+    <img
+      src={src}
+      alt={`Publicidad en ${eventName}`}
+      className="event-ad-image"
+      loading="lazy"
+      decoding="async"
+      onError={() => onError(src)}
+    />
+  </aside>
+);
 
 const InfoRow = ({ icon, label, value }) => {
   const icons = {

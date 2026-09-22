@@ -324,6 +324,69 @@
 .payment-box-container { text-align: center; }
 .payment-info { color: #a0a0b8; font-size: 13px; margin-bottom: 16px; }
 
+/* ── Publicidad lateral (banner / banner2 del evento) ──
+   Sin publicidades, .event-layout no tiene estilos y la página se ve igual
+   que antes. Con al menos una, pantallas chicas y medianas las muestran
+   debajo del contenido (sin empujar el botón de compra) y desde 1280px
+   pasan a columnas a los costados. */
+.event-layout--with-ads {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.event-layout--with-ads .event-main {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.event-ad {
+  order: 1;                       /* siempre después del contenido */
+  flex: 0 1 calc(50% - 24px);     /* dos lado a lado; una sola queda centrada */
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+.event-ad-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+@media (min-width: 1280px) {
+  .event-layout--with-ads {
+    --event-ad-w: clamp(160px, 14vw, 280px);
+    display: grid;
+    /* Las dos columnas laterales existen aunque falte una publicidad,
+       para que el contenido quede siempre centrado. */
+    grid-template-columns: var(--event-ad-w) minmax(0, 1000px) var(--event-ad-w);
+    grid-template-areas: "ad-left main ad-right";
+    justify-content: center;
+    align-items: start;           /* necesario para que sticky funcione en grid */
+    gap: 24px;
+    padding: 0 16px 24px;
+  }
+
+  .event-layout--with-ads .event-main { grid-area: main; }
+  .event-ad--left  { grid-area: ad-left; }
+  .event-ad--right { grid-area: ad-right; }
+
+  .event-ad {
+    max-width: none;
+    position: sticky;             /* acompaña el scroll, como Localidades */
+    top: 84px;
+  }
+
+  /* Que la pieza completa quepa en pantalla mientras está fija. */
+  .event-ad-image {
+    max-height: calc(100vh - 108px);
+    object-fit: contain;
+  }
+}
+
 /* ─── ≤320px ── */
 @media (max-width: 320px) {
   .event-banner { width: 100%; height: 110px; aspect-ratio: unset; border-radius: 0; }

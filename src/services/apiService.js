@@ -311,6 +311,21 @@ export const apiService = {
     return `${API_BASE_URL}/image/?id=${eventId}&type=square`;
   },
 
+  /**
+   * Completa una ruta relativa a la API con el backend de este build.
+   * El backend guarda las publicidades subidas como `/image/?id=...&type=ad1`
+   * (sin dominio) para que funcionen igual contra producción y desarrollo.
+   * Las URLs absolutas se devuelven tal cual. Null si viene vacío.
+   * @param {string|null|undefined} value
+   * @returns {string|null}
+   */
+  resolveApiUrl(value) {
+    if (typeof value !== 'string') return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    return trimmed.startsWith('/') ? `${API_BASE_URL}${trimmed}` : trimmed;
+  },
+
   // ==================== TICKETS / PURCHASE ====================
   async validateEventCode(eventId, code) {
     try {
