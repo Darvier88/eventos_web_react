@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import prechargeStore from '../services/prechargeStore';
+import { hasEventEnded } from '../utils/eventTime';
 import PayphonePaymentBox from '../components/PayphonePaymentBox';
 import './PrechargePage.css';
 
@@ -55,10 +56,7 @@ const PrechargePage = () => {
   const minPrecharge = Math.max(1, Number(event.min_precharge) || 0);
 
   // Determinar si el evento ya terminó
-  const isEventOver = useMemo(() => {
-    const endDate = event.end_date || event.start_date;
-    return endDate ? new Date() > new Date(endDate) : false;
-  }, [event]);
+  const isEventOver = useMemo(() => hasEventEnded(event), [event]);
 
   const totalAmount     = purchase.total_amount || 0;
   const prechargeAmount = purchase.precharge_amount || 0;

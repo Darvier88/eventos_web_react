@@ -16,7 +16,27 @@
   border-radius: 10px;
 }
 
-.event-banner-image { width: 100%; height: 100%; object-fit: cover; }
+/* El banner se muestra completo (`contain`): el alto del hueco cambia según la
+   pantalla y con `cover` se recortaba la parte de abajo, justo donde suelen ir
+   la fecha y el horario. Lo que sobra lo cubre una copia difuminada, que hace
+   de marco y funciona con cualquier imagen que suba el cliente. */
+.event-banner-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.event-banner-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(18px) brightness(0.55);
+  /* Ampliada para que el desenfoque no deje bordes claros. */
+  transform: scale(1.15);
+}
 
 .event-banner-placeholder {
   width: 100%; height: 100%;
@@ -326,9 +346,10 @@
 
 /* ── Publicidad lateral (banner / banner2 del evento) ──
    Sin publicidades, .event-layout no tiene estilos y la página se ve igual
-   que antes. Con al menos una, pantallas chicas y medianas las muestran
-   debajo del contenido (sin empujar el botón de compra) y desde 1280px
-   pasan a columnas a los costados. */
+   que antes. Con al menos una, por debajo de 1024px se muestra una sola tira
+   bajo el contenido que alterna entre ambas, y desde 1024px pasan a columnas
+   a los costados, que ya no bajan por más ancha que sea la pantalla.
+   El ancho de corte está repetido en EventDetailPage.jsx (useMediaQuery). */
 .event-layout--with-ads {
   display: flex;
   flex-wrap: wrap;
@@ -342,11 +363,58 @@
   min-width: 0;
 }
 
-.event-ad {
-  order: 1;                       /* siempre después del contenido */
-  flex: 0 1 calc(50% - 24px);     /* dos lado a lado; una sola queda centrada */
-  max-width: 300px;
-  box-sizing: border-box;
+/* Tira giratoria (pantallas angostas). La pieza es vertical: se recorta al
+   centro para aprovechar el ancho en lugar de dejarla diminuta. */
+.event-ad-strip {
+  position: relative;
+  /* Base automática (y no 100%) para que respete el ancho de abajo y quede
+     con los mismos márgenes que el banner del evento. */
+  flex: 0 0 auto;
+  width: min(100% - 32px, 1000px);
+  height: clamp(130px, 30vw, 220px);
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #141428;
+}
+
+.event-ad-strip-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.event-ad-strip-image.is-visible { opacity: 1; }
+
+.event-ad-strip-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.event-ad-strip-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+.event-ad-strip-dot.is-active { background-color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .event-ad-strip-image { transition: none; }
 }
 
 .event-ad-image {
@@ -356,9 +424,9 @@
   border-radius: 10px;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .event-layout--with-ads {
-    --event-ad-w: clamp(160px, 14vw, 280px);
+    --event-ad-w: clamp(130px, 12vw, 300px);
     display: grid;
     /* Las dos columnas laterales existen aunque falte una publicidad,
        para que el contenido quede siempre centrado. */
@@ -366,8 +434,8 @@
     grid-template-areas: "ad-left main ad-right";
     justify-content: center;
     align-items: start;           /* necesario para que sticky funcione en grid */
-    gap: 24px;
-    padding: 0 16px 24px;
+    gap: 20px;
+    padding: 0 12px 24px;
   }
 
   .event-layout--with-ads .event-main { grid-area: main; }
@@ -385,6 +453,33 @@
     max-height: calc(100vh - 108px);
     object-fit: contain;
   }
+}
+
+/* Entre 1024px y 1279px las columnas laterales dejan poco espacio al centro:
+   la ficha y las localidades se apilan en vez de apretarse. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .event-layout--with-ads .event-detail-container {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  /* Apilada ocupa todo el ancho y deja de seguir el scroll: pegada al borde
+     derecho y angosta se vería como un recorte. */
+  .event-layout--with-ads .tickets-section {
+    position: static;
+    justify-self: stretch;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .event-layout--with-ads { gap: 24px; padding: 0 16px 24px; }
+}
+
+/* Monitores anchos y televisores: las columnas crecen con la pantalla en vez
+   de dejar una franja enorme vacía a los lados. */
+@media (min-width: 1600px) {
+  .event-layout--with-ads { --event-ad-w: clamp(280px, 17vw, 420px); gap: 32px; }
 }
 
 /* ─── ≤320px ── */

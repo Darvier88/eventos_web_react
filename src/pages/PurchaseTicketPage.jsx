@@ -351,8 +351,11 @@ const PurchaseTicketsPage = () => {
     <div className="purchase-page">
       <div className="event-banner">
         {bannerImageUrl && !imageError ? (
-          <img src={bannerImageUrl} alt={event.name} className="event-banner-image"
-            onError={() => setImageError(true)} />
+          <>
+            <img src={bannerImageUrl} alt="" aria-hidden="true" className="event-banner-backdrop" />
+            <img src={bannerImageUrl} alt={event.name} className="event-banner-image"
+              onError={() => setImageError(true)} />
+          </>
         ) : imageError ? (
           <div className="event-banner-placeholder"><p>Imagen no disponible</p></div>
         ) : (

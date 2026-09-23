@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { hasEventEnded } from '../utils/eventTime';
 import './TicketCard.css';
 
 /**
@@ -19,16 +20,9 @@ const TicketCard = ({
   const [showMenu, setShowMenu] = useState(false);
   
   const eventName = ticket.event?.name || 'Evento';
-  const createdAt = ticket.event?.start_date;
-  const eventEndDate = ticket.event?.end_date || ticket.event?.start_date;
 
   // Determinar si el evento ya terminó
-  let isEventOver = false;
-  if (eventEndDate) {
-    const now = new Date();
-    const endDate = new Date(eventEndDate);
-    isEventOver = now > endDate;
-  }
+  const isEventOver = hasEventEnded(ticket.event);
 
   // Notificar a MyTicketsPage si la acción está bloqueada
   const handleShowQrClick = () => {

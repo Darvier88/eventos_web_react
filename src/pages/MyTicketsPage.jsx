@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import prechargeStore from '../services/prechargeStore';
 import TicketCard from '../components/TicketCard';
+import { eventInstant } from '../utils/eventTime';
 import QRCodeModal from '../components/QRCodeModal';
 import PrechargeHistoryModal from '../components/PrechargeHistoryModal';
 import './MyTicketsPage.css';
@@ -185,10 +186,6 @@ const MyTicketsPage = () => {
     );
   }
 
-  const now = new Date();
-  // Restar 5 horas a now para comparación local
-  const nowMinus5h = new Date(now.getTime() - 5 * 60 * 60 * 1000);
-
   const getPurchaseTimestamp = (ticket) => {
     const purchase = ticket?.purchase_ticket || {};
     const parsed = new Date(purchase.purchase_date || 0);
@@ -217,7 +214,8 @@ const MyTicketsPage = () => {
     : sortedTickets.filter((ticket) => {
         const eventDate = ticket?.event?.start_date;
         if (!eventDate) return true;
-        return new Date(eventDate) >= nowMinus5h;
+        const startsAt = eventInstant(eventDate);
+        return startsAt ? startsAt.getTime() >= Date.now() : true;
       });
 
 
