@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { isOnline, withTimeout, quickPing } from '../utils/networkUtils';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://macak.tech/api';
 
 // Utilidad para comprobar red antes de peticiones pesadas
 async function checkNetworkOrThrow() {

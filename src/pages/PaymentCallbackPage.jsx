@@ -8,7 +8,7 @@ import rechargeStore, { classifyRechargeResponse } from '../services/rechargeSto
 import { readPayphoneConfirmation } from '../utils/payphoneConfirmation';
 import './PaymentCallbackPage.css';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://macak.tech/api';
 
 const createPayphoneTransaction = async ({
   attenderId,

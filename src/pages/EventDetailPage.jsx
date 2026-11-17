@@ -17,25 +17,37 @@ const EventDetailPage = () => {
   const eventId = id || secureStorage.getEventId();
 
   const {
-    data,
-    isLoading,
-    isError,
-    error,
+    data: event = null,
+    isLoading: isEventLoading,
+    isError: isEventError,
+    error: eventError,
   } = useQuery({
     queryKey: ['eventDetail', eventId],
-    queryFn: async () => {
-      const [ev, tks] = await Promise.all([
-        apiService.getEventById(eventId),
-        apiService.getTicketsByEvent(eventId),
-      ]);
-      return { event: ev, tickets: tks };
-    },
+    queryFn: () => apiService.getEventById(eventId),
     enabled: !!eventId,
     staleTime: 1000 * 60 * 2,
   });
 
-  const event   = data?.event   ?? null;
-  const tickets = data?.tickets ?? [];
+  // Las localidades van aparte y sin caché: se ocultan o cambian durante la
+  // venta (p. ej. cerrar la preventa), y con la caché de 2 min del evento se
+  // seguían mostrando y vendiendo localidades ya ocultas.
+  const {
+    data: tickets = [],
+    isLoading: isTicketsLoading,
+    isError: isTicketsError,
+    error: ticketsError,
+  } = useQuery({
+    queryKey: ['eventTickets', eventId],
+    queryFn: () => apiService.getTicketsByEvent(eventId),
+    enabled: !!eventId,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+  });
+
+  const isLoading = isEventLoading || isTicketsLoading;
+  const isError = isEventError || isTicketsError;
+  const error = eventError || ticketsError;
 
   // Obtener video del evento
   const {
@@ -146,8 +158,10 @@ const EventDetailPage = () => {
     if (eventId) {
       secureStorage.setEventId(eventId);
     }
+    // Las localidades no se pasan: la página de compra las pide de nuevo, para
+    // no vender con una lista que pudo cambiar mientras se miraba el evento.
     navigate('/purchase', {
-      state: { eventId, event, tickets },
+      state: { eventId, event },
     });
   };
 
