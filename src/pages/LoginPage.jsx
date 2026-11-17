@@ -30,7 +30,7 @@ const LoginPage = () => {
     setLoading(true);
 
     // Mostrar detalles de la petición
-    const url = `${import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev'}/attender/login`;
+    const url = `${import.meta.env.VITE_BACKEND_URL || 'https://macak.tech/api'}/attender/login`;
     const headers = { 'Content-Type': 'application/json' };
     const bodySent = JSON.stringify({ email, password });
     console.log('[LOGIN_ATTENDER] URL:', url);

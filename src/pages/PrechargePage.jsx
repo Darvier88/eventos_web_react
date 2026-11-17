@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import prechargeStore from '../services/prechargeStore';
+import { hasEventEnded } from '../utils/eventTime';
 import PayphonePaymentBox from '../components/PayphonePaymentBox';
 import './PrechargePage.css';
 
@@ -48,11 +49,14 @@ const PrechargePage = () => {
   const eventId    = event._id || event.id || '';
   const purchaseId = purchase._id || '';
 
+  // Mínimo a precargar: el piso de $1.00 que ya existía, o el mínimo propio del
+  // evento si es mayor. Se valida aquí, antes de abrir PayPhone: el backend no
+  // participa antes del cobro, así que no puede rechazar un monto sin dejar a
+  // la persona cobrada y sin precarga. Backends anteriores no envían el campo.
+  const minPrecharge = Math.max(1, Number(event.min_precharge) || 0);
+
   // Determinar si el evento ya terminó
-  const isEventOver = useMemo(() => {
-    const endDate = event.end_date || event.start_date;
-    return endDate ? new Date() > new Date(endDate) : false;
-  }, [event]);
+  const isEventOver = useMemo(() => hasEventEnded(event), [event]);
 
   const totalAmount     = purchase.total_amount || 0;
   const prechargeAmount = purchase.precharge_amount || 0;
@@ -109,8 +113,8 @@ const PrechargePage = () => {
       setError('Ingresa un monto mayor a $0.00');
       return;
     }
-    if (parsed < 1) {
-      setError('El monto mínimo es $1.00');
+    if (parsed < minPrecharge) {
+      setError(`El monto mínimo para este evento es $${minPrecharge.toFixed(2)}`);
       return;
     }
 
@@ -238,9 +242,14 @@ const PrechargePage = () => {
                 className="precharge-amount-input"
                 disabled={isEventOver || submitting}
                 aria-label="Monto a precargar"
+                aria-describedby="precharge-min-hint"
                 autoFocus
               />
             </div>
+
+            <p id="precharge-min-hint" className="precharge-min-hint">
+              Monto mínimo: ${minPrecharge.toFixed(2)}
+            </p>
 
             {error && <div className="precharge-error">{error}</div>}
 

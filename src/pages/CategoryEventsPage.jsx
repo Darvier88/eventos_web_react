@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import EventCard from '../components/EventCard';
+import { sortEventsForDisplay } from '../utils/eventTime';
 import './CategoryEventsPage.css';
 
 const CATEGORY_NAMES = {
@@ -16,7 +17,7 @@ const CategoryEventsPage = () => {
   const { categoryKey } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const events = location.state?.events || [];
+  const events = sortEventsForDisplay(location.state?.events || []);
   const title = CATEGORY_NAMES[categoryKey] || 'Categoría';
 
   return (

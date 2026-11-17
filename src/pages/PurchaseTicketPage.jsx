@@ -14,14 +14,17 @@ const PurchaseTicketsPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { state } = useLocation();
-  const { eventId: eventIdFromState, event: eventFromState, tickets: ticketsFromState } = state || {};
+  const { eventId: eventIdFromState, event: eventFromState } = state || {};
   const resolvedEventId = eventIdFromState || eventFromState?._id || secureStorage.getEventId();
 
   const [event, setEvent] = useState(eventFromState || null);
-  const [tickets, setTickets] = useState(ticketsFromState || []);
-  const [loading, setLoading] = useState(!eventFromState || !ticketsFromState);
+  // Las localidades siempre se piden al entrar (ver el efecto de carga).
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  // Una localidad elegida se ocultó: se ofrece volver al detalle del evento.
+  const [ticketsUnavailable, setTicketsUnavailable] = useState(false);
   const [showPaymentBox, setShowPaymentBox] = useState(false);
   const [purchaseCreated, setPurchaseCreated] = useState(null);
   const [imageError, setImageError] = useState(false);
@@ -118,52 +121,61 @@ const PurchaseTicketsPage = () => {
     }
   };
 
-  // Cargar evento y tickets
+  // Cargar evento y tickets. Las localidades se piden SIEMPRE al servidor,
+  // aunque vengan de la página anterior: si se ocultó una (p. ej. al cerrar la
+  // preventa), con la lista vieja se podía seguir comprando.
   useEffect(() => {
-    if (event && tickets.length) return;
     if (!resolvedEventId) {
       setError('No se pudo identificar el evento');
       setLoading(false);
       return;
     }
+    let cancelled = false;
     const loadData = async () => {
       setLoading(true);
       try {
         const [ev, tks] = await Promise.all([
-          apiService.getEventById(resolvedEventId),
+          eventFromState ? Promise.resolve(eventFromState) : apiService.getEventById(resolvedEventId),
           apiService.getTicketsByEvent(resolvedEventId),
         ]);
+        if (cancelled) return;
         setEvent(ev);
         setTickets(tks);
         secureStorage.setEventId(resolvedEventId);
       } catch (err) {
-        setError(err.message || 'No se pudo cargar el evento');
+        if (!cancelled) setError(err.message || 'No se pudo cargar el evento');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     loadData();
-  }, [resolvedEventId, event, tickets.length]);
+    return () => { cancelled = true; };
+    // eventFromState viene del state de navegación: solo importa al montar.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedEventId]);
 
   useEffect(() => {
     if (resolvedEventId) secureStorage.setEventId(resolvedEventId);
   }, [resolvedEventId]);
 
-  // Inicializar cantidades
+  // Inicializar cantidades. Al recargar las localidades (al validar la compra)
+  // se conserva lo que la persona ya eligió en las que siguen visibles.
   useEffect(() => {
     const visibles = tickets.filter((t) => !t.hidden);
-    const initial = {};
-    if (visibles.length > 1) {
-      visibles.forEach((t) => { initial[t._id] = 0; });
-    } else {
-      visibles.forEach((t) => {
-        const min = Number(t.minimum_to_buy ?? t.minimumToBuy ?? 0);
-        const maxRaw = Number(t.max_to_buy ?? t.maximum_to_buy ?? t.maxToBuy ?? 0);
-        const isFixed = min > 0 && min === maxRaw && maxRaw > 0;
-        initial[t._id] = isFixed ? min : Math.max(0, min);
-      });
-    }
-    setQuantities(initial);
+    setQuantities((prev) => {
+      const initial = {};
+      if (visibles.length > 1) {
+        visibles.forEach((t) => { initial[t._id] = prev[t._id] ?? 0; });
+      } else {
+        visibles.forEach((t) => {
+          const min = Number(t.minimum_to_buy ?? t.minimumToBuy ?? 0);
+          const maxRaw = Number(t.max_to_buy ?? t.maximum_to_buy ?? t.maxToBuy ?? 0);
+          const isFixed = min > 0 && min === maxRaw && maxRaw > 0;
+          initial[t._id] = isFixed ? min : (prev[t._id] ?? Math.max(0, min));
+        });
+      }
+      return initial;
+    });
   }, [tickets]);
 
   const visibleTickets = useMemo(
@@ -224,6 +236,7 @@ const PurchaseTicketsPage = () => {
   const handleBuyWithPayphone = async () => {
     if (!event) return;
     setError(null);
+    setTicketsUnavailable(false);
 
     // Validar code
     if (event.code && !code.trim()) {
@@ -243,6 +256,21 @@ const PurchaseTicketsPage = () => {
 
     setSubmitting(true);
     try {
+      // Revalidar justo antes de crear la orden: la página pudo quedar abierta
+      // mientras se ocultaba una localidad (p. ej. al cerrar la preventa).
+      const freshTickets = await apiService.getTicketsByEvent(resolvedEventId);
+      const freshById = new Map(freshTickets.map((t) => [t._id, t]));
+      const noLongerAvailable = visibleTickets.filter(
+        (t) => (quantities[t._id] || 0) > 0 && (!freshById.has(t._id) || freshById.get(t._id).hidden)
+      );
+      if (noLongerAvailable.length > 0) {
+        setTickets(freshTickets);
+        setTicketsUnavailable(true);
+        const names = noLongerAvailable.map((t) => t.name).join(', ');
+        setError(`La localidad ${names} ya no está disponible. Revisa las localidades vigentes.`);
+        return;
+      }
+
       if (event.code) {
         await apiService.validateEventCode(resolvedEventId, code.trim());
       }
@@ -351,8 +379,11 @@ const PurchaseTicketsPage = () => {
     <div className="purchase-page">
       <div className="event-banner">
         {bannerImageUrl && !imageError ? (
-          <img src={bannerImageUrl} alt={event.name} className="event-banner-image"
-            onError={() => setImageError(true)} />
+          <>
+            <img src={bannerImageUrl} alt="" aria-hidden="true" className="event-banner-backdrop" />
+            <img src={bannerImageUrl} alt={event.name} className="event-banner-image"
+              onError={() => setImageError(true)} />
+          </>
         ) : imageError ? (
           <div className="event-banner-placeholder"><p>Imagen no disponible</p></div>
         ) : (
@@ -522,13 +553,24 @@ const PurchaseTicketsPage = () => {
               <strong>${totalCost.toFixed(2)}</strong>
             </div>
             {error && <div className="purchase-error">{error}</div>}
-            <button
-              className="purchase-next-btn"
-              onClick={handleBuyWithPayphone}
-              disabled={submitting}
-            >
-              {submitting ? 'Procesando...' : 'Siguiente'}
-            </button>
+            {/* Con una localidad elegida ya oculta solo se ofrece volver al
+                detalle: ahí se ven las vigentes y se empieza de nuevo. */}
+            {ticketsUnavailable ? (
+              <button
+                className="btn-back-to-form"
+                onClick={() => navigate(`/evento/${resolvedEventId}`)}
+              >
+                ← Ver localidades disponibles
+              </button>
+            ) : (
+              <button
+                className="purchase-next-btn"
+                onClick={handleBuyWithPayphone}
+                disabled={submitting}
+              >
+                {submitting ? 'Procesando...' : 'Siguiente'}
+              </button>
+            )}
           </section>
         </div>
       )}

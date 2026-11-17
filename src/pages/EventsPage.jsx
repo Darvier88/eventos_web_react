@@ -7,6 +7,7 @@ import secureStorage from '../services/secureStorage';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { eventWallClock, sortEventsForDisplay } from '../utils/eventTime';
 import './EventsPage.css';
 
 // ─── Utilidad de precarga ─────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ const useEvents = () =>
     queryKey: ['events'],
     queryFn: async () => {
       const data = await apiService.getAllEvents();
-      return data.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+      return sortEventsForDisplay(data);
     },
     staleTime: 1000 * 60 * 2,
   });
@@ -96,8 +97,10 @@ const EventsPage = () => {
     if (!isHovered) startAutoAdvance();
   };
 
-  const formatEventDate = (dateString) =>
-    format(new Date(dateString), "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es });
+  const formatEventDate = (dateString) => {
+    const date = eventWallClock(dateString);
+    return date ? format(date, "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es }) : 'Por confirmar';
+  };
 
   const handleEventClick = (eventId) => {
     secureStorage.setEventId(eventId);

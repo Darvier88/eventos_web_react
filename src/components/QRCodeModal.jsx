@@ -1,6 +1,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
+import { hoursUntilEvent } from '../utils/eventTime';
 import './QRCodeModal.css';
 
 const QRCodeModal = ({ ticket, onClose }) => {
@@ -12,17 +13,9 @@ const QRCodeModal = ({ ticket, onClose }) => {
   const purchaseId = ticket.purchase_ticket?._id || ticket.purchase_ticket?.id;
 
 
-  // Obtener la fecha de inicio del evento
-  const eventStartDate = ticket.event?.start_date ? new Date(ticket.event.start_date) : null;
-  const now = new Date();
-  // Restar 5 horas a now para el cálculo local
-  const nowMinus5h = new Date(now.getTime() - 5 * 60 * 60 * 1000);
-  let isMasked = false;
-  if (eventStartDate) {
-    const diffMs = eventStartDate.getTime() - nowMinus5h.getTime();
-    const diffHrs = diffMs / (1000 * 60 * 60);
-    isMasked = diffHrs > 24;
-  }
+  // El QR se tapa hasta 24 horas antes de que empiece el evento.
+  const hoursLeft = hoursUntilEvent(ticket.event);
+  const isMasked = hoursLeft !== null && hoursLeft > 24;
 
   const qrList = useMemo(() => {
     return items.map((item, i) => ({

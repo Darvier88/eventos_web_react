@@ -4,6 +4,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiService from '../services/apiService';
 import rechargeStore, { classifyRechargeResponse } from '../services/rechargeStore';
 import PayphonePaymentBox from '../components/PayphonePaymentBox';
+import HistorySheet from '../components/HistorySheet';
+import TokenTransactions from '../components/TokenTransactions';
+import { formatDate, formatMoney as money } from '../utils/format';
 import './RechargesPage.css';
 
 const AMOUNT_OPTIONS = [5, 10, 20];
@@ -15,6 +18,9 @@ const CONFIRM_WINDOW_MS = 5 * 60 * 1000;
 // Un callback que lleva este tiempo sin actualizar su registro fue interrumpido
 // (se cerró la pestaña o se recargó la página a mitad del proceso).
 const STALE_STEP_MS = 60 * 1000;
+
+// Desde este ancho los movimientos se muestran en un panel al lado; debajo, en una hoja.
+const WIDE_LAYOUT_QUERY = '(min-width: 960px)';
 
 /**
  * Paleta determinista por pulsera: el mismo código recibe siempre el mismo
@@ -48,14 +54,18 @@ function generateClientTxId() {
   return `REC-${uuid}`;
 }
 
-const money = (value) => `$${(Number(value) || 0).toFixed(2)}`;
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
 
-function formatDate(timestamp) {
-  if (!timestamp) return null;
-  const date = new Date(Number(timestamp));
-  if (Number.isNaN(date.getTime())) return null;
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    const handleChange = (event) => setMatches(event.matches);
+    setMatches(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [query]);
+
+  return matches;
 }
 
 const ContactlessIcon = ({ size = 14 }) => (
@@ -93,9 +103,18 @@ const RechargesPage = () => {
   const [retryingTxId, setRetryingTxId] = useState(null);
   const [retryMessage, setRetryMessage] = useState(null);
 
+  const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
+  // Pulsera cuyo historial está abierto en la hoja (solo pantallas angostas)
+  const [historyTokenId, setHistoryTokenId] = useState(null);
+
   const selected = useMemo(
     () => tokens.find((t) => t._id === selectedTokenId) || tokens[0] || null,
     [tokens, selectedTokenId]
+  );
+
+  const historyToken = useMemo(
+    () => tokens.find((t) => t._id === historyTokenId) || null,
+    [tokens, historyTokenId]
   );
 
   const amountValue = selectedAmount ?? parseFloat(customAmount);
@@ -150,6 +169,7 @@ const RechargesPage = () => {
     if (outcome === 'applied') {
       rechargeStore.update(rec.clientTxId, { status: 'done' });
       queryClient.invalidateQueries({ queryKey: ['myTokens', userId] });
+      queryClient.invalidateQueries({ queryKey: ['tokenTransactions', rec.tokenId] });
       setRetryMessage({ type: 'success', text: `Recarga aplicada a la pulsera ${rec.tokenCode}.` });
     } else if (outcome === 'rejected') {
       rechargeStore.update(rec.clientTxId, { status: 'paid' });
@@ -175,6 +195,13 @@ const RechargesPage = () => {
   const handleDismiss = (rec) => {
     rechargeStore.update(rec.clientTxId, { status: 'dismissed' });
     refreshRecords();
+  };
+
+  const handleSelectToken = (token) => {
+    setSelectedTokenId(token._id);
+    setFormError(null);
+    // En pantallas angostas no cabe el panel lateral: el historial se abre en una hoja
+    if (!isWide) setHistoryTokenId(token._id);
   };
 
   const handleCustomAmountChange = (e) => {
@@ -349,138 +376,177 @@ const RechargesPage = () => {
 
   return (
     <div className="recharges-page">
-      <div className="rc-container">
-        <h1 className="rc-title">Recargas</h1>
+      <div className={`rc-layout ${isWide ? 'rc-layout-wide' : ''}`}>
+        <div className="rc-container">
+          <h1 className="rc-title">Recargas</h1>
 
-        {banners}
+          {banners}
 
-        {/* ── Pulsera en foco ── */}
-        <div
-          className="rc-hero"
-          style={{
-            background: `linear-gradient(135deg, ${palette.start} 0%, ${palette.end} 100%)`,
-            boxShadow: `0 14px 30px -14px ${palette.end}`,
-          }}
-        >
-          <div className="rc-hero-top">
-            <div className="rc-hero-id">
-              <span className="rc-hero-label">Pulsera {selected.name}</span>
-              <span className="rc-hero-code">{selected.code}</span>
+          {/* ── Pulsera en foco ── */}
+          <div
+            className="rc-hero"
+            style={{
+              background: `linear-gradient(135deg, ${palette.start} 0%, ${palette.end} 100%)`,
+              boxShadow: `0 14px 30px -14px ${palette.end}`,
+            }}
+          >
+            <div className="rc-hero-top">
+              <div className="rc-hero-id">
+                <span className="rc-hero-label">Pulsera {selected.name}</span>
+                <span className="rc-hero-code">{selected.code}</span>
+              </div>
+              <span className="rc-nfc-chip">
+                <ContactlessIcon />
+                {isRegistered ? 'NFC activo' : 'Desactivada'}
+              </span>
             </div>
-            <span className="rc-nfc-chip">
-              <ContactlessIcon />
-              {isRegistered ? 'NFC activo' : 'Desactivada'}
-            </span>
+            <div className="rc-hero-amount">{money(selected.balance)}</div>
+            <div className="rc-hero-sub">disponible para gastar</div>
+            <div className="rc-hero-meta">
+              {selected.event?.name ? `${selected.event.name} · ` : ''}
+              {activation ? `Activada el ${activation}` : 'Sin fecha de activación'}
+            </div>
+            {!isWide && (
+              <button className="rc-hero-link" onClick={() => setHistoryTokenId(selected._id)}>
+                Ver movimientos
+              </button>
+            )}
           </div>
-          <div className="rc-hero-amount">{money(selected.balance)}</div>
-          <div className="rc-hero-sub">disponible para gastar</div>
-          <div className="rc-hero-meta">
-            {selected.event?.name ? `${selected.event.name} · ` : ''}
-            {activation ? `Activada el ${activation}` : 'Sin fecha de activación'}
-          </div>
-        </div>
 
-        {/* ── Monto ── */}
-        <div className="rc-section-title">Recargar pulsera seleccionada</div>
+          {/* ── Monto ── */}
+          <div className="rc-section-title">Recargar pulsera seleccionada</div>
 
-        <div className="rc-chips">
-          {AMOUNT_OPTIONS.map((value) => (
+          <div className="rc-chips">
+            {AMOUNT_OPTIONS.map((value) => (
+              <button
+                key={value}
+                className={`rc-chip ${selectedAmount === value ? 'selected' : ''}`}
+                onClick={() => {
+                  setSelectedAmount(value);
+                  setFormError(null);
+                }}
+                disabled={!isRegistered}
+              >
+                ${value}
+              </button>
+            ))}
             <button
-              key={value}
-              className={`rc-chip ${selectedAmount === value ? 'selected' : ''}`}
+              className={`rc-chip ${selectedAmount === null ? 'selected' : ''}`}
               onClick={() => {
-                setSelectedAmount(value);
+                setSelectedAmount(null);
                 setFormError(null);
               }}
               disabled={!isRegistered}
             >
-              ${value}
+              Otro
             </button>
-          ))}
+          </div>
+
+          {selectedAmount === null && (
+            <div className="rc-custom-amount">
+              <span className="rc-currency">$</span>
+              <input
+                type="text"
+                inputMode="decimal"
+                placeholder="0.00"
+                value={customAmount}
+                onChange={handleCustomAmountChange}
+                aria-label="Monto a recargar"
+                autoFocus
+              />
+            </div>
+          )}
+
+          {!isRegistered && (
+            <div className="rc-banner rc-banner-warning">
+              <span>Esta pulsera está desactivada y no se puede recargar.</span>
+            </div>
+          )}
+
+          {formError && <div className="rc-error">{formError}</div>}
+
           <button
-            className={`rc-chip ${selectedAmount === null ? 'selected' : ''}`}
-            onClick={() => {
-              setSelectedAmount(null);
-              setFormError(null);
-            }}
-            disabled={!isRegistered}
+            className="rc-primary-btn"
+            onClick={handleStartPayment}
+            disabled={!isRegistered || !hasValidAmount}
           >
-            Otro
+            {hasValidAmount ? `Recargar · ${money(amountValue)}` : 'Recargar · elegir monto'}
           </button>
-        </div>
 
-        {selectedAmount === null && (
-          <div className="rc-custom-amount">
-            <span className="rc-currency">$</span>
-            <input
-              type="text"
-              inputMode="decimal"
-              placeholder="0.00"
-              value={customAmount}
-              onChange={handleCustomAmountChange}
-              aria-label="Monto a recargar"
-              autoFocus
-            />
+          {/* ── Lista de pulseras ── */}
+          <div className="rc-section-title">
+            Mis pulseras <span className="rc-section-count">({tokens.length})</span>
           </div>
-        )}
 
-        {!isRegistered && (
-          <div className="rc-banner rc-banner-warning">
-            <span>Esta pulsera está desactivada y no se puede recargar.</span>
+          <div className="rc-token-list">
+            {tokens.map((token) => {
+              const isSelected = token._id === selected._id;
+              const isEmpty = (Number(token.balance) || 0) <= 0;
+              return (
+                <button
+                  key={token._id}
+                  className={`rc-token ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handleSelectToken(token)}
+                  aria-pressed={isSelected}
+                >
+                  <span className="rc-token-dot" style={{ background: paletteFor(token.code).dot }}>
+                    <ContactlessIcon size={20} />
+                  </span>
+                  <span className="rc-token-info">
+                    <span className="rc-token-name">
+                      <span className="rc-truncate">Pulsera {token.name}</span>
+                      {isEmpty && <span className="rc-pill-low">Bajo</span>}
+                    </span>
+                    <span className="rc-token-code">
+                      {token.code}
+                      {token.event?.name ? ` · ${token.event.name}` : ''}
+                    </span>
+                  </span>
+                  <span className="rc-token-balance">
+                    <strong className={isEmpty ? 'empty' : ''}>{money(token.balance)}</strong>
+                    <span>disponible</span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
+        </div>
+
+        {/* ── Movimientos de la pulsera seleccionada (pantallas anchas) ── */}
+        {isWide && (
+          <aside className="rc-history-panel" aria-label="Movimientos de la pulsera">
+            <div className="rc-history-header">
+              <h2>Movimientos</h2>
+              <span>
+                Pulsera {selected.name} · {selected.code}
+              </span>
+            </div>
+            <TokenTransactions tokenId={selected._id} />
+          </aside>
         )}
-
-        {formError && <div className="rc-error">{formError}</div>}
-
-        <button
-          className="rc-primary-btn"
-          onClick={handleStartPayment}
-          disabled={!isRegistered || !hasValidAmount}
-        >
-          {hasValidAmount ? `Recargar · ${money(amountValue)}` : 'Recargar · elegir monto'}
-        </button>
-
-        {/* ── Lista de pulseras ── */}
-        <div className="rc-section-title">
-          Mis pulseras <span className="rc-section-count">({tokens.length})</span>
-        </div>
-
-        <div className="rc-token-list">
-          {tokens.map((token) => {
-            const isSelected = token._id === selected._id;
-            const isEmpty = (Number(token.balance) || 0) <= 0;
-            return (
-              <button
-                key={token._id}
-                className={`rc-token ${isSelected ? 'selected' : ''}`}
-                onClick={() => {
-                  setSelectedTokenId(token._id);
-                  setFormError(null);
-                }}
-                aria-pressed={isSelected}
-              >
-                <span className="rc-token-dot" style={{ background: paletteFor(token.code).dot }}>
-                  <ContactlessIcon size={20} />
-                </span>
-                <span className="rc-token-info">
-                  <span className="rc-token-name">
-                    <span className="rc-truncate">Pulsera {token.name}</span>
-                    {isEmpty && <span className="rc-pill-low">Bajo</span>}
-                  </span>
-                  <span className="rc-token-code">
-                    {token.code}
-                    {token.event?.name ? ` · ${token.event.name}` : ''}
-                  </span>
-                </span>
-                <span className="rc-token-balance">
-                  <strong className={isEmpty ? 'empty' : ''}>{money(token.balance)}</strong>
-                  <span>disponible</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
       </div>
+
+      {/* ── Movimientos en hoja (pantallas angostas) ── */}
+      {!isWide && historyToken && (
+        <HistorySheet
+          title="Movimientos"
+          subtitle={`Pulsera ${historyToken.name} · ${historyToken.code}`}
+          onClose={() => setHistoryTokenId(null)}
+        >
+          <TokenTransactions tokenId={historyToken._id} />
+          {historyToken.status === 'registered' && (
+            <button
+              className="rc-primary-btn"
+              onClick={() => {
+                setHistoryTokenId(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              Recargar esta pulsera
+            </button>
+          )}
+        </HistorySheet>
+      )}
     </div>
   );
 };

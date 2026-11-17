@@ -8,7 +8,7 @@ import rechargeStore, { classifyRechargeResponse } from '../services/rechargeSto
 import { readPayphoneConfirmation } from '../utils/payphoneConfirmation';
 import './PaymentCallbackPage.css';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://macak.tech/api';
 
 const createPayphoneTransaction = async ({
   attenderId,
@@ -350,6 +350,7 @@ const PaymentCallbackPage = () => {
           setStatus('success');
           setMessage(`¡Precarga de $${confirmedAmount.toFixed(2)} registrada correctamente!`);
           queryClient.invalidateQueries({ queryKey: ['myTickets', userId] });
+          queryClient.invalidateQueries({ queryKey: ['prechargeStatus'] });
 
           setTimeout(() => {
             navigate(record.eventId ? `/evento/${record.eventId}` : '/my-tickets');

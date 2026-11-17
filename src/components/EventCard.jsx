@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { eventWallClock } from '../utils/eventTime';
 import apiService from '../services/apiService';
 import secureStorage from '../services/secureStorage';
 import './EventCard.css';
@@ -37,8 +38,8 @@ const EventCard = ({ event }) => {
   }, [eventId]);
 
   const formatEventDate = (dateString) => {
-    const date = new Date(dateString);
-    return format(date, "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es });
+    const date = eventWallClock(dateString);
+    return date ? format(date, "dd 'de' MMMM 'de' yyyy • HH:mm '(EC)'", { locale: es }) : 'Por confirmar';
   };
 
   const truncateText = (text, maxLength = 150) => {

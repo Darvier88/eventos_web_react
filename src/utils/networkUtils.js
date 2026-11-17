@@ -22,7 +22,7 @@ export function withTimeout(promise, ms = 15000, timeoutMsg = 'Tiempo de espera 
  * Intenta hacer un ping rápido a un recurso público para comprobar la red.
  * Devuelve true si responde, false si no.
  */
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://biodynamics.tech/macak_dev';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://macak.tech/api';
 export async function quickPing(url = `${API_BASE_URL}/event/get_all`, ms = 4000) {
   try {
     const controller = new AbortController();
